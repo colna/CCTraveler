@@ -1,0 +1,10872 @@
+{
+  "total": 2173,
+  "source": "ctrip",
+  "updated_at": "2026-04-22",
+  "cities": [
+    {
+      "id": 1,
+      "name": "北京",
+      "pinyin": "beijing"
+    },
+    {
+      "id": 2,
+      "name": "上海",
+      "pinyin": "shanghai"
+    },
+    {
+      "id": 3,
+      "name": "天津",
+      "pinyin": "tianjin"
+    },
+    {
+      "id": 4,
+      "name": "重庆",
+      "pinyin": "chongqing"
+    },
+    {
+      "id": 5,
+      "name": "哈尔滨",
+      "pinyin": "haerbin"
+    },
+    {
+      "id": 6,
+      "name": "大连",
+      "pinyin": "dalian"
+    },
+    {
+      "id": 7,
+      "name": "青岛",
+      "pinyin": "qingdao"
+    },
+    {
+      "id": 10,
+      "name": "西安",
+      "pinyin": "xian"
+    },
+    {
+      "id": 11,
+      "name": "敦煌(酒泉)",
+      "pinyin": "dunhuang"
+    },
+    {
+      "id": 12,
+      "name": "南京",
+      "pinyin": "nanjing"
+    },
+    {
+      "id": 13,
+      "name": "无锡",
+      "pinyin": "wuxi"
+    },
+    {
+      "id": 14,
+      "name": "苏州",
+      "pinyin": "suzhou"
+    },
+    {
+      "id": 15,
+      "name": "扬州",
+      "pinyin": "yangzhou"
+    },
+    {
+      "id": 16,
+      "name": "镇江",
+      "pinyin": "zhenjiang"
+    },
+    {
+      "id": 17,
+      "name": "杭州",
+      "pinyin": "hangzhou"
+    },
+    {
+      "id": 19,
+      "name": "舟山",
+      "pinyin": "zhoushan"
+    },
+    {
+      "id": 20,
+      "name": "淳安(杭州)",
+      "pinyin": "chunan"
+    },
+    {
+      "id": 22,
+      "name": "绍兴",
+      "pinyin": "shaoxing"
+    },
+    {
+      "id": 23,
+      "name": "黄山",
+      "pinyin": "huangshan"
+    },
+    {
+      "id": 24,
+      "name": "九江",
+      "pinyin": "jiujiang"
+    },
+    {
+      "id": 25,
+      "name": "厦门",
+      "pinyin": "xiamen"
+    },
+    {
+      "id": 26,
+      "name": "武夷山(南平)",
+      "pinyin": "wuyishan"
+    },
+    {
+      "id": 27,
+      "name": "张家界",
+      "pinyin": "zhangjiajie"
+    },
+    {
+      "id": 28,
+      "name": "成都",
+      "pinyin": "chengdu"
+    },
+    {
+      "id": 30,
+      "name": "深圳",
+      "pinyin": "shenzhen"
+    },
+    {
+      "id": 31,
+      "name": "珠海",
+      "pinyin": "zhuhai"
+    },
+    {
+      "id": 32,
+      "name": "广州",
+      "pinyin": "guangzhou"
+    },
+    {
+      "id": 33,
+      "name": "桂林",
+      "pinyin": "guilin"
+    },
+    {
+      "id": 34,
+      "name": "昆明",
+      "pinyin": "kunming"
+    },
+    {
+      "id": 35,
+      "name": "西双版纳",
+      "pinyin": "xishuangbanna"
+    },
+    {
+      "id": 36,
+      "name": "大理市",
+      "pinyin": "dalishi"
+    },
+    {
+      "id": 37,
+      "name": "丽江",
+      "pinyin": "lijiang"
+    },
+    {
+      "id": 38,
+      "name": "贵阳",
+      "pinyin": "guiyang"
+    },
+    {
+      "id": 39,
+      "name": "乌鲁木齐",
+      "pinyin": "wulumuqi"
+    },
+    {
+      "id": 40,
+      "name": "吐鲁番",
+      "pinyin": "tulufan"
+    },
+    {
+      "id": 41,
+      "name": "拉萨",
+      "pinyin": "lasa"
+    },
+    {
+      "id": 42,
+      "name": "海口",
+      "pinyin": "haikou"
+    },
+    {
+      "id": 43,
+      "name": "三亚",
+      "pinyin": "sanya"
+    },
+    {
+      "id": 44,
+      "name": "文昌",
+      "pinyin": "wenchang"
+    },
+    {
+      "id": 45,
+      "name": "万宁",
+      "pinyin": "wanning"
+    },
+    {
+      "id": 46,
+      "name": "五指山",
+      "pinyin": "wuzhishan"
+    },
+    {
+      "id": 47,
+      "name": "屯昌",
+      "pinyin": "tunchang"
+    },
+    {
+      "id": 48,
+      "name": "东方",
+      "pinyin": "dongfang"
+    },
+    {
+      "id": 49,
+      "name": "乐东",
+      "pinyin": "ledong"
+    },
+    {
+      "id": 50,
+      "name": "定安",
+      "pinyin": "dingan"
+    },
+    {
+      "id": 52,
+      "name": "琼海",
+      "pinyin": "qionghai"
+    },
+    {
+      "id": 53,
+      "name": "琼中",
+      "pinyin": "qiongzhong"
+    },
+    {
+      "id": 54,
+      "name": "保亭",
+      "pinyin": "baoting"
+    },
+    {
+      "id": 55,
+      "name": "陵水",
+      "pinyin": "lingshui"
+    },
+    {
+      "id": 56,
+      "name": "昌江",
+      "pinyin": "changjiang"
+    },
+    {
+      "id": 57,
+      "name": "儋州",
+      "pinyin": "danzhou"
+    },
+    {
+      "id": 58,
+      "name": "香港",
+      "pinyin": "xianggang"
+    },
+    {
+      "id": 59,
+      "name": "澳门",
+      "pinyin": "aomen"
+    },
+    {
+      "id": 82,
+      "name": "南通",
+      "pinyin": "nantong"
+    },
+    {
+      "id": 83,
+      "name": "昆山(苏州)",
+      "pinyin": "kunshan"
+    },
+    {
+      "id": 84,
+      "name": "海宁(嘉兴)",
+      "pinyin": "haining"
+    },
+    {
+      "id": 85,
+      "name": "永嘉(温州)",
+      "pinyin": "yongjia"
+    },
+    {
+      "id": 86,
+      "name": "湖州",
+      "pinyin": "huzhou"
+    },
+    {
+      "id": 91,
+      "name": "九寨沟",
+      "pinyin": "jiuzhaigou"
+    },
+    {
+      "id": 92,
+      "name": "日喀则",
+      "pinyin": "rikaze"
+    },
+    {
+      "id": 94,
+      "name": "都江堰(成都)",
+      "pinyin": "dujiangyan"
+    },
+    {
+      "id": 95,
+      "name": "峨眉山(乐山)",
+      "pinyin": "emeishan"
+    },
+    {
+      "id": 96,
+      "name": "常熟(苏州)",
+      "pinyin": "changshu"
+    },
+    {
+      "id": 97,
+      "name": "阿里",
+      "pinyin": "ali"
+    },
+    {
+      "id": 99,
+      "name": "银川",
+      "pinyin": "yinchuan"
+    },
+    {
+      "id": 100,
+      "name": "兰州",
+      "pinyin": "lanzhou"
+    },
+    {
+      "id": 103,
+      "name": "呼和浩特",
+      "pinyin": "huhehaote"
+    },
+    {
+      "id": 104,
+      "name": "平遥(晋中)",
+      "pinyin": "pingyao"
+    },
+    {
+      "id": 105,
+      "name": "太原",
+      "pinyin": "taiyuan"
+    },
+    {
+      "id": 108,
+      "name": "林芝",
+      "pinyin": "linzhi"
+    },
+    {
+      "id": 109,
+      "name": "喀什市(喀什)",
+      "pinyin": "kashishi"
+    },
+    {
+      "id": 110,
+      "name": "延安",
+      "pinyin": "yanan"
+    },
+    {
+      "id": 111,
+      "name": "咸阳",
+      "pinyin": "xianyang"
+    },
+    {
+      "id": 112,
+      "name": "宝鸡",
+      "pinyin": "baoji"
+    },
+    {
+      "id": 117,
+      "name": "潼关(渭南)",
+      "pinyin": "tongguan"
+    },
+    {
+      "id": 118,
+      "name": "铜川",
+      "pinyin": "tongchuan"
+    },
+    {
+      "id": 119,
+      "name": "华阴(渭南)",
+      "pinyin": "huayin"
+    },
+    {
+      "id": 123,
+      "name": "丹凤(商洛)",
+      "pinyin": "danfeng"
+    },
+    {
+      "id": 124,
+      "name": "西宁",
+      "pinyin": "xining"
+    },
+    {
+      "id": 125,
+      "name": "都兰(海西)",
+      "pinyin": "dulan"
+    },
+    {
+      "id": 126,
+      "name": "佳县(榆林)",
+      "pinyin": "jiaxian"
+    },
+    {
+      "id": 127,
+      "name": "黄陵(延安)",
+      "pinyin": "huangling"
+    },
+    {
+      "id": 128,
+      "name": "韩城(渭南)",
+      "pinyin": "hancheng"
+    },
+    {
+      "id": 129,
+      "name": "汉中",
+      "pinyin": "hanzhong"
+    },
+    {
+      "id": 131,
+      "name": "岐山(宝鸡)",
+      "pinyin": "qishan"
+    },
+    {
+      "id": 132,
+      "name": "格尔木(海西)",
+      "pinyin": "geermu"
+    },
+    {
+      "id": 134,
+      "name": "灵石(晋中)",
+      "pinyin": "lingshi"
+    },
+    {
+      "id": 135,
+      "name": "介休(晋中)",
+      "pinyin": "jiexiu"
+    },
+    {
+      "id": 136,
+      "name": "大同",
+      "pinyin": "datong"
+    },
+    {
+      "id": 137,
+      "name": "长治",
+      "pinyin": "changzhi"
+    },
+    {
+      "id": 139,
+      "name": "临汾",
+      "pinyin": "linfen"
+    },
+    {
+      "id": 140,
+      "name": "运城",
+      "pinyin": "yuncheng"
+    },
+    {
+      "id": 141,
+      "name": "包头",
+      "pinyin": "baotou"
+    },
+    {
+      "id": 143,
+      "name": "曲阜(济宁)",
+      "pinyin": "qufu"
+    },
+    {
+      "id": 144,
+      "name": "济南",
+      "pinyin": "jinan"
+    },
+    {
+      "id": 147,
+      "name": "秦皇岛",
+      "pinyin": "qinhuangdao"
+    },
+    {
+      "id": 149,
+      "name": "齐齐哈尔",
+      "pinyin": "qiqihaer"
+    },
+    {
+      "id": 150,
+      "name": "牡丹江",
+      "pinyin": "mudanjiang"
+    },
+    {
+      "id": 153,
+      "name": "北安(黑河)",
+      "pinyin": "beian"
+    },
+    {
+      "id": 155,
+      "name": "漠河(大兴安岭)",
+      "pinyin": "mohe"
+    },
+    {
+      "id": 156,
+      "name": "虎林(鸡西)",
+      "pinyin": "hulin"
+    },
+    {
+      "id": 157,
+      "name": "鸡西",
+      "pinyin": "jixi"
+    },
+    {
+      "id": 158,
+      "name": "长春",
+      "pinyin": "changchun"
+    },
+    {
+      "id": 159,
+      "name": "吉林市",
+      "pinyin": "jilinshi"
+    },
+    {
+      "id": 161,
+      "name": "集安(通化)",
+      "pinyin": "jian"
+    },
+    {
+      "id": 162,
+      "name": "农安(长春)",
+      "pinyin": "nongan"
+    },
+    {
+      "id": 165,
+      "name": "敦化",
+      "pinyin": "dunhua"
+    },
+    {
+      "id": 166,
+      "name": "克拉玛依",
+      "pinyin": "kelamayi"
+    },
+    {
+      "id": 171,
+      "name": "安康",
+      "pinyin": "ankang"
+    },
+    {
+      "id": 177,
+      "name": "安庆",
+      "pinyin": "anqing"
+    },
+    {
+      "id": 178,
+      "name": "鞍山",
+      "pinyin": "anshan"
+    },
+    {
+      "id": 179,
+      "name": "安顺",
+      "pinyin": "anshun"
+    },
+    {
+      "id": 180,
+      "name": "安溪(泉州)",
+      "pinyin": "anxi"
+    },
+    {
+      "id": 181,
+      "name": "安阳",
+      "pinyin": "anyang"
+    },
+    {
+      "id": 182,
+      "name": "蚌埠",
+      "pinyin": "bengbu"
+    },
+    {
+      "id": 185,
+      "name": "保定",
+      "pinyin": "baoding"
+    },
+    {
+      "id": 186,
+      "name": "玉溪",
+      "pinyin": "yuxi"
+    },
+    {
+      "id": 189,
+      "name": "北海",
+      "pinyin": "beihai"
+    },
+    {
+      "id": 190,
+      "name": "白河(安康)",
+      "pinyin": "baihe"
+    },
+    {
+      "id": 197,
+      "name": "保山",
+      "pinyin": "baoshan"
+    },
+    {
+      "id": 198,
+      "name": "长白(白山)",
+      "pinyin": "changbai"
+    },
+    {
+      "id": 201,
+      "name": "常德",
+      "pinyin": "changde"
+    },
+    {
+      "id": 202,
+      "name": "赤峰",
+      "pinyin": "chifeng"
+    },
+    {
+      "id": 206,
+      "name": "长沙",
+      "pinyin": "changsha"
+    },
+    {
+      "id": 208,
+      "name": "嵊泗(舟山)",
+      "pinyin": "shengsi"
+    },
+    {
+      "id": 209,
+      "name": "广德(宣城)",
+      "pinyin": "guangde"
+    },
+    {
+      "id": 211,
+      "name": "朝阳",
+      "pinyin": "chaoyang"
+    },
+    {
+      "id": 213,
+      "name": "常州",
+      "pinyin": "changzhou"
+    },
+    {
+      "id": 214,
+      "name": "滁州",
+      "pinyin": "chuzhou"
+    },
+    {
+      "id": 215,
+      "name": "潮州",
+      "pinyin": "chaozhou"
+    },
+    {
+      "id": 216,
+      "name": "沧州",
+      "pinyin": "cangzhou"
+    },
+    {
+      "id": 218,
+      "name": "池州",
+      "pinyin": "chizhou"
+    },
+    {
+      "id": 221,
+      "name": "丹东",
+      "pinyin": "dandong"
+    },
+    {
+      "id": 222,
+      "name": "登封(郑州)",
+      "pinyin": "dengfeng"
+    },
+    {
+      "id": 223,
+      "name": "东莞",
+      "pinyin": "dongguan"
+    },
+    {
+      "id": 231,
+      "name": "大庆",
+      "pinyin": "daqing"
+    },
+    {
+      "id": 236,
+      "name": "东营",
+      "pinyin": "dongying"
+    },
+    {
+      "id": 237,
+      "name": "德阳",
+      "pinyin": "deyang"
+    },
+    {
+      "id": 238,
+      "name": "丹阳(镇江)",
+      "pinyin": "danyang"
+    },
+    {
+      "id": 246,
+      "name": "福鼎(宁德)",
+      "pinyin": "fuding"
+    },
+    {
+      "id": 251,
+      "name": "佛山",
+      "pinyin": "foshan"
+    },
+    {
+      "id": 252,
+      "name": "抚顺",
+      "pinyin": "fushun"
+    },
+    {
+      "id": 254,
+      "name": "阜新",
+      "pinyin": "fuxin"
+    },
+    {
+      "id": 255,
+      "name": "富蕴",
+      "pinyin": "fuyun"
+    },
+    {
+      "id": 257,
+      "name": "阜阳",
+      "pinyin": "fuyang"
+    },
+    {
+      "id": 258,
+      "name": "福州",
+      "pinyin": "fuzhou"
+    },
+    {
+      "id": 267,
+      "name": "广元",
+      "pinyin": "guangyuan"
+    },
+    {
+      "id": 268,
+      "name": "赣州",
+      "pinyin": "ganzhou"
+    },
+    {
+      "id": 270,
+      "name": "惠安(泉州)",
+      "pinyin": "huian"
+    },
+    {
+      "id": 272,
+      "name": "淮北",
+      "pinyin": "huaibei"
+    },
+    {
+      "id": 275,
+      "name": "邯郸",
+      "pinyin": "handan"
+    },
+    {
+      "id": 278,
+      "name": "合肥",
+      "pinyin": "hefei"
+    },
+    {
+      "id": 281,
+      "name": "黑河",
+      "pinyin": "heihe"
+    },
+    {
+      "id": 282,
+      "name": "怀化",
+      "pinyin": "huaihua"
+    },
+    {
+      "id": 285,
+      "name": "哈密市",
+      "pinyin": "hami"
+    },
+    {
+      "id": 287,
+      "name": "淮南",
+      "pinyin": "huainan"
+    },
+    {
+      "id": 290,
+      "name": "衡水",
+      "pinyin": "hengshui"
+    },
+    {
+      "id": 291,
+      "name": "鹤山(江门)",
+      "pinyin": "heshan"
+    },
+    {
+      "id": 292,
+      "name": "黄石",
+      "pinyin": "huangshi"
+    },
+    {
+      "id": 294,
+      "name": "和田市",
+      "pinyin": "hetianshi"
+    },
+    {
+      "id": 297,
+      "name": "衡阳",
+      "pinyin": "hengyang"
+    },
+    {
+      "id": 299,
+      "name": "惠州",
+      "pinyin": "huizhou"
+    },
+    {
+      "id": 305,
+      "name": "景德镇",
+      "pinyin": "jingdezhen"
+    },
+    {
+      "id": 307,
+      "name": "井冈山(吉安)",
+      "pinyin": "jinggangshan"
+    },
+    {
+      "id": 308,
+      "name": "金华",
+      "pinyin": "jinhua"
+    },
+    {
+      "id": 309,
+      "name": "景洪",
+      "pinyin": "jinghong"
+    },
+    {
+      "id": 312,
+      "name": "施秉",
+      "pinyin": "shibing"
+    },
+    {
+      "id": 316,
+      "name": "江门",
+      "pinyin": "jiangmen"
+    },
+    {
+      "id": 317,
+      "name": "佳木斯",
+      "pinyin": "jiamusi"
+    },
+    {
+      "id": 318,
+      "name": "济宁",
+      "pinyin": "jining"
+    },
+    {
+      "id": 321,
+      "name": "固原",
+      "pinyin": "guyuan"
+    },
+    {
+      "id": 325,
+      "name": "江阴(无锡)",
+      "pinyin": "jiangyin"
+    },
+    {
+      "id": 326,
+      "name": "嘉峪关",
+      "pinyin": "jiayuguan"
+    },
+    {
+      "id": 327,
+      "name": "锦州",
+      "pinyin": "jinzhou"
+    },
+    {
+      "id": 328,
+      "name": "荆州",
+      "pinyin": "jingzhou"
+    },
+    {
+      "id": 329,
+      "name": "库车",
+      "pinyin": "kuche"
+    },
+    {
+      "id": 330,
+      "name": "库尔勒",
+      "pinyin": "kuerle"
+    },
+    {
+      "id": 331,
+      "name": "开封",
+      "pinyin": "kaifeng"
+    },
+    {
+      "id": 333,
+      "name": "凯里",
+      "pinyin": "kaili"
+    },
+    {
+      "id": 335,
+      "name": "开平(江门)",
+      "pinyin": "kaiping"
+    },
+    {
+      "id": 339,
+      "name": "罗定(云浮)",
+      "pinyin": "luoding"
+    },
+    {
+      "id": 340,
+      "name": "廊坊",
+      "pinyin": "langfang"
+    },
+    {
+      "id": 341,
+      "name": "龙海(漳州)",
+      "pinyin": "longhai"
+    },
+    {
+      "id": 344,
+      "name": "庐山(九江)",
+      "pinyin": "lushan"
+    },
+    {
+      "id": 345,
+      "name": "乐山",
+      "pinyin": "leshan"
+    },
+    {
+      "id": 346,
+      "name": "丽水",
+      "pinyin": "lishui"
+    },
+    {
+      "id": 348,
+      "name": "龙岩",
+      "pinyin": "longyan"
+    },
+    {
+      "id": 350,
+      "name": "洛阳",
+      "pinyin": "luoyang"
+    },
+    {
+      "id": 351,
+      "name": "辽阳",
+      "pinyin": "liaoyang"
+    },
+    {
+      "id": 352,
+      "name": "辽源",
+      "pinyin": "liaoyuan"
+    },
+    {
+      "id": 353,
+      "name": "连云港",
+      "pinyin": "lianyungang"
+    },
+    {
+      "id": 354,
+      "name": "柳州",
+      "pinyin": "liuzhou"
+    },
+    {
+      "id": 355,
+      "name": "泸州",
+      "pinyin": "luzhou"
+    },
+    {
+      "id": 370,
+      "name": "绵阳",
+      "pinyin": "mianyang"
+    },
+    {
+      "id": 371,
+      "name": "海晏",
+      "pinyin": "haiyan"
+    },
+    {
+      "id": 373,
+      "name": "隆化(承德)",
+      "pinyin": "longhua"
+    },
+    {
+      "id": 374,
+      "name": "南安(泉州)",
+      "pinyin": "nanan"
+    },
+    {
+      "id": 375,
+      "name": "宁波",
+      "pinyin": "ningbo"
+    },
+    {
+      "id": 376,
+      "name": "南昌",
+      "pinyin": "nanchang"
+    },
+    {
+      "id": 377,
+      "name": "南充",
+      "pinyin": "nanchong"
+    },
+    {
+      "id": 378,
+      "name": "宁德",
+      "pinyin": "ningde"
+    },
+    {
+      "id": 380,
+      "name": "南宁",
+      "pinyin": "nanning"
+    },
+    {
+      "id": 385,
+      "name": "南阳",
+      "pinyin": "nanyang"
+    },
+    {
+      "id": 387,
+      "name": "盘锦",
+      "pinyin": "panjin"
+    },
+    {
+      "id": 388,
+      "name": "平凉",
+      "pinyin": "pingliang"
+    },
+    {
+      "id": 389,
+      "name": "普宁(揭阳)",
+      "pinyin": "puning"
+    },
+    {
+      "id": 392,
+      "name": "平潭(福州)",
+      "pinyin": "pingtan"
+    },
+    {
+      "id": 396,
+      "name": "凭祥(崇左)",
+      "pinyin": "pingxiang"
+    },
+    {
+      "id": 399,
+      "name": "且末",
+      "pinyin": "qiemo"
+    },
+    {
+      "id": 403,
+      "name": "黟县(黄山)",
+      "pinyin": "yixian"
+    },
+    {
+      "id": 404,
+      "name": "庆阳",
+      "pinyin": "qingyang"
+    },
+    {
+      "id": 406,
+      "name": "泉州",
+      "pinyin": "quanzhou"
+    },
+    {
+      "id": 407,
+      "name": "衢州",
+      "pinyin": "quzhou"
+    },
+    {
+      "id": 408,
+      "name": "瑞安(温州)",
+      "pinyin": "ruian"
+    },
+    {
+      "id": 411,
+      "name": "上饶",
+      "pinyin": "shangrao"
+    },
+    {
+      "id": 412,
+      "name": "瑞丽",
+      "pinyin": "ruili"
+    },
+    {
+      "id": 421,
+      "name": "绥芬河(牡丹江)",
+      "pinyin": "suifenhe"
+    },
+    {
+      "id": 422,
+      "name": "韶关",
+      "pinyin": "shaoguan"
+    },
+    {
+      "id": 426,
+      "name": "石河子",
+      "pinyin": "shihezi"
+    },
+    {
+      "id": 428,
+      "name": "石家庄",
+      "pinyin": "shijiazhuang"
+    },
+    {
+      "id": 431,
+      "name": "石林(昆明)",
+      "pinyin": "shilin"
+    },
+    {
+      "id": 433,
+      "name": "汉寿(常德)",
+      "pinyin": "hanshou"
+    },
+    {
+      "id": 436,
+      "name": "三门峡",
+      "pinyin": "sanmenxia"
+    },
+    {
+      "id": 437,
+      "name": "三明",
+      "pinyin": "sanming"
+    },
+    {
+      "id": 440,
+      "name": "四平",
+      "pinyin": "siping"
+    },
+    {
+      "id": 441,
+      "name": "商丘",
+      "pinyin": "shangqiu"
+    },
+    {
+      "id": 443,
+      "name": "泗水(济宁)",
+      "pinyin": "sishui"
+    },
+    {
+      "id": 444,
+      "name": "石狮(泉州)",
+      "pinyin": "shishi"
+    },
+    {
+      "id": 446,
+      "name": "韶山(湘潭)",
+      "pinyin": "shaoshan"
+    },
+    {
+      "id": 447,
+      "name": "汕头",
+      "pinyin": "shantou"
+    },
+    {
+      "id": 448,
+      "name": "邵武(南平)",
+      "pinyin": "shaowu"
+    },
+    {
+      "id": 451,
+      "name": "沈阳",
+      "pinyin": "shenyang"
+    },
+    {
+      "id": 452,
+      "name": "十堰",
+      "pinyin": "shiyan"
+    },
+    {
+      "id": 454,
+      "name": "泰安",
+      "pinyin": "taian"
+    },
+    {
+      "id": 456,
+      "name": "通化",
+      "pinyin": "tonghua"
+    },
+    {
+      "id": 458,
+      "name": "通辽",
+      "pinyin": "tongliao"
+    },
+    {
+      "id": 459,
+      "name": "铜陵",
+      "pinyin": "tongling"
+    },
+    {
+      "id": 460,
+      "name": "桐庐(杭州)",
+      "pinyin": "tonglu"
+    },
+    {
+      "id": 463,
+      "name": "图们",
+      "pinyin": "tumen"
+    },
+    {
+      "id": 464,
+      "name": "天水",
+      "pinyin": "tianshui"
+    },
+    {
+      "id": 468,
+      "name": "唐山",
+      "pinyin": "tangshan"
+    },
+    {
+      "id": 470,
+      "name": "天台(台州)",
+      "pinyin": "tiantai"
+    },
+    {
+      "id": 473,
+      "name": "五大连池(黑河)",
+      "pinyin": "wudalianchi"
+    },
+    {
+      "id": 475,
+      "name": "潍坊",
+      "pinyin": "weifang"
+    },
+    {
+      "id": 477,
+      "name": "武汉",
+      "pinyin": "wuhan"
+    },
+    {
+      "id": 478,
+      "name": "芜湖",
+      "pinyin": "wuhu"
+    },
+    {
+      "id": 479,
+      "name": "威海",
+      "pinyin": "weihai"
+    },
+    {
+      "id": 480,
+      "name": "五华(梅州)",
+      "pinyin": "wuhua"
+    },
+    {
+      "id": 484,
+      "name": "乌兰浩特",
+      "pinyin": "wulanhaote"
+    },
+    {
+      "id": 485,
+      "name": "永安(三明)",
+      "pinyin": "yongan"
+    },
+    {
+      "id": 489,
+      "name": "婺源(上饶)",
+      "pinyin": "wuyuan"
+    },
+    {
+      "id": 491,
+      "name": "温州",
+      "pinyin": "wenzhou"
+    },
+    {
+      "id": 492,
+      "name": "梧州",
+      "pinyin": "wuzhou"
+    },
+    {
+      "id": 494,
+      "name": "西昌",
+      "pinyin": "xichang"
+    },
+    {
+      "id": 496,
+      "name": "襄阳",
+      "pinyin": "xiangyang"
+    },
+    {
+      "id": 497,
+      "name": "夏河",
+      "pinyin": "xiahe"
+    },
+    {
+      "id": 499,
+      "name": "兴隆(承德)",
+      "pinyin": "xinglong"
+    },
+    {
+      "id": 500,
+      "name": "锡林浩特(锡林郭勒盟)",
+      "pinyin": "xilinhaote"
+    },
+    {
+      "id": 502,
+      "name": "青县(沧州)",
+      "pinyin": "qingxian"
+    },
+    {
+      "id": 507,
+      "name": "新乡",
+      "pinyin": "xinxiang"
+    },
+    {
+      "id": 508,
+      "name": "歙县(黄山)",
+      "pinyin": "shexian"
+    },
+    {
+      "id": 510,
+      "name": "信阳",
+      "pinyin": "xinyang"
+    },
+    {
+      "id": 512,
+      "name": "徐州",
+      "pinyin": "xuzhou"
+    },
+    {
+      "id": 513,
+      "name": "忻州",
+      "pinyin": "xinzhou"
+    },
+    {
+      "id": 514,
+      "name": "宜宾",
+      "pinyin": "yibin"
+    },
+    {
+      "id": 515,
+      "name": "宜昌",
+      "pinyin": "yichang"
+    },
+    {
+      "id": 517,
+      "name": "伊春",
+      "pinyin": "yichun"
+    },
+    {
+      "id": 518,
+      "name": "宜春",
+      "pinyin": "yichun"
+    },
+    {
+      "id": 521,
+      "name": "宿州",
+      "pinyin": "suzhou"
+    },
+    {
+      "id": 523,
+      "name": "延吉",
+      "pinyin": "yanji"
+    },
+    {
+      "id": 527,
+      "name": "榆林",
+      "pinyin": "yulin"
+    },
+    {
+      "id": 528,
+      "name": "依兰(哈尔滨)",
+      "pinyin": "yilan"
+    },
+    {
+      "id": 529,
+      "name": "伊宁市",
+      "pinyin": "yining"
+    },
+    {
+      "id": 533,
+      "name": "烟台",
+      "pinyin": "yantai"
+    },
+    {
+      "id": 534,
+      "name": "鹰潭",
+      "pinyin": "yingtan"
+    },
+    {
+      "id": 536,
+      "name": "义乌(金华)",
+      "pinyin": "yiwu"
+    },
+    {
+      "id": 537,
+      "name": "宜兴(无锡)",
+      "pinyin": "yixing"
+    },
+    {
+      "id": 539,
+      "name": "岳阳",
+      "pinyin": "yueyang"
+    },
+    {
+      "id": 540,
+      "name": "余姚(宁波)",
+      "pinyin": "yuyao"
+    },
+    {
+      "id": 542,
+      "name": "淄博",
+      "pinyin": "zibo"
+    },
+    {
+      "id": 544,
+      "name": "自贡",
+      "pinyin": "zigong"
+    },
+    {
+      "id": 545,
+      "name": "遵化(唐山)",
+      "pinyin": "zunhua"
+    },
+    {
+      "id": 547,
+      "name": "湛江",
+      "pinyin": "zhanjiang"
+    },
+    {
+      "id": 548,
+      "name": "诸暨(绍兴)",
+      "pinyin": "zhuji"
+    },
+    {
+      "id": 550,
+      "name": "张家口",
+      "pinyin": "zhangjiakou"
+    },
+    {
+      "id": 551,
+      "name": "驻马店",
+      "pinyin": "zhumadian"
+    },
+    {
+      "id": 552,
+      "name": "肇庆",
+      "pinyin": "zhaoqing"
+    },
+    {
+      "id": 553,
+      "name": "中山",
+      "pinyin": "zhongshan"
+    },
+    {
+      "id": 555,
+      "name": "昭通",
+      "pinyin": "zhaotong"
+    },
+    {
+      "id": 556,
+      "name": "中卫",
+      "pinyin": "zhongwei"
+    },
+    {
+      "id": 557,
+      "name": "浑源(大同)",
+      "pinyin": "hunyuan"
+    },
+    {
+      "id": 558,
+      "name": "遵义",
+      "pinyin": "zunyi"
+    },
+    {
+      "id": 559,
+      "name": "郑州",
+      "pinyin": "zhengzhou"
+    },
+    {
+      "id": 560,
+      "name": "漳州",
+      "pinyin": "zhangzhou"
+    },
+    {
+      "id": 562,
+      "name": "承德",
+      "pinyin": "chengde"
+    },
+    {
+      "id": 569,
+      "name": "临沂",
+      "pinyin": "linyi"
+    },
+    {
+      "id": 571,
+      "name": "嘉兴",
+      "pinyin": "jiaxing"
+    },
+    {
+      "id": 575,
+      "name": "昌都",
+      "pinyin": "changdu"
+    },
+    {
+      "id": 577,
+      "name": "淮安",
+      "pinyin": "huaian"
+    },
+    {
+      "id": 578,
+      "name": "台州",
+      "pinyin": "taizhou"
+    },
+    {
+      "id": 579,
+      "name": "泰州",
+      "pinyin": "taizhou"
+    },
+    {
+      "id": 580,
+      "name": "桐乡(嘉兴)",
+      "pinyin": "tongxiang"
+    },
+    {
+      "id": 582,
+      "name": "海盐(嘉兴)",
+      "pinyin": "haiyan"
+    },
+    {
+      "id": 589,
+      "name": "巢湖(合肥)",
+      "pinyin": "chaohu"
+    },
+    {
+      "id": 596,
+      "name": "嘉善(嘉兴)",
+      "pinyin": "jiashan"
+    },
+    {
+      "id": 597,
+      "name": "兰溪(金华)",
+      "pinyin": "lanxi"
+    },
+    {
+      "id": 598,
+      "name": "湘潭",
+      "pinyin": "xiangtan"
+    },
+    {
+      "id": 600,
+      "name": "漳平(龙岩)",
+      "pinyin": "zhangping"
+    },
+    {
+      "id": 601,
+      "name": "株洲",
+      "pinyin": "zhuzhou"
+    },
+    {
+      "id": 603,
+      "name": "新余",
+      "pinyin": "xinyu"
+    },
+    {
+      "id": 605,
+      "name": "六盘水",
+      "pinyin": "liupanshui"
+    },
+    {
+      "id": 606,
+      "name": "南平",
+      "pinyin": "nanping"
+    },
+    {
+      "id": 612,
+      "name": "郴州",
+      "pinyin": "chenzhou"
+    },
+    {
+      "id": 614,
+      "name": "枣庄",
+      "pinyin": "zaozhuang"
+    },
+    {
+      "id": 617,
+      "name": "台北",
+      "pinyin": "taibei"
+    },
+    {
+      "id": 619,
+      "name": "温岭(台州)",
+      "pinyin": "wenling"
+    },
+    {
+      "id": 621,
+      "name": "张家港(苏州)",
+      "pinyin": "zhangjiagang"
+    },
+    {
+      "id": 652,
+      "name": "缙云(丽水)",
+      "pinyin": "jinyun"
+    },
+    {
+      "id": 654,
+      "name": "太仓(苏州)",
+      "pinyin": "taicang"
+    },
+    {
+      "id": 657,
+      "name": "神农架",
+      "pinyin": "shennongjia"
+    },
+    {
+      "id": 658,
+      "name": "建德(杭州)",
+      "pinyin": "jiande"
+    },
+    {
+      "id": 659,
+      "name": "安吉(湖州)",
+      "pinyin": "anji"
+    },
+    {
+      "id": 660,
+      "name": "香格里拉",
+      "pinyin": "xianggelila"
+    },
+    {
+      "id": 662,
+      "name": "酒泉",
+      "pinyin": "jiuquan"
+    },
+    {
+      "id": 663,
+      "name": "张掖",
+      "pinyin": "zhangye"
+    },
+    {
+      "id": 664,
+      "name": "武威",
+      "pinyin": "wuwei"
+    },
+    {
+      "id": 667,
+      "name": "莆田",
+      "pinyin": "putian"
+    },
+    {
+      "id": 677,
+      "name": "衡山(衡阳)",
+      "pinyin": "hengshan"
+    },
+    {
+      "id": 686,
+      "name": "高州(茂名)",
+      "pinyin": "gaozhou"
+    },
+    {
+      "id": 692,
+      "name": "阳江",
+      "pinyin": "yangjiang"
+    },
+    {
+      "id": 693,
+      "name": "河源",
+      "pinyin": "heyuan"
+    },
+    {
+      "id": 696,
+      "name": "盱眙(淮安)",
+      "pinyin": "xuyi"
+    },
+    {
+      "id": 697,
+      "name": "启东(南通)",
+      "pinyin": "qidong"
+    },
+    {
+      "id": 720,
+      "name": "高雄",
+      "pinyin": "gaoxiong"
+    },
+    {
+      "id": 729,
+      "name": "台山(江门)",
+      "pinyin": "taishan"
+    },
+    {
+      "id": 732,
+      "name": "乐清(温州)",
+      "pinyin": "yueqing"
+    },
+    {
+      "id": 750,
+      "name": "广汉(德阳)",
+      "pinyin": "guanghan"
+    },
+    {
+      "id": 755,
+      "name": "东阳(金华)",
+      "pinyin": "dongyang"
+    },
+    {
+      "id": 833,
+      "name": "荣成(威海)",
+      "pinyin": "rongcheng"
+    },
+    {
+      "id": 866,
+      "name": "凤凰",
+      "pinyin": "fenghuang"
+    },
+    {
+      "id": 868,
+      "name": "仙居(台州)",
+      "pinyin": "xianju"
+    },
+    {
+      "id": 869,
+      "name": "罗平(曲靖)",
+      "pinyin": "luoping"
+    },
+    {
+      "id": 871,
+      "name": "阳朔(桂林)",
+      "pinyin": "yangshuo"
+    },
+    {
+      "id": 872,
+      "name": "新昌(绍兴)",
+      "pinyin": "xinchang"
+    },
+    {
+      "id": 884,
+      "name": "英德(清远)",
+      "pinyin": "yingde"
+    },
+    {
+      "id": 887,
+      "name": "吴桥(沧州)",
+      "pinyin": "wuqiao"
+    },
+    {
+      "id": 888,
+      "name": "禹城(德州)",
+      "pinyin": "yucheng"
+    },
+    {
+      "id": 891,
+      "name": "固镇(蚌埠)",
+      "pinyin": "guzhen"
+    },
+    {
+      "id": 892,
+      "name": "明光(滁州)",
+      "pinyin": "mingguang"
+    },
+    {
+      "id": 893,
+      "name": "庐江(合肥)",
+      "pinyin": "lujiang"
+    },
+    {
+      "id": 894,
+      "name": "东海(连云港)",
+      "pinyin": "donghai"
+    },
+    {
+      "id": 895,
+      "name": "新沂(徐州)",
+      "pinyin": "xinyi"
+    },
+    {
+      "id": 897,
+      "name": "兰考(开封)",
+      "pinyin": "lankao"
+    },
+    {
+      "id": 898,
+      "name": "民权(商丘)",
+      "pinyin": "minquan"
+    },
+    {
+      "id": 899,
+      "name": "虞城(商丘)",
+      "pinyin": "yucheng"
+    },
+    {
+      "id": 900,
+      "name": "砀山(宿州)",
+      "pinyin": "dangshan"
+    },
+    {
+      "id": 901,
+      "name": "鄯善(吐鲁番)",
+      "pinyin": "shanshan"
+    },
+    {
+      "id": 904,
+      "name": "甘谷(天水)",
+      "pinyin": "gangu"
+    },
+    {
+      "id": 905,
+      "name": "辛集(石家庄)",
+      "pinyin": "xinji"
+    },
+    {
+      "id": 907,
+      "name": "阳泉",
+      "pinyin": "yangquan"
+    },
+    {
+      "id": 908,
+      "name": "寿阳(晋中)",
+      "pinyin": "shouyang"
+    },
+    {
+      "id": 909,
+      "name": "滕州(枣庄)",
+      "pinyin": "tengzhou"
+    },
+    {
+      "id": 917,
+      "name": "湘乡(湘潭)",
+      "pinyin": "xiangxiang"
+    },
+    {
+      "id": 918,
+      "name": "娄底",
+      "pinyin": "loudi"
+    },
+    {
+      "id": 920,
+      "name": "冷水江(娄底)",
+      "pinyin": "lengshuijiang"
+    },
+    {
+      "id": 921,
+      "name": "新化(娄底)",
+      "pinyin": "xinhua"
+    },
+    {
+      "id": 925,
+      "name": "溆浦(怀化)",
+      "pinyin": "xupu"
+    },
+    {
+      "id": 926,
+      "name": "辰溪(怀化)",
+      "pinyin": "chenxi"
+    },
+    {
+      "id": 927,
+      "name": "和平(河源)",
+      "pinyin": "heping"
+    },
+    {
+      "id": 928,
+      "name": "龙川(河源)",
+      "pinyin": "longchuan"
+    },
+    {
+      "id": 929,
+      "name": "浦江(金华)",
+      "pinyin": "pujiang"
+    },
+    {
+      "id": 932,
+      "name": "新干(吉安)",
+      "pinyin": "xingan"
+    },
+    {
+      "id": 933,
+      "name": "吉安",
+      "pinyin": "jian"
+    },
+    {
+      "id": 934,
+      "name": "兴国(赣州)",
+      "pinyin": "xingguo"
+    },
+    {
+      "id": 935,
+      "name": "信丰(赣州)",
+      "pinyin": "xinfeng"
+    },
+    {
+      "id": 936,
+      "name": "定南(赣州)",
+      "pinyin": "dingnan"
+    },
+    {
+      "id": 937,
+      "name": "咸宁",
+      "pinyin": "xianning"
+    },
+    {
+      "id": 938,
+      "name": "乐昌(韶关)",
+      "pinyin": "lechang"
+    },
+    {
+      "id": 940,
+      "name": "耒阳(衡阳)",
+      "pinyin": "leiyang"
+    },
+    {
+      "id": 941,
+      "name": "黄梅(黄冈)",
+      "pinyin": "huangmei"
+    },
+    {
+      "id": 942,
+      "name": "德安(九江)",
+      "pinyin": "dean"
+    },
+    {
+      "id": 943,
+      "name": "永修(九江)",
+      "pinyin": "yongxiu"
+    },
+    {
+      "id": 944,
+      "name": "桐城(安庆)",
+      "pinyin": "tongcheng"
+    },
+    {
+      "id": 946,
+      "name": "太湖(安庆)",
+      "pinyin": "taihu"
+    },
+    {
+      "id": 947,
+      "name": "邢台",
+      "pinyin": "xingtai"
+    },
+    {
+      "id": 948,
+      "name": "宿松(安庆)",
+      "pinyin": "susong"
+    },
+    {
+      "id": 949,
+      "name": "沙河市(邢台)",
+      "pinyin": "shaheshi"
+    },
+    {
+      "id": 950,
+      "name": "汤阴(安阳)",
+      "pinyin": "tangyin"
+    },
+    {
+      "id": 951,
+      "name": "鹤壁",
+      "pinyin": "hebi"
+    },
+    {
+      "id": 952,
+      "name": "夏邑(商丘)",
+      "pinyin": "xiayi"
+    },
+    {
+      "id": 954,
+      "name": "兴宁(梅州)",
+      "pinyin": "xingning"
+    },
+    {
+      "id": 955,
+      "name": "丰顺(梅州)",
+      "pinyin": "fengshun"
+    },
+    {
+      "id": 956,
+      "name": "揭阳",
+      "pinyin": "jieyang"
+    },
+    {
+      "id": 958,
+      "name": "巩义(郑州)",
+      "pinyin": "gongyi"
+    },
+    {
+      "id": 959,
+      "name": "武义(金华)",
+      "pinyin": "wuyi"
+    },
+    {
+      "id": 960,
+      "name": "永康(金华)",
+      "pinyin": "yongkang"
+    },
+    {
+      "id": 961,
+      "name": "青田(丽水)",
+      "pinyin": "qingtian"
+    },
+    {
+      "id": 962,
+      "name": "扶余(松原)",
+      "pinyin": "fuyu"
+    },
+    {
+      "id": 963,
+      "name": "海城(鞍山)",
+      "pinyin": "haicheng"
+    },
+    {
+      "id": 966,
+      "name": "瓦房店(大连)",
+      "pinyin": "wafangdian"
+    },
+    {
+      "id": 967,
+      "name": "大石桥(营口)",
+      "pinyin": "dashiqiao"
+    },
+    {
+      "id": 968,
+      "name": "陇西(定西)",
+      "pinyin": "longxi"
+    },
+    {
+      "id": 969,
+      "name": "荥阳(郑州)",
+      "pinyin": "xingyang"
+    },
+    {
+      "id": 970,
+      "name": "永州",
+      "pinyin": "yongzhou"
+    },
+    {
+      "id": 971,
+      "name": "全州(桂林)",
+      "pinyin": "quanzhou"
+    },
+    {
+      "id": 973,
+      "name": "龙游(衢州)",
+      "pinyin": "longyou"
+    },
+    {
+      "id": 975,
+      "name": "都匀(黔南)",
+      "pinyin": "duyun"
+    },
+    {
+      "id": 976,
+      "name": "贵定(黔南)",
+      "pinyin": "guiding"
+    },
+    {
+      "id": 979,
+      "name": "樟树(宜春)",
+      "pinyin": "zhangshu"
+    },
+    {
+      "id": 981,
+      "name": "醴陵(株洲)",
+      "pinyin": "liling"
+    },
+    {
+      "id": 982,
+      "name": "玉屏(铜仁)",
+      "pinyin": "yuping"
+    },
+    {
+      "id": 983,
+      "name": "桐梓(遵义)",
+      "pinyin": "tongzi"
+    },
+    {
+      "id": 984,
+      "name": "宣威(曲靖)",
+      "pinyin": "xuanwei"
+    },
+    {
+      "id": 985,
+      "name": "曲靖",
+      "pinyin": "qujing"
+    },
+    {
+      "id": 986,
+      "name": "镇远",
+      "pinyin": "zhenyuan"
+    },
+    {
+      "id": 989,
+      "name": "祁东(衡阳)",
+      "pinyin": "qidong"
+    },
+    {
+      "id": 990,
+      "name": "东安(永州)",
+      "pinyin": "dongan"
+    },
+    {
+      "id": 991,
+      "name": "进贤(南昌)",
+      "pinyin": "jinxian"
+    },
+    {
+      "id": 992,
+      "name": "鄂州",
+      "pinyin": "ezhou"
+    },
+    {
+      "id": 995,
+      "name": "顺昌(南平)",
+      "pinyin": "shunchang"
+    },
+    {
+      "id": 996,
+      "name": "古田(宁德)",
+      "pinyin": "gutian"
+    },
+    {
+      "id": 1000,
+      "name": "江山(衢州)",
+      "pinyin": "jiangshan"
+    },
+    {
+      "id": 1001,
+      "name": "玉山(上饶)",
+      "pinyin": "yushan"
+    },
+    {
+      "id": 1002,
+      "name": "弋阳(上饶)",
+      "pinyin": "yiyang"
+    },
+    {
+      "id": 1003,
+      "name": "丰城(宜春)",
+      "pinyin": "fengcheng"
+    },
+    {
+      "id": 1004,
+      "name": "分宜(新余)",
+      "pinyin": "fenyi"
+    },
+    {
+      "id": 1005,
+      "name": "宁国(宣城)",
+      "pinyin": "ningguo"
+    },
+    {
+      "id": 1006,
+      "name": "宣城",
+      "pinyin": "xuancheng"
+    },
+    {
+      "id": 1007,
+      "name": "当涂(马鞍山)",
+      "pinyin": "dangtu"
+    },
+    {
+      "id": 1008,
+      "name": "绩溪(宣城)",
+      "pinyin": "jixi"
+    },
+    {
+      "id": 1010,
+      "name": "凤阳(滁州)",
+      "pinyin": "fengyang"
+    },
+    {
+      "id": 1011,
+      "name": "宁乡(长沙)",
+      "pinyin": "ningxiang"
+    },
+    {
+      "id": 1021,
+      "name": "定西",
+      "pinyin": "dingxi"
+    },
+    {
+      "id": 1022,
+      "name": "兴平(咸阳)",
+      "pinyin": "xingping"
+    },
+    {
+      "id": 1023,
+      "name": "灵宝(三门峡)",
+      "pinyin": "lingbao"
+    },
+    {
+      "id": 1024,
+      "name": "马鞍山",
+      "pinyin": "maanshan"
+    },
+    {
+      "id": 1025,
+      "name": "渑池(三门峡)",
+      "pinyin": "mianchi"
+    },
+    {
+      "id": 1026,
+      "name": "祁门(黄山)",
+      "pinyin": "qimen"
+    },
+    {
+      "id": 1028,
+      "name": "万年(上饶)",
+      "pinyin": "wannian"
+    },
+    {
+      "id": 1029,
+      "name": "义马(三门峡)",
+      "pinyin": "yima"
+    },
+    {
+      "id": 1030,
+      "name": "渭南",
+      "pinyin": "weinan"
+    },
+    {
+      "id": 1033,
+      "name": "同心(吴忠)",
+      "pinyin": "tongxin"
+    },
+    {
+      "id": 1034,
+      "name": "青铜峡(吴忠)",
+      "pinyin": "qingtongxia"
+    },
+    {
+      "id": 1035,
+      "name": "中宁(中卫)",
+      "pinyin": "zhongning"
+    },
+    {
+      "id": 1037,
+      "name": "海阳(烟台)",
+      "pinyin": "haiyang"
+    },
+    {
+      "id": 1038,
+      "name": "莱阳(烟台)",
+      "pinyin": "laiyang"
+    },
+    {
+      "id": 1040,
+      "name": "高密(潍坊)",
+      "pinyin": "gaomi"
+    },
+    {
+      "id": 1043,
+      "name": "胶州(青岛)",
+      "pinyin": "jiaozhou"
+    },
+    {
+      "id": 1044,
+      "name": "青州(潍坊)",
+      "pinyin": "qingzhou"
+    },
+    {
+      "id": 1045,
+      "name": "明水(绥化)",
+      "pinyin": "mingshui"
+    },
+    {
+      "id": 1046,
+      "name": "公主岭(长春)",
+      "pinyin": "gongzhuling"
+    },
+    {
+      "id": 1047,
+      "name": "昌图(铁岭)",
+      "pinyin": "changtu"
+    },
+    {
+      "id": 1048,
+      "name": "铁岭",
+      "pinyin": "tieling"
+    },
+    {
+      "id": 1050,
+      "name": "葫芦岛",
+      "pinyin": "huludao"
+    },
+    {
+      "id": 1051,
+      "name": "兴城(葫芦岛)",
+      "pinyin": "xingcheng"
+    },
+    {
+      "id": 1052,
+      "name": "昌黎(秦皇岛)",
+      "pinyin": "changli"
+    },
+    {
+      "id": 1053,
+      "name": "滦县(唐山)",
+      "pinyin": "luanxian"
+    },
+    {
+      "id": 1054,
+      "name": "江油(绵阳)",
+      "pinyin": "jiangyou"
+    },
+    {
+      "id": 1055,
+      "name": "勉县(汉中)",
+      "pinyin": "mianxian"
+    },
+    {
+      "id": 1056,
+      "name": "西乡(汉中)",
+      "pinyin": "xixiang"
+    },
+    {
+      "id": 1058,
+      "name": "邓州(南阳)",
+      "pinyin": "dengzhou"
+    },
+    {
+      "id": 1060,
+      "name": "汝州(平顶山)",
+      "pinyin": "ruzhou"
+    },
+    {
+      "id": 1064,
+      "name": "略阳(汉中)",
+      "pinyin": "lueyang"
+    },
+    {
+      "id": 1067,
+      "name": "武功(咸阳)",
+      "pinyin": "wugong"
+    },
+    {
+      "id": 1068,
+      "name": "霸州(廊坊)",
+      "pinyin": "bazhou"
+    },
+    {
+      "id": 1069,
+      "name": "任丘(沧州)",
+      "pinyin": "renqiu"
+    },
+    {
+      "id": 1070,
+      "name": "肃宁(沧州)",
+      "pinyin": "suning"
+    },
+    {
+      "id": 1071,
+      "name": "聊城",
+      "pinyin": "liaocheng"
+    },
+    {
+      "id": 1072,
+      "name": "台前(濮阳)",
+      "pinyin": "taiqian"
+    },
+    {
+      "id": 1073,
+      "name": "梁山(济宁)",
+      "pinyin": "liangshan"
+    },
+    {
+      "id": 1074,
+      "name": "菏泽",
+      "pinyin": "heze"
+    },
+    {
+      "id": 1075,
+      "name": "潢川(信阳)",
+      "pinyin": "huangchuan"
+    },
+    {
+      "id": 1076,
+      "name": "新县(信阳)",
+      "pinyin": "xinxian"
+    },
+    {
+      "id": 1078,
+      "name": "亳州",
+      "pinyin": "bozhou"
+    },
+    {
+      "id": 1079,
+      "name": "麻城(黄冈)",
+      "pinyin": "macheng"
+    },
+    {
+      "id": 1081,
+      "name": "蕲春(黄冈)",
+      "pinyin": "qichun"
+    },
+    {
+      "id": 1082,
+      "name": "舒城(六安)",
+      "pinyin": "shucheng"
+    },
+    {
+      "id": 1083,
+      "name": "满洲里(呼伦贝尔)",
+      "pinyin": "manzhouli"
+    },
+    {
+      "id": 1087,
+      "name": "濉溪(淮北)",
+      "pinyin": "suixi"
+    },
+    {
+      "id": 1088,
+      "name": "漯河",
+      "pinyin": "luohe"
+    },
+    {
+      "id": 1089,
+      "name": "乐平(景德镇)",
+      "pinyin": "leping"
+    },
+    {
+      "id": 1090,
+      "name": "定州(保定)",
+      "pinyin": "dingzhou"
+    },
+    {
+      "id": 1092,
+      "name": "晋城",
+      "pinyin": "jincheng"
+    },
+    {
+      "id": 1093,
+      "name": "焦作",
+      "pinyin": "jiaozuo"
+    },
+    {
+      "id": 1094,
+      "name": "许昌",
+      "pinyin": "xuchang"
+    },
+    {
+      "id": 1095,
+      "name": "侯马(临汾)",
+      "pinyin": "houma"
+    },
+    {
+      "id": 1097,
+      "name": "攀枝花",
+      "pinyin": "panzhihua"
+    },
+    {
+      "id": 1099,
+      "name": "万源(达州)",
+      "pinyin": "wanyuan"
+    },
+    {
+      "id": 1100,
+      "name": "广安",
+      "pinyin": "guangan"
+    },
+    {
+      "id": 1103,
+      "name": "阳春(阳江)",
+      "pinyin": "yangchun"
+    },
+    {
+      "id": 1105,
+      "name": "茂名",
+      "pinyin": "maoming"
+    },
+    {
+      "id": 1106,
+      "name": "日照",
+      "pinyin": "rizhao"
+    },
+    {
+      "id": 1107,
+      "name": "长兴(湖州)",
+      "pinyin": "changxing"
+    },
+    {
+      "id": 1108,
+      "name": "龙南(赣州)",
+      "pinyin": "longnan"
+    },
+    {
+      "id": 1110,
+      "name": "吉首",
+      "pinyin": "jishou"
+    },
+    {
+      "id": 1111,
+      "name": "邵阳",
+      "pinyin": "shaoyang"
+    },
+    {
+      "id": 1113,
+      "name": "玉林",
+      "pinyin": "yulin"
+    },
+    {
+      "id": 1114,
+      "name": "独山(黔南)",
+      "pinyin": "dushan"
+    },
+    {
+      "id": 1115,
+      "name": "梅河口(通化)",
+      "pinyin": "meihekou"
+    },
+    {
+      "id": 1116,
+      "name": "白城",
+      "pinyin": "baicheng"
+    },
+    {
+      "id": 1117,
+      "name": "随州",
+      "pinyin": "suizhou"
+    },
+    {
+      "id": 1118,
+      "name": "平泉(承德)",
+      "pinyin": "pingquan"
+    },
+    {
+      "id": 1119,
+      "name": "凌源(朝阳)",
+      "pinyin": "lingyuan"
+    },
+    {
+      "id": 1121,
+      "name": "荆门",
+      "pinyin": "jingmen"
+    },
+    {
+      "id": 1122,
+      "name": "当阳(宜昌)",
+      "pinyin": "dangyang"
+    },
+    {
+      "id": 1123,
+      "name": "石门(常德)",
+      "pinyin": "shimen"
+    },
+    {
+      "id": 1124,
+      "name": "临澧(常德)",
+      "pinyin": "linli"
+    },
+    {
+      "id": 1125,
+      "name": "益阳",
+      "pinyin": "yiyang"
+    },
+    {
+      "id": 1127,
+      "name": "泰来(齐齐哈尔)",
+      "pinyin": "tailai"
+    },
+    {
+      "id": 1128,
+      "name": "绥化",
+      "pinyin": "suihua"
+    },
+    {
+      "id": 1130,
+      "name": "安达(绥化)",
+      "pinyin": "anda"
+    },
+    {
+      "id": 1133,
+      "name": "乌海",
+      "pinyin": "wuhai"
+    },
+    {
+      "id": 1135,
+      "name": "扎兰屯(呼伦贝尔)",
+      "pinyin": "zhalantun"
+    },
+    {
+      "id": 1136,
+      "name": "牙克石(呼伦贝尔)",
+      "pinyin": "yakeshi"
+    },
+    {
+      "id": 1139,
+      "name": "兴义",
+      "pinyin": "xingyi"
+    },
+    {
+      "id": 1140,
+      "name": "百色",
+      "pinyin": "baise"
+    },
+    {
+      "id": 1141,
+      "name": "平果(百色)",
+      "pinyin": "pingguo"
+    },
+    {
+      "id": 1142,
+      "name": "嫩江(黑河)",
+      "pinyin": "nenjiang"
+    },
+    {
+      "id": 1148,
+      "name": "眉山",
+      "pinyin": "meishan"
+    },
+    {
+      "id": 1150,
+      "name": "清原(抚顺)",
+      "pinyin": "qingyuan"
+    },
+    {
+      "id": 1155,
+      "name": "本溪",
+      "pinyin": "benxi"
+    },
+    {
+      "id": 1157,
+      "name": "义县(锦州)",
+      "pinyin": "yixian"
+    },
+    {
+      "id": 1158,
+      "name": "金昌",
+      "pinyin": "jinchang"
+    },
+    {
+      "id": 1159,
+      "name": "清涧(榆林)",
+      "pinyin": "qingjian"
+    },
+    {
+      "id": 1161,
+      "name": "宁蒗(丽江)",
+      "pinyin": "ninglang"
+    },
+    {
+      "id": 1200,
+      "name": "盐城",
+      "pinyin": "yancheng"
+    },
+    {
+      "id": 1201,
+      "name": "宁海(宁波)",
+      "pinyin": "ninghai"
+    },
+    {
+      "id": 1202,
+      "name": "武山(天水)",
+      "pinyin": "wushan"
+    },
+    {
+      "id": 1206,
+      "name": "平湖(嘉兴)",
+      "pinyin": "pinghu"
+    },
+    {
+      "id": 1208,
+      "name": "慈溪(宁波)",
+      "pinyin": "cixi"
+    },
+    {
+      "id": 1209,
+      "name": "临海(台州)",
+      "pinyin": "linhai"
+    },
+    {
+      "id": 1212,
+      "name": "嵊州(绍兴)",
+      "pinyin": "shengzhou"
+    },
+    {
+      "id": 1219,
+      "name": "武穴(黄冈)",
+      "pinyin": "wuxue"
+    },
+    {
+      "id": 1221,
+      "name": "涉县(邯郸)",
+      "pinyin": "shexian"
+    },
+    {
+      "id": 1222,
+      "name": "稻城",
+      "pinyin": "daocheng"
+    },
+    {
+      "id": 1224,
+      "name": "仪征(扬州)",
+      "pinyin": "yizheng"
+    },
+    {
+      "id": 1232,
+      "name": "濮阳",
+      "pinyin": "puyang"
+    },
+    {
+      "id": 1233,
+      "name": "达州",
+      "pinyin": "dazhou"
+    },
+    {
+      "id": 1236,
+      "name": "临沧",
+      "pinyin": "lincang"
+    },
+    {
+      "id": 1300,
+      "name": "营口",
+      "pinyin": "yingkou"
+    },
+    {
+      "id": 1302,
+      "name": "临江(白山)",
+      "pinyin": "linjiang"
+    },
+    {
+      "id": 1303,
+      "name": "松原",
+      "pinyin": "songyuan"
+    },
+    {
+      "id": 1306,
+      "name": "临西(邢台)",
+      "pinyin": "linxi"
+    },
+    {
+      "id": 1315,
+      "name": "永济(运城)",
+      "pinyin": "yongji"
+    },
+    {
+      "id": 1316,
+      "name": "岢岚(忻州)",
+      "pinyin": "kelan"
+    },
+    {
+      "id": 1317,
+      "name": "朔州",
+      "pinyin": "shuozhou"
+    },
+    {
+      "id": 1320,
+      "name": "沈丘(周口)",
+      "pinyin": "shenqiu"
+    },
+    {
+      "id": 1321,
+      "name": "茶陵(株洲)",
+      "pinyin": "chaling"
+    },
+    {
+      "id": 1322,
+      "name": "东明(菏泽)",
+      "pinyin": "dongming"
+    },
+    {
+      "id": 1323,
+      "name": "澧县(常德)",
+      "pinyin": "lixian"
+    },
+    {
+      "id": 1325,
+      "name": "奎屯",
+      "pinyin": "kuitun"
+    },
+    {
+      "id": 1326,
+      "name": "玉门(酒泉)",
+      "pinyin": "yumen"
+    },
+    {
+      "id": 1327,
+      "name": "阿拉山口",
+      "pinyin": "alashankou"
+    },
+    {
+      "id": 1330,
+      "name": "石屏",
+      "pinyin": "shiping"
+    },
+    {
+      "id": 1331,
+      "name": "永平",
+      "pinyin": "yongping"
+    },
+    {
+      "id": 1333,
+      "name": "开远",
+      "pinyin": "kaiyuan"
+    },
+    {
+      "id": 1336,
+      "name": "营山(南充)",
+      "pinyin": "yingshan"
+    },
+    {
+      "id": 1342,
+      "name": "文山市",
+      "pinyin": "wenshanshi"
+    },
+    {
+      "id": 1358,
+      "name": "溧阳(常州)",
+      "pinyin": "liyang"
+    },
+    {
+      "id": 1367,
+      "name": "德清(湖州)",
+      "pinyin": "deqing"
+    },
+    {
+      "id": 1370,
+      "name": "德州",
+      "pinyin": "dezhou"
+    },
+    {
+      "id": 1371,
+      "name": "遂宁",
+      "pinyin": "suining"
+    },
+    {
+      "id": 1372,
+      "name": "松潘",
+      "pinyin": "songpan"
+    },
+    {
+      "id": 1373,
+      "name": "连城(龙岩)",
+      "pinyin": "liancheng"
+    },
+    {
+      "id": 1422,
+      "name": "清远",
+      "pinyin": "qingyuan"
+    },
+    {
+      "id": 1428,
+      "name": "恩平(江门)",
+      "pinyin": "enping"
+    },
+    {
+      "id": 1436,
+      "name": "汕尾",
+      "pinyin": "shanwei"
+    },
+    {
+      "id": 1443,
+      "name": "泰顺(温州)",
+      "pinyin": "taishun"
+    },
+    {
+      "id": 1453,
+      "name": "晋中",
+      "pinyin": "jinzhong"
+    },
+    {
+      "id": 1454,
+      "name": "济源",
+      "pinyin": "jiyuan"
+    },
+    {
+      "id": 1466,
+      "name": "安图",
+      "pinyin": "antu"
+    },
+    {
+      "id": 1472,
+      "name": "宿迁",
+      "pinyin": "suqian"
+    },
+    {
+      "id": 1474,
+      "name": "丰宁(承德)",
+      "pinyin": "fengning"
+    },
+    {
+      "id": 1485,
+      "name": "滦平(承德)",
+      "pinyin": "luanping"
+    },
+    {
+      "id": 1490,
+      "name": "孝感",
+      "pinyin": "xiaogan"
+    },
+    {
+      "id": 1491,
+      "name": "资中(内江)",
+      "pinyin": "zizhong"
+    },
+    {
+      "id": 1494,
+      "name": "陆川(玉林)",
+      "pinyin": "luchuan"
+    },
+    {
+      "id": 1495,
+      "name": "河口",
+      "pinyin": "hekou"
+    },
+    {
+      "id": 1501,
+      "name": "高碑店(保定)",
+      "pinyin": "gaobeidian"
+    },
+    {
+      "id": 1507,
+      "name": "洮南(白城)",
+      "pinyin": "taonan"
+    },
+    {
+      "id": 1509,
+      "name": "怀仁(朔州)",
+      "pinyin": "huairen"
+    },
+    {
+      "id": 1510,
+      "name": "宁武(忻州)",
+      "pinyin": "ningwu"
+    },
+    {
+      "id": 1511,
+      "name": "原平(忻州)",
+      "pinyin": "yuanping"
+    },
+    {
+      "id": 1515,
+      "name": "米易(攀枝花)",
+      "pinyin": "miyi"
+    },
+    {
+      "id": 1516,
+      "name": "德昌",
+      "pinyin": "dechang"
+    },
+    {
+      "id": 1517,
+      "name": "汉源(雅安)",
+      "pinyin": "hanyuan"
+    },
+    {
+      "id": 1518,
+      "name": "贵港",
+      "pinyin": "guigang"
+    },
+    {
+      "id": 1521,
+      "name": "赤壁(咸宁)",
+      "pinyin": "chibi"
+    },
+    {
+      "id": 1522,
+      "name": "涞源(保定)",
+      "pinyin": "laiyuan"
+    },
+    {
+      "id": 1523,
+      "name": "灵丘(大同)",
+      "pinyin": "lingqiu"
+    },
+    {
+      "id": 1524,
+      "name": "代县(忻州)",
+      "pinyin": "daixian"
+    },
+    {
+      "id": 1540,
+      "name": "崇信(平凉)",
+      "pinyin": "chongxin"
+    },
+    {
+      "id": 1541,
+      "name": "白银",
+      "pinyin": "baiyin"
+    },
+    {
+      "id": 1544,
+      "name": "彰武(阜新)",
+      "pinyin": "zhangwu"
+    },
+    {
+      "id": 1545,
+      "name": "镇赉(白城)",
+      "pinyin": "zhenlai"
+    },
+    {
+      "id": 1546,
+      "name": "富裕(齐齐哈尔)",
+      "pinyin": "fuyu"
+    },
+    {
+      "id": 1548,
+      "name": "旬阳(安康)",
+      "pinyin": "xunyang"
+    },
+    {
+      "id": 1549,
+      "name": "石泉(安康)",
+      "pinyin": "shiquan"
+    },
+    {
+      "id": 1550,
+      "name": "古交(太原)",
+      "pinyin": "gujiao"
+    },
+    {
+      "id": 1555,
+      "name": "枣阳(襄阳)",
+      "pinyin": "zaoyang"
+    },
+    {
+      "id": 1556,
+      "name": "安陆(孝感)",
+      "pinyin": "anlu"
+    },
+    {
+      "id": 1557,
+      "name": "枝江(宜昌)",
+      "pinyin": "zhijiang"
+    },
+    {
+      "id": 1558,
+      "name": "松滋(荆州)",
+      "pinyin": "songzi"
+    },
+    {
+      "id": 1559,
+      "name": "慈利(张家界)",
+      "pinyin": "cili"
+    },
+    {
+      "id": 1560,
+      "name": "资阳",
+      "pinyin": "ziyang"
+    },
+    {
+      "id": 1564,
+      "name": "绥中(葫芦岛)",
+      "pinyin": "suizhong"
+    },
+    {
+      "id": 1565,
+      "name": "开原(铁岭)",
+      "pinyin": "kaiyuan"
+    },
+    {
+      "id": 1572,
+      "name": "大安(白城)",
+      "pinyin": "daan"
+    },
+    {
+      "id": 1575,
+      "name": "安平(衡水)",
+      "pinyin": "anping"
+    },
+    {
+      "id": 1582,
+      "name": "五常(哈尔滨)",
+      "pinyin": "wuchang"
+    },
+    {
+      "id": 1584,
+      "name": "舒兰(吉林市)",
+      "pinyin": "shulan"
+    },
+    {
+      "id": 1585,
+      "name": "蛟河(吉林市)",
+      "pinyin": "jiaohe"
+    },
+    {
+      "id": 1588,
+      "name": "汪清",
+      "pinyin": "wangqing"
+    },
+    {
+      "id": 1589,
+      "name": "讷河(齐齐哈尔)",
+      "pinyin": "nehe"
+    },
+    {
+      "id": 1593,
+      "name": "隆昌(内江)",
+      "pinyin": "longchang"
+    },
+    {
+      "id": 1596,
+      "name": "绥棱(绥化)",
+      "pinyin": "suiling"
+    },
+    {
+      "id": 1597,
+      "name": "内江",
+      "pinyin": "neijiang"
+    },
+    {
+      "id": 1599,
+      "name": "七台河",
+      "pinyin": "qitaihe"
+    },
+    {
+      "id": 1600,
+      "name": "勃利(七台河)",
+      "pinyin": "boli"
+    },
+    {
+      "id": 1601,
+      "name": "穆棱(牡丹江)",
+      "pinyin": "muling"
+    },
+    {
+      "id": 1603,
+      "name": "绥阳(遵义)",
+      "pinyin": "suiyang"
+    },
+    {
+      "id": 1609,
+      "name": "密山(鸡西)",
+      "pinyin": "mishan"
+    },
+    {
+      "id": 1610,
+      "name": "榆树(长春)",
+      "pinyin": "yushu"
+    },
+    {
+      "id": 1611,
+      "name": "鹤岗",
+      "pinyin": "hegang"
+    },
+    {
+      "id": 1617,
+      "name": "双鸭山",
+      "pinyin": "shuangyashan"
+    },
+    {
+      "id": 1618,
+      "name": "铁力(伊春)",
+      "pinyin": "tieli"
+    },
+    {
+      "id": 1622,
+      "name": "富锦(佳木斯)",
+      "pinyin": "fujin"
+    },
+    {
+      "id": 1624,
+      "name": "肇东(绥化)",
+      "pinyin": "zhaodong"
+    },
+    {
+      "id": 1625,
+      "name": "依安(齐齐哈尔)",
+      "pinyin": "yian"
+    },
+    {
+      "id": 1628,
+      "name": "塔河(大兴安岭)",
+      "pinyin": "tahe"
+    },
+    {
+      "id": 1632,
+      "name": "三河(廊坊)",
+      "pinyin": "sanhe"
+    },
+    {
+      "id": 1633,
+      "name": "玉田(唐山)",
+      "pinyin": "yutian"
+    },
+    {
+      "id": 1638,
+      "name": "新民(沈阳)",
+      "pinyin": "xinmin"
+    },
+    {
+      "id": 1641,
+      "name": "灯塔(辽阳)",
+      "pinyin": "dengta"
+    },
+    {
+      "id": 1646,
+      "name": "庄河(大连)",
+      "pinyin": "zhuanghe"
+    },
+    {
+      "id": 1654,
+      "name": "磐石(吉林市)",
+      "pinyin": "panshi"
+    },
+    {
+      "id": 1658,
+      "name": "阿尔山",
+      "pinyin": "aershan"
+    },
+    {
+      "id": 1661,
+      "name": "德惠(长春)",
+      "pinyin": "dehui"
+    },
+    {
+      "id": 1666,
+      "name": "海林(牡丹江)",
+      "pinyin": "hailin"
+    },
+    {
+      "id": 1668,
+      "name": "孙吴(黑河)",
+      "pinyin": "sunwu"
+    },
+    {
+      "id": 1675,
+      "name": "靖远(白银)",
+      "pinyin": "jingyuan"
+    },
+    {
+      "id": 1677,
+      "name": "防城港",
+      "pinyin": "fangchenggang"
+    },
+    {
+      "id": 1680,
+      "name": "神木(榆林)",
+      "pinyin": "shenmu"
+    },
+    {
+      "id": 1682,
+      "name": "海伦(绥化)",
+      "pinyin": "hailun"
+    },
+    {
+      "id": 1685,
+      "name": "淮滨(信阳)",
+      "pinyin": "huaibin"
+    },
+    {
+      "id": 1696,
+      "name": "曹县(菏泽)",
+      "pinyin": "caoxian"
+    },
+    {
+      "id": 1697,
+      "name": "浠水(黄冈)",
+      "pinyin": "xishui"
+    },
+    {
+      "id": 1700,
+      "name": "瑞昌(九江)",
+      "pinyin": "ruichang"
+    },
+    {
+      "id": 1705,
+      "name": "六安",
+      "pinyin": "liuan"
+    },
+    {
+      "id": 1708,
+      "name": "荔波(黔南)",
+      "pinyin": "libo"
+    },
+    {
+      "id": 1803,
+      "name": "晋江(泉州)",
+      "pinyin": "jinjiang"
+    },
+    {
+      "id": 1804,
+      "name": "莱西(青岛)",
+      "pinyin": "laixi"
+    },
+    {
+      "id": 1819,
+      "name": "腾冲(保山)",
+      "pinyin": "tengchong"
+    },
+    {
+      "id": 1820,
+      "name": "滨州",
+      "pinyin": "binzhou"
+    },
+    {
+      "id": 1822,
+      "name": "兴安县(桂林)",
+      "pinyin": "xinganxian"
+    },
+    {
+      "id": 1823,
+      "name": "象山(宁波)",
+      "pinyin": "xiangshan"
+    },
+    {
+      "id": 1840,
+      "name": "萍乡",
+      "pinyin": "pingxiang"
+    },
+    {
+      "id": 1882,
+      "name": "仙桃",
+      "pinyin": "xiantao"
+    },
+    {
+      "id": 1884,
+      "name": "肥城(泰安)",
+      "pinyin": "feicheng"
+    },
+    {
+      "id": 1888,
+      "name": "龙里(黔南)",
+      "pinyin": "longli"
+    },
+    {
+      "id": 1890,
+      "name": "永福(桂林)",
+      "pinyin": "yongfu"
+    },
+    {
+      "id": 1891,
+      "name": "鹿寨(柳州)",
+      "pinyin": "luzhai"
+    },
+    {
+      "id": 1892,
+      "name": "来宾",
+      "pinyin": "laibin"
+    },
+    {
+      "id": 1893,
+      "name": "南丹(河池)",
+      "pinyin": "nandan"
+    },
+    {
+      "id": 1895,
+      "name": "扶绥(崇左)",
+      "pinyin": "fusui"
+    },
+    {
+      "id": 1896,
+      "name": "崇左",
+      "pinyin": "chongzuo"
+    },
+    {
+      "id": 1897,
+      "name": "宁明(崇左)",
+      "pinyin": "ningming"
+    },
+    {
+      "id": 1899,
+      "name": "钦州",
+      "pinyin": "qinzhou"
+    },
+    {
+      "id": 1900,
+      "name": "隆安(南宁)",
+      "pinyin": "longan"
+    },
+    {
+      "id": 1901,
+      "name": "田东(百色)",
+      "pinyin": "tiandong"
+    },
+    {
+      "id": 1903,
+      "name": "田林(百色)",
+      "pinyin": "tianlin"
+    },
+    {
+      "id": 1904,
+      "name": "师宗(曲靖)",
+      "pinyin": "shizong"
+    },
+    {
+      "id": 1905,
+      "name": "柞水(商洛)",
+      "pinyin": "zhashui"
+    },
+    {
+      "id": 1906,
+      "name": "镇安(商洛)",
+      "pinyin": "zhenan"
+    },
+    {
+      "id": 1910,
+      "name": "汉阴(安康)",
+      "pinyin": "hanyin"
+    },
+    {
+      "id": 1920,
+      "name": "洋县(汉中)",
+      "pinyin": "yangxian"
+    },
+    {
+      "id": 1921,
+      "name": "城固(汉中)",
+      "pinyin": "chenggu"
+    },
+    {
+      "id": 1923,
+      "name": "千阳(宝鸡)",
+      "pinyin": "qianyang"
+    },
+    {
+      "id": 1924,
+      "name": "陇县(宝鸡)",
+      "pinyin": "longxian"
+    },
+    {
+      "id": 1928,
+      "name": "景泰(白银)",
+      "pinyin": "jingtai"
+    },
+    {
+      "id": 1929,
+      "name": "皋兰(兰州)",
+      "pinyin": "gaolan"
+    },
+    {
+      "id": 1937,
+      "name": "米脂(榆林)",
+      "pinyin": "mizhi"
+    },
+    {
+      "id": 1938,
+      "name": "绥德(榆林)",
+      "pinyin": "suide"
+    },
+    {
+      "id": 1940,
+      "name": "子长(延安)",
+      "pinyin": "zichang"
+    },
+    {
+      "id": 1941,
+      "name": "甘泉(延安)",
+      "pinyin": "ganquan"
+    },
+    {
+      "id": 1942,
+      "name": "富县(延安)",
+      "pinyin": "fuxian"
+    },
+    {
+      "id": 1946,
+      "name": "蒲城(渭南)",
+      "pinyin": "pucheng"
+    },
+    {
+      "id": 1950,
+      "name": "三原(咸阳)",
+      "pinyin": "sanyuan"
+    },
+    {
+      "id": 1953,
+      "name": "修文(贵阳)",
+      "pinyin": "xiuwen"
+    },
+    {
+      "id": 1964,
+      "name": "榆社(晋中)",
+      "pinyin": "yushe"
+    },
+    {
+      "id": 1968,
+      "name": "武乡(长治)",
+      "pinyin": "wuxiang"
+    },
+    {
+      "id": 1971,
+      "name": "沁县(长治)",
+      "pinyin": "qinxian"
+    },
+    {
+      "id": 1976,
+      "name": "襄垣(长治)",
+      "pinyin": "xiangyuan"
+    },
+    {
+      "id": 1980,
+      "name": "定兴(保定)",
+      "pinyin": "dingxing"
+    },
+    {
+      "id": 1987,
+      "name": "望都(保定)",
+      "pinyin": "wangdu"
+    },
+    {
+      "id": 1991,
+      "name": "新乐(石家庄)",
+      "pinyin": "xinle"
+    },
+    {
+      "id": 1993,
+      "name": "正定(石家庄)",
+      "pinyin": "zhengding"
+    },
+    {
+      "id": 1996,
+      "name": "元氏(石家庄)",
+      "pinyin": "yuanshi"
+    },
+    {
+      "id": 1997,
+      "name": "高邑(石家庄)",
+      "pinyin": "gaoyi"
+    },
+    {
+      "id": 1999,
+      "name": "临城(邢台)",
+      "pinyin": "lincheng"
+    },
+    {
+      "id": 2000,
+      "name": "隆尧(邢台)",
+      "pinyin": "longyao"
+    },
+    {
+      "id": 2033,
+      "name": "武安(邯郸)",
+      "pinyin": "wuan"
+    },
+    {
+      "id": 2036,
+      "name": "黎城(长治)",
+      "pinyin": "licheng"
+    },
+    {
+      "id": 2042,
+      "name": "长垣(新乡)",
+      "pinyin": "changyuan"
+    },
+    {
+      "id": 2044,
+      "name": "封丘(新乡)",
+      "pinyin": "fengqiu"
+    },
+    {
+      "id": 2045,
+      "name": "延津(新乡)",
+      "pinyin": "yanjin"
+    },
+    {
+      "id": 2047,
+      "name": "获嘉(新乡)",
+      "pinyin": "huojia"
+    },
+    {
+      "id": 2049,
+      "name": "修武(焦作)",
+      "pinyin": "xiuwu"
+    },
+    {
+      "id": 2057,
+      "name": "高平(晋城)",
+      "pinyin": "gaoping"
+    },
+    {
+      "id": 2063,
+      "name": "沁阳(焦作)",
+      "pinyin": "qinyang"
+    },
+    {
+      "id": 2096,
+      "name": "大厂(廊坊)",
+      "pinyin": "dachang"
+    },
+    {
+      "id": 2109,
+      "name": "伊川(洛阳)",
+      "pinyin": "yichuan"
+    },
+    {
+      "id": 2110,
+      "name": "汝阳(洛阳)",
+      "pinyin": "ruyang"
+    },
+    {
+      "id": 2118,
+      "name": "宝丰(平顶山)",
+      "pinyin": "baofeng"
+    },
+    {
+      "id": 2122,
+      "name": "鲁山(平顶山)",
+      "pinyin": "lushan"
+    },
+    {
+      "id": 2128,
+      "name": "南召(南阳)",
+      "pinyin": "nanzhao"
+    },
+    {
+      "id": 2155,
+      "name": "老河口(襄阳)",
+      "pinyin": "laohekou"
+    },
+    {
+      "id": 2157,
+      "name": "谷城(襄阳)",
+      "pinyin": "gucheng"
+    },
+    {
+      "id": 2170,
+      "name": "黄龙(延安)",
+      "pinyin": "huanglong"
+    },
+    {
+      "id": 2189,
+      "name": "紫阳(安康)",
+      "pinyin": "ziyang"
+    },
+    {
+      "id": 2204,
+      "name": "宣汉(达州)",
+      "pinyin": "xuanhan"
+    },
+    {
+      "id": 2211,
+      "name": "和静",
+      "pinyin": "hejing"
+    },
+    {
+      "id": 2212,
+      "name": "焉耆",
+      "pinyin": "yanqi"
+    },
+    {
+      "id": 2219,
+      "name": "渠县(达州)",
+      "pinyin": "quxian"
+    },
+    {
+      "id": 2226,
+      "name": "新和",
+      "pinyin": "xinhe"
+    },
+    {
+      "id": 2227,
+      "name": "巴楚(喀什)",
+      "pinyin": "bachu"
+    },
+    {
+      "id": 2229,
+      "name": "阿图什",
+      "pinyin": "atushi"
+    },
+    {
+      "id": 2230,
+      "name": "迁安(唐山)",
+      "pinyin": "qianan"
+    },
+    {
+      "id": 2232,
+      "name": "卢龙(秦皇岛)",
+      "pinyin": "lulong"
+    },
+    {
+      "id": 2242,
+      "name": "安化(益阳)",
+      "pinyin": "anhua"
+    },
+    {
+      "id": 2248,
+      "name": "涟源(娄底)",
+      "pinyin": "lianyuan"
+    },
+    {
+      "id": 2249,
+      "name": "开江(达州)",
+      "pinyin": "kaijiang"
+    },
+    {
+      "id": 2266,
+      "name": "大通(西宁)",
+      "pinyin": "datong"
+    },
+    {
+      "id": 2267,
+      "name": "遂溪(湛江)",
+      "pinyin": "suixi"
+    },
+    {
+      "id": 2288,
+      "name": "建昌(葫芦岛)",
+      "pinyin": "jianchang"
+    },
+    {
+      "id": 2308,
+      "name": "彝良(昭通)",
+      "pinyin": "yiliang"
+    },
+    {
+      "id": 2309,
+      "name": "大关(昭通)",
+      "pinyin": "daguan"
+    },
+    {
+      "id": 2311,
+      "name": "盐津(昭通)",
+      "pinyin": "yanjin"
+    },
+    {
+      "id": 2313,
+      "name": "水富(昭通)",
+      "pinyin": "shuifu"
+    },
+    {
+      "id": 2339,
+      "name": "邵东(邵阳)",
+      "pinyin": "shaodong"
+    },
+    {
+      "id": 2346,
+      "name": "麻阳(怀化)",
+      "pinyin": "mayang"
+    },
+    {
+      "id": 2348,
+      "name": "中方(怀化)",
+      "pinyin": "zhongfang"
+    },
+    {
+      "id": 2351,
+      "name": "永和(临汾)",
+      "pinyin": "yonghe"
+    },
+    {
+      "id": 2352,
+      "name": "会同(怀化)",
+      "pinyin": "huitong"
+    },
+    {
+      "id": 2355,
+      "name": "靖州(怀化)",
+      "pinyin": "jingzhou"
+    },
+    {
+      "id": 2357,
+      "name": "通道(怀化)",
+      "pinyin": "tongdao"
+    },
+    {
+      "id": 2376,
+      "name": "灵川(桂林)",
+      "pinyin": "lingchuan"
+    },
+    {
+      "id": 2394,
+      "name": "怀远(蚌埠)",
+      "pinyin": "huaiyuan"
+    },
+    {
+      "id": 2403,
+      "name": "新兴(云浮)",
+      "pinyin": "xinxing"
+    },
+    {
+      "id": 2415,
+      "name": "北票(朝阳)",
+      "pinyin": "beipiao"
+    },
+    {
+      "id": 2431,
+      "name": "蒙自",
+      "pinyin": "mengzi"
+    },
+    {
+      "id": 2442,
+      "name": "建水",
+      "pinyin": "jianshui"
+    },
+    {
+      "id": 2462,
+      "name": "册亨",
+      "pinyin": "ceheng"
+    },
+    {
+      "id": 2465,
+      "name": "安龙",
+      "pinyin": "anlong"
+    },
+    {
+      "id": 2485,
+      "name": "麻江",
+      "pinyin": "majiang"
+    },
+    {
+      "id": 2487,
+      "name": "福泉(黔南)",
+      "pinyin": "fuquan"
+    },
+    {
+      "id": 2522,
+      "name": "民和(海东)",
+      "pinyin": "minhe"
+    },
+    {
+      "id": 2525,
+      "name": "永登(兰州)",
+      "pinyin": "yongdeng"
+    },
+    {
+      "id": 2528,
+      "name": "天祝(武威)",
+      "pinyin": "tianzhu"
+    },
+    {
+      "id": 2531,
+      "name": "古浪(武威)",
+      "pinyin": "gulang"
+    },
+    {
+      "id": 2532,
+      "name": "山丹(张掖)",
+      "pinyin": "shandan"
+    },
+    {
+      "id": 2533,
+      "name": "临泽(张掖)",
+      "pinyin": "linze"
+    },
+    {
+      "id": 2534,
+      "name": "高台(张掖)",
+      "pinyin": "gaotai"
+    },
+    {
+      "id": 2535,
+      "name": "清水(天水)",
+      "pinyin": "qingshui"
+    },
+    {
+      "id": 2536,
+      "name": "湟源(西宁)",
+      "pinyin": "huangyuan"
+    },
+    {
+      "id": 2538,
+      "name": "刚察",
+      "pinyin": "gangcha"
+    },
+    {
+      "id": 2539,
+      "name": "天峻(海西)",
+      "pinyin": "tianjun"
+    },
+    {
+      "id": 2541,
+      "name": "乌兰(海西)",
+      "pinyin": "wulan"
+    },
+    {
+      "id": 2542,
+      "name": "德令哈(海西)",
+      "pinyin": "delingha"
+    },
+    {
+      "id": 2544,
+      "name": "玛纳斯",
+      "pinyin": "manasi"
+    },
+    {
+      "id": 2545,
+      "name": "沙湾",
+      "pinyin": "shawan"
+    },
+    {
+      "id": 2546,
+      "name": "乌苏",
+      "pinyin": "wusu"
+    },
+    {
+      "id": 2547,
+      "name": "精河",
+      "pinyin": "jinghe"
+    },
+    {
+      "id": 2548,
+      "name": "博乐",
+      "pinyin": "bole"
+    },
+    {
+      "id": 2549,
+      "name": "轮台",
+      "pinyin": "luntai"
+    },
+    {
+      "id": 2550,
+      "name": "蓬安(南充)",
+      "pinyin": "pengan"
+    },
+    {
+      "id": 2551,
+      "name": "蓬溪(遂宁)",
+      "pinyin": "pengxi"
+    },
+    {
+      "id": 2552,
+      "name": "大英(遂宁)",
+      "pinyin": "daying"
+    },
+    {
+      "id": 2553,
+      "name": "金堂(成都)",
+      "pinyin": "jintang"
+    },
+    {
+      "id": 2555,
+      "name": "梓潼(绵阳)",
+      "pinyin": "zitong"
+    },
+    {
+      "id": 2580,
+      "name": "洛川(延安)",
+      "pinyin": "luochuan"
+    },
+    {
+      "id": 2594,
+      "name": "东山(漳州)",
+      "pinyin": "dongshan"
+    },
+    {
+      "id": 2599,
+      "name": "黑山(锦州)",
+      "pinyin": "heishan"
+    },
+    {
+      "id": 2607,
+      "name": "五峰(宜昌)",
+      "pinyin": "wufeng"
+    },
+    {
+      "id": 2617,
+      "name": "两当(陇南)",
+      "pinyin": "liangdang"
+    },
+    {
+      "id": 2625,
+      "name": "绵竹(德阳)",
+      "pinyin": "mianzhu"
+    },
+    {
+      "id": 2651,
+      "name": "根河(呼伦贝尔)",
+      "pinyin": "genhe"
+    },
+    {
+      "id": 2682,
+      "name": "裕民",
+      "pinyin": "yumin"
+    },
+    {
+      "id": 2708,
+      "name": "新安(洛阳)",
+      "pinyin": "xinan"
+    },
+    {
+      "id": 2735,
+      "name": "三台(绵阳)",
+      "pinyin": "santai"
+    },
+    {
+      "id": 2788,
+      "name": "永胜(丽江)",
+      "pinyin": "yongsheng"
+    },
+    {
+      "id": 2809,
+      "name": "五原(巴彦淖尔)",
+      "pinyin": "wuyuan"
+    },
+    {
+      "id": 2850,
+      "name": "龙山",
+      "pinyin": "longshan"
+    },
+    {
+      "id": 2853,
+      "name": "柳河(通化)",
+      "pinyin": "liuhe"
+    },
+    {
+      "id": 2867,
+      "name": "永宁(银川)",
+      "pinyin": "yongning"
+    },
+    {
+      "id": 2882,
+      "name": "襄汾(临汾)",
+      "pinyin": "xiangfen"
+    },
+    {
+      "id": 2886,
+      "name": "闻喜(运城)",
+      "pinyin": "wenxi"
+    },
+    {
+      "id": 2950,
+      "name": "林口(牡丹江)",
+      "pinyin": "linkou"
+    },
+    {
+      "id": 2953,
+      "name": "互助(海东)",
+      "pinyin": "huzhu"
+    },
+    {
+      "id": 2957,
+      "name": "桦南(佳木斯)",
+      "pinyin": "huanan"
+    },
+    {
+      "id": 2966,
+      "name": "尚志(哈尔滨)",
+      "pinyin": "shangzhi"
+    },
+    {
+      "id": 3008,
+      "name": "曲水(拉萨)",
+      "pinyin": "qushui"
+    },
+    {
+      "id": 3017,
+      "name": "宁安(牡丹江)",
+      "pinyin": "ningan"
+    },
+    {
+      "id": 3053,
+      "name": "梅州",
+      "pinyin": "meizhou"
+    },
+    {
+      "id": 3055,
+      "name": "龙泉(丽水)",
+      "pinyin": "longquan"
+    },
+    {
+      "id": 3221,
+      "name": "周口",
+      "pinyin": "zhoukou"
+    },
+    {
+      "id": 3222,
+      "name": "平顶山",
+      "pinyin": "pingdingshan"
+    },
+    {
+      "id": 3229,
+      "name": "芷江(怀化)",
+      "pinyin": "zhijiang"
+    },
+    {
+      "id": 3230,
+      "name": "句容(镇江)",
+      "pinyin": "jurong"
+    },
+    {
+      "id": 3233,
+      "name": "东台(盐城)",
+      "pinyin": "dongtai"
+    },
+    {
+      "id": 3275,
+      "name": "阆中(南充)",
+      "pinyin": "langzhong"
+    },
+    {
+      "id": 3277,
+      "name": "雅安",
+      "pinyin": "yaan"
+    },
+    {
+      "id": 3327,
+      "name": "布尔津",
+      "pinyin": "buerjin"
+    },
+    {
+      "id": 3839,
+      "name": "那曲",
+      "pinyin": "naqu"
+    },
+    {
+      "id": 3845,
+      "name": "新竹",
+      "pinyin": "xinzhu"
+    },
+    {
+      "id": 3847,
+      "name": "台南",
+      "pinyin": "tainan"
+    },
+    {
+      "id": 3848,
+      "name": "台东",
+      "pinyin": "taidong"
+    },
+    {
+      "id": 3849,
+      "name": "台中",
+      "pinyin": "taizhong"
+    },
+    {
+      "id": 3852,
+      "name": "黎平",
+      "pinyin": "liping"
+    },
+    {
+      "id": 3863,
+      "name": "寿光(潍坊)",
+      "pinyin": "shouguang"
+    },
+    {
+      "id": 3881,
+      "name": "泗阳(宿迁)",
+      "pinyin": "siyang"
+    },
+    {
+      "id": 3884,
+      "name": "抚州",
+      "pinyin": "fuzhou"
+    },
+    {
+      "id": 3885,
+      "name": "黄冈",
+      "pinyin": "huanggang"
+    },
+    {
+      "id": 3886,
+      "name": "白山",
+      "pinyin": "baishan"
+    },
+    {
+      "id": 3887,
+      "name": "巴彦淖尔",
+      "pinyin": "bayannaoer"
+    },
+    {
+      "id": 3913,
+      "name": "沂源(淄博)",
+      "pinyin": "yiyuan"
+    },
+    {
+      "id": 3914,
+      "name": "大冶(黄石)",
+      "pinyin": "daye"
+    },
+    {
+      "id": 3915,
+      "name": "莱州(烟台)",
+      "pinyin": "laizhou"
+    },
+    {
+      "id": 3917,
+      "name": "福清(福州)",
+      "pinyin": "fuqing"
+    },
+    {
+      "id": 3919,
+      "name": "贵溪(鹰潭)",
+      "pinyin": "guixi"
+    },
+    {
+      "id": 3920,
+      "name": "天门",
+      "pinyin": "tianmen"
+    },
+    {
+      "id": 3921,
+      "name": "楚雄市",
+      "pinyin": "chuxiongshi"
+    },
+    {
+      "id": 3922,
+      "name": "个旧",
+      "pinyin": "gejiu"
+    },
+    {
+      "id": 3923,
+      "name": "海安(南通)",
+      "pinyin": "haian"
+    },
+    {
+      "id": 3924,
+      "name": "平山(石家庄)",
+      "pinyin": "pingshan"
+    },
+    {
+      "id": 3925,
+      "name": "玉环(台州)",
+      "pinyin": "yuhuan"
+    },
+    {
+      "id": 3926,
+      "name": "靖江(泰州)",
+      "pinyin": "jingjiang"
+    },
+    {
+      "id": 3927,
+      "name": "德兴(上饶)",
+      "pinyin": "dexing"
+    },
+    {
+      "id": 3928,
+      "name": "德钦",
+      "pinyin": "deqin"
+    },
+    {
+      "id": 3929,
+      "name": "邳州(徐州)",
+      "pinyin": "pizhou"
+    },
+    {
+      "id": 3930,
+      "name": "陆良(曲靖)",
+      "pinyin": "luliang"
+    },
+    {
+      "id": 3931,
+      "name": "连州(清远)",
+      "pinyin": "lianzhou"
+    },
+    {
+      "id": 3932,
+      "name": "阳山(清远)",
+      "pinyin": "yangshan"
+    },
+    {
+      "id": 3933,
+      "name": "云浮",
+      "pinyin": "yunfu"
+    },
+    {
+      "id": 3934,
+      "name": "孝义(吕梁)",
+      "pinyin": "xiaoyi"
+    },
+    {
+      "id": 3935,
+      "name": "应城(孝感)",
+      "pinyin": "yingcheng"
+    },
+    {
+      "id": 3936,
+      "name": "蒲县(临汾)",
+      "pinyin": "puxian"
+    },
+    {
+      "id": 3937,
+      "name": "扬中(镇江)",
+      "pinyin": "yangzhong"
+    },
+    {
+      "id": 3938,
+      "name": "钟祥(荆门)",
+      "pinyin": "zhongxiang"
+    },
+    {
+      "id": 3940,
+      "name": "无棣(滨州)",
+      "pinyin": "wudi"
+    },
+    {
+      "id": 3941,
+      "name": "合山(来宾)",
+      "pinyin": "heshan"
+    },
+    {
+      "id": 3943,
+      "name": "平度(青岛)",
+      "pinyin": "pingdu"
+    },
+    {
+      "id": 3944,
+      "name": "彬州(咸阳)",
+      "pinyin": "binzhou"
+    },
+    {
+      "id": 3946,
+      "name": "龙口(烟台)",
+      "pinyin": "longkou"
+    },
+    {
+      "id": 3962,
+      "name": "上杭(龙岩)",
+      "pinyin": "shanghang"
+    },
+    {
+      "id": 3963,
+      "name": "福安(宁德)",
+      "pinyin": "fuan"
+    },
+    {
+      "id": 3964,
+      "name": "长汀(龙岩)",
+      "pinyin": "changting"
+    },
+    {
+      "id": 3966,
+      "name": "巴中",
+      "pinyin": "bazhong"
+    },
+    {
+      "id": 3967,
+      "name": "东兴(防城港)",
+      "pinyin": "dongxing"
+    },
+    {
+      "id": 3968,
+      "name": "桂平(贵港)",
+      "pinyin": "guiping"
+    },
+    {
+      "id": 3969,
+      "name": "河池",
+      "pinyin": "hechi"
+    },
+    {
+      "id": 3970,
+      "name": "高安(宜春)",
+      "pinyin": "gaoan"
+    },
+    {
+      "id": 3971,
+      "name": "瑞金(赣州)",
+      "pinyin": "ruijin"
+    },
+    {
+      "id": 3972,
+      "name": "宜都(宜昌)",
+      "pinyin": "yidu"
+    },
+    {
+      "id": 3976,
+      "name": "鄂尔多斯",
+      "pinyin": "eerduosi"
+    },
+    {
+      "id": 3977,
+      "name": "资兴(郴州)",
+      "pinyin": "zixing"
+    },
+    {
+      "id": 3978,
+      "name": "临夏市",
+      "pinyin": "linxiashi"
+    },
+    {
+      "id": 3980,
+      "name": "泰兴(泰州)",
+      "pinyin": "taixing"
+    },
+    {
+      "id": 3988,
+      "name": "庆城(庆阳)",
+      "pinyin": "qingcheng"
+    },
+    {
+      "id": 3995,
+      "name": "舞钢(平顶山)",
+      "pinyin": "wugang"
+    },
+    {
+      "id": 3996,
+      "name": "普洱",
+      "pinyin": "puer"
+    },
+    {
+      "id": 3997,
+      "name": "芒市",
+      "pinyin": "mangshi"
+    },
+    {
+      "id": 4004,
+      "name": "靖边(榆林)",
+      "pinyin": "jingbian"
+    },
+    {
+      "id": 4013,
+      "name": "夏津(德州)",
+      "pinyin": "xiajin"
+    },
+    {
+      "id": 4020,
+      "name": "永城(商丘)",
+      "pinyin": "yongcheng"
+    },
+    {
+      "id": 4125,
+      "name": "高邮(扬州)",
+      "pinyin": "gaoyou"
+    },
+    {
+      "id": 4130,
+      "name": "康定",
+      "pinyin": "kangding"
+    },
+    {
+      "id": 4131,
+      "name": "阳城(晋城)",
+      "pinyin": "yangcheng"
+    },
+    {
+      "id": 4132,
+      "name": "香河(廊坊)",
+      "pinyin": "xianghe"
+    },
+    {
+      "id": 4136,
+      "name": "新密(郑州)",
+      "pinyin": "xinmi"
+    },
+    {
+      "id": 4137,
+      "name": "珲春",
+      "pinyin": "hunchun"
+    },
+    {
+      "id": 4139,
+      "name": "如皋(南通)",
+      "pinyin": "rugao"
+    },
+    {
+      "id": 4141,
+      "name": "博兴(滨州)",
+      "pinyin": "boxing"
+    },
+    {
+      "id": 4143,
+      "name": "枞阳(铜陵)",
+      "pinyin": "zongyang"
+    },
+    {
+      "id": 4144,
+      "name": "诸城(潍坊)",
+      "pinyin": "zhucheng"
+    },
+    {
+      "id": 4145,
+      "name": "陆丰(汕尾)",
+      "pinyin": "lufeng"
+    },
+    {
+      "id": 4146,
+      "name": "贺州",
+      "pinyin": "hezhou"
+    },
+    {
+      "id": 4154,
+      "name": "潜江",
+      "pinyin": "qianjiang"
+    },
+    {
+      "id": 4182,
+      "name": "宝应(扬州)",
+      "pinyin": "baoying"
+    },
+    {
+      "id": 4185,
+      "name": "浏阳(长沙)",
+      "pinyin": "liuyang"
+    },
+    {
+      "id": 4216,
+      "name": "石嘴山",
+      "pinyin": "shizuishan"
+    },
+    {
+      "id": 4243,
+      "name": "弥勒",
+      "pinyin": "mile"
+    },
+    {
+      "id": 4251,
+      "name": "招远(烟台)",
+      "pinyin": "zhaoyuan"
+    },
+    {
+      "id": 4254,
+      "name": "乌拉特后旗(巴彦淖尔)",
+      "pinyin": "wulatehouqi"
+    },
+    {
+      "id": 4255,
+      "name": "呼伦贝尔",
+      "pinyin": "hulunbeier"
+    },
+    {
+      "id": 5152,
+      "name": "嘉义市",
+      "pinyin": "jiayishi"
+    },
+    {
+      "id": 5589,
+      "name": "屏东",
+      "pinyin": "pingdong"
+    },
+    {
+      "id": 6954,
+      "name": "花莲",
+      "pinyin": "hualien"
+    },
+    {
+      "id": 7203,
+      "name": "金门",
+      "pinyin": "jinmen"
+    },
+    {
+      "id": 7518,
+      "name": "乌兰察布",
+      "pinyin": "wulanchabu"
+    },
+    {
+      "id": 7519,
+      "name": "邹城(济宁)",
+      "pinyin": "zoucheng"
+    },
+    {
+      "id": 7521,
+      "name": "龙胜(桂林)",
+      "pinyin": "longsheng"
+    },
+    {
+      "id": 7523,
+      "name": "云林",
+      "pinyin": "yunlin"
+    },
+    {
+      "id": 7524,
+      "name": "南投",
+      "pinyin": "nantou"
+    },
+    {
+      "id": 7525,
+      "name": "北川(绵阳)",
+      "pinyin": "beichuan"
+    },
+    {
+      "id": 7531,
+      "name": "大新(崇左)",
+      "pinyin": "daxin"
+    },
+    {
+      "id": 7533,
+      "name": "平阳(温州)",
+      "pinyin": "pingyang"
+    },
+    {
+      "id": 7534,
+      "name": "昌吉市",
+      "pinyin": "changjishi"
+    },
+    {
+      "id": 7536,
+      "name": "平邑(临沂)",
+      "pinyin": "pingyi"
+    },
+    {
+      "id": 7538,
+      "name": "平南(贵港)",
+      "pinyin": "pingnan"
+    },
+    {
+      "id": 7540,
+      "name": "马尔康",
+      "pinyin": "maerkang"
+    },
+    {
+      "id": 7541,
+      "name": "资源(桂林)",
+      "pinyin": "ziyuan"
+    },
+    {
+      "id": 7542,
+      "name": "紫云(安顺)",
+      "pinyin": "ziyun"
+    },
+    {
+      "id": 7544,
+      "name": "赤水(遵义)",
+      "pinyin": "chishui"
+    },
+    {
+      "id": 7545,
+      "name": "林州(安阳)",
+      "pinyin": "linzhou"
+    },
+    {
+      "id": 7549,
+      "name": "泸定",
+      "pinyin": "luding"
+    },
+    {
+      "id": 7550,
+      "name": "彭州(成都)",
+      "pinyin": "pengzhou"
+    },
+    {
+      "id": 7551,
+      "name": "商洛",
+      "pinyin": "shangluo"
+    },
+    {
+      "id": 7552,
+      "name": "平定(阳泉)",
+      "pinyin": "pingding"
+    },
+    {
+      "id": 7553,
+      "name": "邛崃(成都)",
+      "pinyin": "qionglai"
+    },
+    {
+      "id": 7554,
+      "name": "乳山(威海)",
+      "pinyin": "rushan"
+    },
+    {
+      "id": 7557,
+      "name": "如东(南通)",
+      "pinyin": "rudong"
+    },
+    {
+      "id": 7558,
+      "name": "三门(台州)",
+      "pinyin": "sanmen"
+    },
+    {
+      "id": 7560,
+      "name": "汨罗(岳阳)",
+      "pinyin": "miluo"
+    },
+    {
+      "id": 7568,
+      "name": "佛坪(汉中)",
+      "pinyin": "foping"
+    },
+    {
+      "id": 7569,
+      "name": "盖州(营口)",
+      "pinyin": "gaizhou"
+    },
+    {
+      "id": 7570,
+      "name": "桃园",
+      "pinyin": "taoyuan"
+    },
+    {
+      "id": 7571,
+      "name": "磐安(金华)",
+      "pinyin": "panan"
+    },
+    {
+      "id": 7572,
+      "name": "和龙",
+      "pinyin": "helong"
+    },
+    {
+      "id": 7575,
+      "name": "射洪(遂宁)",
+      "pinyin": "shehong"
+    },
+    {
+      "id": 7576,
+      "name": "锡林郭勒盟",
+      "pinyin": "xilinguolemeng"
+    },
+    {
+      "id": 7577,
+      "name": "天长(滁州)",
+      "pinyin": "tianchang"
+    },
+    {
+      "id": 7578,
+      "name": "兴化(泰州)",
+      "pinyin": "xinghua"
+    },
+    {
+      "id": 7579,
+      "name": "东港(丹东)",
+      "pinyin": "donggang"
+    },
+    {
+      "id": 7582,
+      "name": "玉树市",
+      "pinyin": "yushushi"
+    },
+    {
+      "id": 7586,
+      "name": "开化(衢州)",
+      "pinyin": "kaihua"
+    },
+    {
+      "id": 7587,
+      "name": "吴忠",
+      "pinyin": "wuzhong"
+    },
+    {
+      "id": 7589,
+      "name": "海西",
+      "pinyin": "haixi"
+    },
+    {
+      "id": 7590,
+      "name": "常山(衢州)",
+      "pinyin": "changshan"
+    },
+    {
+      "id": 7594,
+      "name": "元阳",
+      "pinyin": "yuanyang"
+    },
+    {
+      "id": 7595,
+      "name": "长泰(漳州)",
+      "pinyin": "changtai"
+    },
+    {
+      "id": 7596,
+      "name": "扶风(宝鸡)",
+      "pinyin": "fufeng"
+    },
+    {
+      "id": 7599,
+      "name": "天全(雅安)",
+      "pinyin": "tianquan"
+    },
+    {
+      "id": 7604,
+      "name": "汾阳(吕梁)",
+      "pinyin": "fenyang"
+    },
+    {
+      "id": 7605,
+      "name": "涿州(保定)",
+      "pinyin": "zhuozhou"
+    },
+    {
+      "id": 7606,
+      "name": "吴川(湛江)",
+      "pinyin": "wuchuan"
+    },
+    {
+      "id": 7607,
+      "name": "荔浦(桂林)",
+      "pinyin": "lipu"
+    },
+    {
+      "id": 7614,
+      "name": "宜兰",
+      "pinyin": "yilan"
+    },
+    {
+      "id": 7618,
+      "name": "洪湖(荆州)",
+      "pinyin": "honghu"
+    },
+    {
+      "id": 7619,
+      "name": "仁怀(遵义)",
+      "pinyin": "renhuai"
+    },
+    {
+      "id": 7624,
+      "name": "四会(肇庆)",
+      "pinyin": "sihui"
+    },
+    {
+      "id": 7625,
+      "name": "广饶(东营)",
+      "pinyin": "guangrao"
+    },
+    {
+      "id": 7626,
+      "name": "二连浩特(锡林郭勒盟)",
+      "pinyin": "erlianhaote"
+    },
+    {
+      "id": 7629,
+      "name": "泊头(沧州)",
+      "pinyin": "botou"
+    },
+    {
+      "id": 7630,
+      "name": "沂水(临沂)",
+      "pinyin": "yishui"
+    },
+    {
+      "id": 7631,
+      "name": "吕梁",
+      "pinyin": "lvliang"
+    },
+    {
+      "id": 7632,
+      "name": "武冈(邵阳)",
+      "pinyin": "wugang"
+    },
+    {
+      "id": 7637,
+      "name": "栾川(洛阳)",
+      "pinyin": "luanchuan"
+    },
+    {
+      "id": 7638,
+      "name": "额尔古纳(呼伦贝尔)",
+      "pinyin": "eerguna"
+    },
+    {
+      "id": 7639,
+      "name": "蒙城(亳州)",
+      "pinyin": "mengcheng"
+    },
+    {
+      "id": 7642,
+      "name": "清镇(贵阳)",
+      "pinyin": "qingzhen"
+    },
+    {
+      "id": 7644,
+      "name": "黄骅(沧州)",
+      "pinyin": "huanghua"
+    },
+    {
+      "id": 7650,
+      "name": "长葛(许昌)",
+      "pinyin": "changge"
+    },
+    {
+      "id": 7651,
+      "name": "宁城(赤峰)",
+      "pinyin": "ningcheng"
+    },
+    {
+      "id": 7652,
+      "name": "凤山(河池)",
+      "pinyin": "fengshan"
+    },
+    {
+      "id": 7662,
+      "name": "新北",
+      "pinyin": "xinbei"
+    },
+    {
+      "id": 7663,
+      "name": "大兴安岭",
+      "pinyin": "daxinganling"
+    },
+    {
+      "id": 7665,
+      "name": "遂昌(丽水)",
+      "pinyin": "suichang"
+    },
+    {
+      "id": 7666,
+      "name": "苍南(温州)",
+      "pinyin": "cangnan"
+    },
+    {
+      "id": 7667,
+      "name": "罗田(黄冈)",
+      "pinyin": "luotian"
+    },
+    {
+      "id": 7669,
+      "name": "栖霞(烟台)",
+      "pinyin": "qixia"
+    },
+    {
+      "id": 7671,
+      "name": "凤城(丹东)",
+      "pinyin": "fengcheng"
+    },
+    {
+      "id": 7673,
+      "name": "郓城(菏泽)",
+      "pinyin": "yuncheng"
+    },
+    {
+      "id": 7675,
+      "name": "沂南(临沂)",
+      "pinyin": "yinan"
+    },
+    {
+      "id": 7678,
+      "name": "崇州(成都)",
+      "pinyin": "chongzhou"
+    },
+    {
+      "id": 7679,
+      "name": "景宁(丽水)",
+      "pinyin": "jingning"
+    },
+    {
+      "id": 7682,
+      "name": "泸西",
+      "pinyin": "luxi"
+    },
+    {
+      "id": 7685,
+      "name": "丹江口(十堰)",
+      "pinyin": "danjiangkou"
+    },
+    {
+      "id": 7688,
+      "name": "乐亭(唐山)",
+      "pinyin": "laoting"
+    },
+    {
+      "id": 7692,
+      "name": "金湖(淮安)",
+      "pinyin": "jinhu"
+    },
+    {
+      "id": 7693,
+      "name": "涟水(淮安)",
+      "pinyin": "lianshui"
+    },
+    {
+      "id": 7694,
+      "name": "睢宁(徐州)",
+      "pinyin": "suining"
+    },
+    {
+      "id": 7695,
+      "name": "响水(盐城)",
+      "pinyin": "xiangshui"
+    },
+    {
+      "id": 7698,
+      "name": "北镇(锦州)",
+      "pinyin": "beizhen"
+    },
+    {
+      "id": 7700,
+      "name": "五莲(日照)",
+      "pinyin": "wulian"
+    },
+    {
+      "id": 7702,
+      "name": "右玉(朔州)",
+      "pinyin": "youyu"
+    },
+    {
+      "id": 7703,
+      "name": "舞阳(漯河)",
+      "pinyin": "wuyang"
+    },
+    {
+      "id": 7707,
+      "name": "陇南",
+      "pinyin": "longnan"
+    },
+    {
+      "id": 7710,
+      "name": "光山(信阳)",
+      "pinyin": "guangshan"
+    },
+    {
+      "id": 7711,
+      "name": "瓮安(黔南)",
+      "pinyin": "wengan"
+    },
+    {
+      "id": 7712,
+      "name": "平罗(石嘴山)",
+      "pinyin": "pingluo"
+    },
+    {
+      "id": 7714,
+      "name": "莒南(临沂)",
+      "pinyin": "junan"
+    },
+    {
+      "id": 7716,
+      "name": "大邑(成都)",
+      "pinyin": "dayi"
+    },
+    {
+      "id": 7723,
+      "name": "石阡(铜仁)",
+      "pinyin": "shiqian"
+    },
+    {
+      "id": 7727,
+      "name": "贺兰(银川)",
+      "pinyin": "helan"
+    },
+    {
+      "id": 7728,
+      "name": "东平(泰安)",
+      "pinyin": "dongping"
+    },
+    {
+      "id": 7733,
+      "name": "盐山(沧州)",
+      "pinyin": "yanshan"
+    },
+    {
+      "id": 7736,
+      "name": "安丘(潍坊)",
+      "pinyin": "anqiu"
+    },
+    {
+      "id": 7744,
+      "name": "简阳(成都)",
+      "pinyin": "jianyang"
+    },
+    {
+      "id": 7745,
+      "name": "金乡(济宁)",
+      "pinyin": "jinxiang"
+    },
+    {
+      "id": 7746,
+      "name": "维西",
+      "pinyin": "weixi"
+    },
+    {
+      "id": 7748,
+      "name": "伊金霍洛旗(鄂尔多斯)",
+      "pinyin": "yijinhuoluoqi"
+    },
+    {
+      "id": 7749,
+      "name": "达拉特旗(鄂尔多斯)",
+      "pinyin": "dalateqi"
+    },
+    {
+      "id": 7751,
+      "name": "理县",
+      "pinyin": "lixian"
+    },
+    {
+      "id": 7752,
+      "name": "海东",
+      "pinyin": "haidong"
+    },
+    {
+      "id": 7758,
+      "name": "邹平(滨州)",
+      "pinyin": "zouping"
+    },
+    {
+      "id": 7759,
+      "name": "河间(沧州)",
+      "pinyin": "hejian"
+    },
+    {
+      "id": 7766,
+      "name": "禹州(许昌)",
+      "pinyin": "yuzhou"
+    },
+    {
+      "id": 7767,
+      "name": "泗洪(宿迁)",
+      "pinyin": "sihong"
+    },
+    {
+      "id": 7770,
+      "name": "太康(周口)",
+      "pinyin": "taikang"
+    },
+    {
+      "id": 7771,
+      "name": "新泰(泰安)",
+      "pinyin": "xintai"
+    },
+    {
+      "id": 7772,
+      "name": "河津(运城)",
+      "pinyin": "hejin"
+    },
+    {
+      "id": 7773,
+      "name": "三江(柳州)",
+      "pinyin": "sanjiang"
+    },
+    {
+      "id": 7779,
+      "name": "利川",
+      "pinyin": "lichuan"
+    },
+    {
+      "id": 7782,
+      "name": "吉木乃",
+      "pinyin": "jimunai"
+    },
+    {
+      "id": 7783,
+      "name": "乐陵(德州)",
+      "pinyin": "leling"
+    },
+    {
+      "id": 7789,
+      "name": "云和(丽水)",
+      "pinyin": "yunhe"
+    },
+    {
+      "id": 7791,
+      "name": "宜良(昆明)",
+      "pinyin": "yiliang"
+    },
+    {
+      "id": 7792,
+      "name": "五家渠",
+      "pinyin": "wujiaqu"
+    },
+    {
+      "id": 7793,
+      "name": "鄂托克旗(鄂尔多斯)",
+      "pinyin": "etuokeqi"
+    },
+    {
+      "id": 7803,
+      "name": "洪江(怀化)",
+      "pinyin": "hongjiang"
+    },
+    {
+      "id": 7805,
+      "name": "澎湖",
+      "pinyin": "penghu"
+    },
+    {
+      "id": 7806,
+      "name": "宁阳(泰安)",
+      "pinyin": "ningyang"
+    },
+    {
+      "id": 7808,
+      "name": "马祖",
+      "pinyin": "mazu"
+    },
+    {
+      "id": 7809,
+      "name": "苗栗",
+      "pinyin": "miaoli"
+    },
+    {
+      "id": 7810,
+      "name": "基隆",
+      "pinyin": "jilong"
+    },
+    {
+      "id": 7811,
+      "name": "彰化",
+      "pinyin": "zhanghua"
+    },
+    {
+      "id": 7814,
+      "name": "桦甸(吉林市)",
+      "pinyin": "huadian"
+    },
+    {
+      "id": 7823,
+      "name": "法库(沈阳)",
+      "pinyin": "faku"
+    },
+    {
+      "id": 7828,
+      "name": "延寿(哈尔滨)",
+      "pinyin": "yanshou"
+    },
+    {
+      "id": 7829,
+      "name": "成县(陇南)",
+      "pinyin": "chengxian"
+    },
+    {
+      "id": 7834,
+      "name": "若尔盖",
+      "pinyin": "ruoergai"
+    },
+    {
+      "id": 7835,
+      "name": "红原",
+      "pinyin": "hongyuan"
+    },
+    {
+      "id": 7836,
+      "name": "文成(温州)",
+      "pinyin": "wencheng"
+    },
+    {
+      "id": 7839,
+      "name": "齐河(德州)",
+      "pinyin": "qihe"
+    },
+    {
+      "id": 7840,
+      "name": "沽源(张家口)",
+      "pinyin": "guyuan"
+    },
+    {
+      "id": 7843,
+      "name": "洱源",
+      "pinyin": "eryuan"
+    },
+    {
+      "id": 10252,
+      "name": "布拖",
+      "pinyin": "butuo"
+    },
+    {
+      "id": 10254,
+      "name": "安宁(昆明)",
+      "pinyin": "anning"
+    },
+    {
+      "id": 10271,
+      "name": "洛宁(洛阳)",
+      "pinyin": "luoning"
+    },
+    {
+      "id": 10272,
+      "name": "丹巴",
+      "pinyin": "danba"
+    },
+    {
+      "id": 10273,
+      "name": "莒县(日照)",
+      "pinyin": "juxian"
+    },
+    {
+      "id": 10296,
+      "name": "洪雅(眉山)",
+      "pinyin": "hongya"
+    },
+    {
+      "id": 10297,
+      "name": "昌乐(潍坊)",
+      "pinyin": "changle"
+    },
+    {
+      "id": 10298,
+      "name": "茂县",
+      "pinyin": "maoxian"
+    },
+    {
+      "id": 19953,
+      "name": "平原(德州)",
+      "pinyin": "pingyuan"
+    },
+    {
+      "id": 19954,
+      "name": "庆云(德州)",
+      "pinyin": "qingyun"
+    },
+    {
+      "id": 19955,
+      "name": "庆元(丽水)",
+      "pinyin": "qingyuan"
+    },
+    {
+      "id": 19956,
+      "name": "高唐(聊城)",
+      "pinyin": "gaotang"
+    },
+    {
+      "id": 19958,
+      "name": "贵德",
+      "pinyin": "guide"
+    },
+    {
+      "id": 19959,
+      "name": "蒙阴(临沂)",
+      "pinyin": "mengyin"
+    },
+    {
+      "id": 19960,
+      "name": "武陟(焦作)",
+      "pinyin": "wuzhi"
+    },
+    {
+      "id": 20743,
+      "name": "微山(济宁)",
+      "pinyin": "weishan"
+    },
+    {
+      "id": 20756,
+      "name": "平阴(济南)",
+      "pinyin": "pingyin"
+    },
+    {
+      "id": 20793,
+      "name": "长顺(黔南)",
+      "pinyin": "changshun"
+    },
+    {
+      "id": 20794,
+      "name": "灵武(银川)",
+      "pinyin": "lingwu"
+    },
+    {
+      "id": 20801,
+      "name": "武平(龙岩)",
+      "pinyin": "wuping"
+    },
+    {
+      "id": 20805,
+      "name": "桓台(淄博)",
+      "pinyin": "huantai"
+    },
+    {
+      "id": 20806,
+      "name": "临朐(潍坊)",
+      "pinyin": "linqu"
+    },
+    {
+      "id": 20808,
+      "name": "吉县(临汾)",
+      "pinyin": "jixian"
+    },
+    {
+      "id": 20809,
+      "name": "临沭(临沂)",
+      "pinyin": "linshu"
+    },
+    {
+      "id": 20812,
+      "name": "嵩县(洛阳)",
+      "pinyin": "songxian"
+    },
+    {
+      "id": 20813,
+      "name": "岫岩(鞍山)",
+      "pinyin": "xiuyan"
+    },
+    {
+      "id": 20822,
+      "name": "岳阳县(岳阳)",
+      "pinyin": "yueyangxian"
+    },
+    {
+      "id": 20823,
+      "name": "宁强(汉中)",
+      "pinyin": "ningqiang"
+    },
+    {
+      "id": 20824,
+      "name": "新晃(怀化)",
+      "pinyin": "xinhuang"
+    },
+    {
+      "id": 20825,
+      "name": "灌南(连云港)",
+      "pinyin": "guannan"
+    },
+    {
+      "id": 20826,
+      "name": "柳林(吕梁)",
+      "pinyin": "liulin"
+    },
+    {
+      "id": 20827,
+      "name": "肥东(合肥)",
+      "pinyin": "feidong"
+    },
+    {
+      "id": 20828,
+      "name": "怀集(肇庆)",
+      "pinyin": "huaiji"
+    },
+    {
+      "id": 20829,
+      "name": "景东(普洱)",
+      "pinyin": "jingdong"
+    },
+    {
+      "id": 20830,
+      "name": "肃北(酒泉)",
+      "pinyin": "subei"
+    },
+    {
+      "id": 20831,
+      "name": "新野(南阳)",
+      "pinyin": "xinye"
+    },
+    {
+      "id": 20832,
+      "name": "伊吾(哈密市)",
+      "pinyin": "yiwu"
+    },
+    {
+      "id": 20833,
+      "name": "阳谷(聊城)",
+      "pinyin": "yanggu"
+    },
+    {
+      "id": 20834,
+      "name": "东至(池州)",
+      "pinyin": "dongzhi"
+    },
+    {
+      "id": 20836,
+      "name": "澄迈",
+      "pinyin": "chengmai"
+    },
+    {
+      "id": 20837,
+      "name": "巴马(河池)",
+      "pinyin": "bama"
+    },
+    {
+      "id": 20838,
+      "name": "大余(赣州)",
+      "pinyin": "dayu"
+    },
+    {
+      "id": 20839,
+      "name": "申扎(那曲)",
+      "pinyin": "shenzha"
+    },
+    {
+      "id": 20840,
+      "name": "大化(河池)",
+      "pinyin": "dahua"
+    },
+    {
+      "id": 20841,
+      "name": "怀安(张家口)",
+      "pinyin": "huaian"
+    },
+    {
+      "id": 20842,
+      "name": "鸡泽(邯郸)",
+      "pinyin": "jize"
+    },
+    {
+      "id": 20844,
+      "name": "安泽(临汾)",
+      "pinyin": "anze"
+    },
+    {
+      "id": 20845,
+      "name": "比如(那曲)",
+      "pinyin": "biru"
+    },
+    {
+      "id": 20846,
+      "name": "惠水(黔南)",
+      "pinyin": "huishui"
+    },
+    {
+      "id": 20847,
+      "name": "积石山",
+      "pinyin": "jishishan"
+    },
+    {
+      "id": 20848,
+      "name": "错那",
+      "pinyin": "cuona"
+    },
+    {
+      "id": 20849,
+      "name": "永泰(福州)",
+      "pinyin": "yongtai"
+    },
+    {
+      "id": 20850,
+      "name": "康保(张家口)",
+      "pinyin": "kangbao"
+    },
+    {
+      "id": 20851,
+      "name": "林西(赤峰)",
+      "pinyin": "linxi"
+    },
+    {
+      "id": 20852,
+      "name": "四子王旗(乌兰察布)",
+      "pinyin": "siziwangqi"
+    },
+    {
+      "id": 20853,
+      "name": "宽甸(丹东)",
+      "pinyin": "kuandian"
+    },
+    {
+      "id": 20854,
+      "name": "盘州(六盘水)",
+      "pinyin": "panzhou"
+    },
+    {
+      "id": 20855,
+      "name": "象州(来宾)",
+      "pinyin": "xiangzhou"
+    },
+    {
+      "id": 20856,
+      "name": "兴文(宜宾)",
+      "pinyin": "xingwen"
+    },
+    {
+      "id": 20857,
+      "name": "广昌(抚州)",
+      "pinyin": "guangchang"
+    },
+    {
+      "id": 20858,
+      "name": "正镶白旗(锡林郭勒盟)",
+      "pinyin": "zhengxiangbaiqi"
+    },
+    {
+      "id": 20859,
+      "name": "江孜(日喀则)",
+      "pinyin": "jiangzi"
+    },
+    {
+      "id": 20860,
+      "name": "汝城(郴州)",
+      "pinyin": "rucheng"
+    },
+    {
+      "id": 20862,
+      "name": "广南",
+      "pinyin": "guangnan"
+    },
+    {
+      "id": 20863,
+      "name": "衡南(衡阳)",
+      "pinyin": "hengnan"
+    },
+    {
+      "id": 20865,
+      "name": "木兰(哈尔滨)",
+      "pinyin": "mulan"
+    },
+    {
+      "id": 20866,
+      "name": "泗县(宿州)",
+      "pinyin": "sixian"
+    },
+    {
+      "id": 20867,
+      "name": "突泉",
+      "pinyin": "tuquan"
+    },
+    {
+      "id": 20868,
+      "name": "临高",
+      "pinyin": "lingao"
+    },
+    {
+      "id": 20869,
+      "name": "靖宇(白山)",
+      "pinyin": "jingyu"
+    },
+    {
+      "id": 20870,
+      "name": "察雅(昌都)",
+      "pinyin": "chaya"
+    },
+    {
+      "id": 20871,
+      "name": "宕昌(陇南)",
+      "pinyin": "dangchang"
+    },
+    {
+      "id": 20872,
+      "name": "旌德(宣城)",
+      "pinyin": "jingde"
+    },
+    {
+      "id": 20873,
+      "name": "华池(庆阳)",
+      "pinyin": "huachi"
+    },
+    {
+      "id": 20874,
+      "name": "太和(阜阳)",
+      "pinyin": "taihe"
+    },
+    {
+      "id": 20875,
+      "name": "博野(保定)",
+      "pinyin": "boye"
+    },
+    {
+      "id": 20876,
+      "name": "公安(荆州)",
+      "pinyin": "gongan"
+    },
+    {
+      "id": 20877,
+      "name": "开阳(贵阳)",
+      "pinyin": "kaiyang"
+    },
+    {
+      "id": 20878,
+      "name": "黎川(抚州)",
+      "pinyin": "lichuan"
+    },
+    {
+      "id": 20879,
+      "name": "禄丰",
+      "pinyin": "lufeng"
+    },
+    {
+      "id": 20880,
+      "name": "郧西(十堰)",
+      "pinyin": "yunxi"
+    },
+    {
+      "id": 20881,
+      "name": "长武(咸阳)",
+      "pinyin": "changwu"
+    },
+    {
+      "id": 20882,
+      "name": "双辽(四平)",
+      "pinyin": "shuangliao"
+    },
+    {
+      "id": 20883,
+      "name": "阿巴嘎旗(锡林郭勒盟)",
+      "pinyin": "abagaqi"
+    },
+    {
+      "id": 20885,
+      "name": "浮梁(景德镇)",
+      "pinyin": "fuliang"
+    },
+    {
+      "id": 20886,
+      "name": "华亭(平凉)",
+      "pinyin": "huating"
+    },
+    {
+      "id": 20887,
+      "name": "南涧",
+      "pinyin": "nanjian"
+    },
+    {
+      "id": 20888,
+      "name": "武川(呼和浩特)",
+      "pinyin": "wuchuan"
+    },
+    {
+      "id": 20889,
+      "name": "萝北(鹤岗)",
+      "pinyin": "luobei"
+    },
+    {
+      "id": 20890,
+      "name": "睢县(商丘)",
+      "pinyin": "suixian"
+    },
+    {
+      "id": 20892,
+      "name": "祁连",
+      "pinyin": "qilian"
+    },
+    {
+      "id": 20893,
+      "name": "恩施市",
+      "pinyin": "enshishi"
+    },
+    {
+      "id": 20894,
+      "name": "灌阳(桂林)",
+      "pinyin": "guanyang"
+    },
+    {
+      "id": 20895,
+      "name": "蕉岭(梅州)",
+      "pinyin": "jiaoling"
+    },
+    {
+      "id": 20897,
+      "name": "同德",
+      "pinyin": "tongde"
+    },
+    {
+      "id": 20898,
+      "name": "衡阳县(衡阳)",
+      "pinyin": "hengyangxian"
+    },
+    {
+      "id": 20899,
+      "name": "会泽(曲靖)",
+      "pinyin": "huize"
+    },
+    {
+      "id": 20901,
+      "name": "汝南(驻马店)",
+      "pinyin": "runan"
+    },
+    {
+      "id": 20902,
+      "name": "夏县(运城)",
+      "pinyin": "xiaxian"
+    },
+    {
+      "id": 20903,
+      "name": "盐边(攀枝花)",
+      "pinyin": "yanbian"
+    },
+    {
+      "id": 20904,
+      "name": "柏乡(邢台)",
+      "pinyin": "baixiang"
+    },
+    {
+      "id": 20905,
+      "name": "合水(庆阳)",
+      "pinyin": "heshui"
+    },
+    {
+      "id": 20908,
+      "name": "曲周(邯郸)",
+      "pinyin": "quzhou"
+    },
+    {
+      "id": 20910,
+      "name": "寻乌(赣州)",
+      "pinyin": "xunwu"
+    },
+    {
+      "id": 20911,
+      "name": "巩留",
+      "pinyin": "gongliu"
+    },
+    {
+      "id": 20912,
+      "name": "尼木(拉萨)",
+      "pinyin": "nimu"
+    },
+    {
+      "id": 20913,
+      "name": "壤塘",
+      "pinyin": "rangtang"
+    },
+    {
+      "id": 20914,
+      "name": "围场(承德)",
+      "pinyin": "weichang"
+    },
+    {
+      "id": 20915,
+      "name": "安福(吉安)",
+      "pinyin": "anfu"
+    },
+    {
+      "id": 20916,
+      "name": "滨海(盐城)",
+      "pinyin": "binhai"
+    },
+    {
+      "id": 20917,
+      "name": "调兵山(铁岭)",
+      "pinyin": "diaobingshan"
+    },
+    {
+      "id": 20918,
+      "name": "宁晋(邢台)",
+      "pinyin": "ningjin"
+    },
+    {
+      "id": 20919,
+      "name": "澄江(玉溪)",
+      "pinyin": "chengjiang"
+    },
+    {
+      "id": 20920,
+      "name": "得荣",
+      "pinyin": "derong"
+    },
+    {
+      "id": 20921,
+      "name": "杭锦后旗(巴彦淖尔)",
+      "pinyin": "hangjinhouqi"
+    },
+    {
+      "id": 20922,
+      "name": "建始",
+      "pinyin": "jianshi"
+    },
+    {
+      "id": 20923,
+      "name": "阳信(滨州)",
+      "pinyin": "yangxin"
+    },
+    {
+      "id": 20924,
+      "name": "丰县(徐州)",
+      "pinyin": "fengxian"
+    },
+    {
+      "id": 20925,
+      "name": "商都(乌兰察布)",
+      "pinyin": "shangdu"
+    },
+    {
+      "id": 20926,
+      "name": "社旗(南阳)",
+      "pinyin": "sheqi"
+    },
+    {
+      "id": 20928,
+      "name": "陆河(汕尾)",
+      "pinyin": "luhe"
+    },
+    {
+      "id": 20930,
+      "name": "富平(渭南)",
+      "pinyin": "fuping"
+    },
+    {
+      "id": 20932,
+      "name": "青阳(池州)",
+      "pinyin": "qingyang"
+    },
+    {
+      "id": 20933,
+      "name": "通渭(定西)",
+      "pinyin": "tongwei"
+    },
+    {
+      "id": 20934,
+      "name": "苍梧(梧州)",
+      "pinyin": "cangwu"
+    },
+    {
+      "id": 20935,
+      "name": "横峰(上饶)",
+      "pinyin": "hengfeng"
+    },
+    {
+      "id": 20936,
+      "name": "宁远(永州)",
+      "pinyin": "ningyuan"
+    },
+    {
+      "id": 20937,
+      "name": "江陵(荆州)",
+      "pinyin": "jiangling"
+    },
+    {
+      "id": 20938,
+      "name": "郯城(临沂)",
+      "pinyin": "tancheng"
+    },
+    {
+      "id": 20939,
+      "name": "仁化(韶关)",
+      "pinyin": "renhua"
+    },
+    {
+      "id": 20940,
+      "name": "青神(眉山)",
+      "pinyin": "qingshen"
+    },
+    {
+      "id": 20941,
+      "name": "丹寨",
+      "pinyin": "danzhai"
+    },
+    {
+      "id": 20942,
+      "name": "洛南(商洛)",
+      "pinyin": "luonan"
+    },
+    {
+      "id": 20943,
+      "name": "阿拉尔",
+      "pinyin": "alaer"
+    },
+    {
+      "id": 20944,
+      "name": "上犹(赣州)",
+      "pinyin": "shangyou"
+    },
+    {
+      "id": 20945,
+      "name": "石楼(吕梁)",
+      "pinyin": "shilou"
+    },
+    {
+      "id": 20946,
+      "name": "平和(漳州)",
+      "pinyin": "pinghe"
+    },
+    {
+      "id": 20948,
+      "name": "双牌(永州)",
+      "pinyin": "shuangpai"
+    },
+    {
+      "id": 20950,
+      "name": "盂县(阳泉)",
+      "pinyin": "yuxian"
+    },
+    {
+      "id": 20951,
+      "name": "桂东(郴州)",
+      "pinyin": "guidong"
+    },
+    {
+      "id": 20952,
+      "name": "郏县(平顶山)",
+      "pinyin": "jiaxian"
+    },
+    {
+      "id": 20953,
+      "name": "灵山(钦州)",
+      "pinyin": "lingshan"
+    },
+    {
+      "id": 20954,
+      "name": "灵寿(石家庄)",
+      "pinyin": "lingshou"
+    },
+    {
+      "id": 20955,
+      "name": "康乐",
+      "pinyin": "kangle"
+    },
+    {
+      "id": 20956,
+      "name": "信宜(茂名)",
+      "pinyin": "xinyi"
+    },
+    {
+      "id": 20957,
+      "name": "范县(濮阳)",
+      "pinyin": "fanxian"
+    },
+    {
+      "id": 20958,
+      "name": "花垣",
+      "pinyin": "huayuan"
+    },
+    {
+      "id": 20959,
+      "name": "饶阳(衡水)",
+      "pinyin": "raoyang"
+    },
+    {
+      "id": 20960,
+      "name": "元谋",
+      "pinyin": "yuanmou"
+    },
+    {
+      "id": 20961,
+      "name": "萨迦(日喀则)",
+      "pinyin": "sajia"
+    },
+    {
+      "id": 20962,
+      "name": "魏县(邯郸)",
+      "pinyin": "weixian"
+    },
+    {
+      "id": 20964,
+      "name": "舟曲",
+      "pinyin": "zhouqu"
+    },
+    {
+      "id": 20965,
+      "name": "双柏",
+      "pinyin": "shuangbai"
+    },
+    {
+      "id": 20966,
+      "name": "昭觉",
+      "pinyin": "zhaojue"
+    },
+    {
+      "id": 20967,
+      "name": "长宁(宜宾)",
+      "pinyin": "changning"
+    },
+    {
+      "id": 20968,
+      "name": "将乐(三明)",
+      "pinyin": "jiangle"
+    },
+    {
+      "id": 20969,
+      "name": "康县(陇南)",
+      "pinyin": "kangxian"
+    },
+    {
+      "id": 20970,
+      "name": "蓝田(西安)",
+      "pinyin": "lantian"
+    },
+    {
+      "id": 20971,
+      "name": "临夏县",
+      "pinyin": "linxiaxian"
+    },
+    {
+      "id": 20972,
+      "name": "理塘",
+      "pinyin": "litang"
+    },
+    {
+      "id": 20973,
+      "name": "普定(安顺)",
+      "pinyin": "puding"
+    },
+    {
+      "id": 20974,
+      "name": "乐至(资阳)",
+      "pinyin": "lezhi"
+    },
+    {
+      "id": 20975,
+      "name": "盈江",
+      "pinyin": "yingjiang"
+    },
+    {
+      "id": 20976,
+      "name": "多伦(锡林郭勒盟)",
+      "pinyin": "duolun"
+    },
+    {
+      "id": 20977,
+      "name": "江安(宜宾)",
+      "pinyin": "jiangan"
+    },
+    {
+      "id": 20978,
+      "name": "定远(滁州)",
+      "pinyin": "dingyuan"
+    },
+    {
+      "id": 20979,
+      "name": "康平(沈阳)",
+      "pinyin": "kangping"
+    },
+    {
+      "id": 20980,
+      "name": "霞浦(宁德)",
+      "pinyin": "xiapu"
+    },
+    {
+      "id": 20981,
+      "name": "边坝(昌都)",
+      "pinyin": "bianba"
+    },
+    {
+      "id": 20982,
+      "name": "扶沟(周口)",
+      "pinyin": "fugou"
+    },
+    {
+      "id": 20983,
+      "name": "岚皋(安康)",
+      "pinyin": "langao"
+    },
+    {
+      "id": 20984,
+      "name": "古县(临汾)",
+      "pinyin": "guxian"
+    },
+    {
+      "id": 20985,
+      "name": "泾阳(咸阳)",
+      "pinyin": "jingyang"
+    },
+    {
+      "id": 20986,
+      "name": "炉霍",
+      "pinyin": "luhuo"
+    },
+    {
+      "id": 20987,
+      "name": "宁陵(商丘)",
+      "pinyin": "ningling"
+    },
+    {
+      "id": 20988,
+      "name": "杂多",
+      "pinyin": "zaduo"
+    },
+    {
+      "id": 20989,
+      "name": "余干(上饶)",
+      "pinyin": "yugan"
+    },
+    {
+      "id": 20990,
+      "name": "晋州(石家庄)",
+      "pinyin": "jinzhou"
+    },
+    {
+      "id": 20991,
+      "name": "拉孜(日喀则)",
+      "pinyin": "lazi"
+    },
+    {
+      "id": 20992,
+      "name": "天等(崇左)",
+      "pinyin": "tiandeng"
+    },
+    {
+      "id": 20993,
+      "name": "达茂旗(包头)",
+      "pinyin": "damaoqi"
+    },
+    {
+      "id": 20994,
+      "name": "岚县(吕梁)",
+      "pinyin": "lanxian"
+    },
+    {
+      "id": 20995,
+      "name": "从江",
+      "pinyin": "congjiang"
+    },
+    {
+      "id": 20996,
+      "name": "单县(菏泽)",
+      "pinyin": "shanxian"
+    },
+    {
+      "id": 20997,
+      "name": "大名(邯郸)",
+      "pinyin": "daming"
+    },
+    {
+      "id": 20998,
+      "name": "吉木萨尔",
+      "pinyin": "jimusaer"
+    },
+    {
+      "id": 20999,
+      "name": "井研(乐山)",
+      "pinyin": "jingyan"
+    },
+    {
+      "id": 21000,
+      "name": "鄢陵(许昌)",
+      "pinyin": "yanling"
+    },
+    {
+      "id": 21001,
+      "name": "克什克腾旗(赤峰)",
+      "pinyin": "keshiketengqi"
+    },
+    {
+      "id": 21002,
+      "name": "泰和(吉安)",
+      "pinyin": "taihe"
+    },
+    {
+      "id": 21003,
+      "name": "城步(邵阳)",
+      "pinyin": "chengbu"
+    },
+    {
+      "id": 21004,
+      "name": "景县(衡水)",
+      "pinyin": "jingxian"
+    },
+    {
+      "id": 21005,
+      "name": "龙江(齐齐哈尔)",
+      "pinyin": "longjiang"
+    },
+    {
+      "id": 21006,
+      "name": "隆回(邵阳)",
+      "pinyin": "longhui"
+    },
+    {
+      "id": 21007,
+      "name": "吴堡(榆林)",
+      "pinyin": "wupu"
+    },
+    {
+      "id": 21008,
+      "name": "休宁(黄山)",
+      "pinyin": "xiuning"
+    },
+    {
+      "id": 21009,
+      "name": "新郑(郑州)",
+      "pinyin": "xinzheng"
+    },
+    {
+      "id": 21010,
+      "name": "炎陵(株洲)",
+      "pinyin": "yanling"
+    },
+    {
+      "id": 21011,
+      "name": "泽普(喀什)",
+      "pinyin": "zepu"
+    },
+    {
+      "id": 21012,
+      "name": "吉水(吉安)",
+      "pinyin": "jishui"
+    },
+    {
+      "id": 21013,
+      "name": "巨鹿(邢台)",
+      "pinyin": "julu"
+    },
+    {
+      "id": 21014,
+      "name": "广河",
+      "pinyin": "guanghe"
+    },
+    {
+      "id": 21015,
+      "name": "崇仁(抚州)",
+      "pinyin": "chongren"
+    },
+    {
+      "id": 21016,
+      "name": "克东(齐齐哈尔)",
+      "pinyin": "kedong"
+    },
+    {
+      "id": 21017,
+      "name": "疏附(喀什)",
+      "pinyin": "shufu"
+    },
+    {
+      "id": 21018,
+      "name": "金秀(来宾)",
+      "pinyin": "jinxiu"
+    },
+    {
+      "id": 21020,
+      "name": "泌阳(驻马店)",
+      "pinyin": "biyang"
+    },
+    {
+      "id": 21022,
+      "name": "宽城(承德)",
+      "pinyin": "kuancheng"
+    },
+    {
+      "id": 21023,
+      "name": "青河",
+      "pinyin": "qinghe"
+    },
+    {
+      "id": 21024,
+      "name": "铜鼓(宜春)",
+      "pinyin": "tonggu"
+    },
+    {
+      "id": 21025,
+      "name": "白沙",
+      "pinyin": "baisha"
+    },
+    {
+      "id": 21028,
+      "name": "措勤(阿里)",
+      "pinyin": "cuoqin"
+    },
+    {
+      "id": 21029,
+      "name": "金川",
+      "pinyin": "jinchuan"
+    },
+    {
+      "id": 21030,
+      "name": "临潭",
+      "pinyin": "lintan"
+    },
+    {
+      "id": 21031,
+      "name": "墨脱(林芝)",
+      "pinyin": "motuo"
+    },
+    {
+      "id": 21032,
+      "name": "新绛(运城)",
+      "pinyin": "xinjiang"
+    },
+    {
+      "id": 21033,
+      "name": "安义(南昌)",
+      "pinyin": "anyi"
+    },
+    {
+      "id": 21034,
+      "name": "察布查尔",
+      "pinyin": "chabuchaer"
+    },
+    {
+      "id": 21035,
+      "name": "会昌(赣州)",
+      "pinyin": "huichang"
+    },
+    {
+      "id": 21036,
+      "name": "邻水(广安)",
+      "pinyin": "linshui"
+    },
+    {
+      "id": 21037,
+      "name": "德保(百色)",
+      "pinyin": "debao"
+    },
+    {
+      "id": 21039,
+      "name": "龙州(崇左)",
+      "pinyin": "longzhou"
+    },
+    {
+      "id": 21040,
+      "name": "西充(南充)",
+      "pinyin": "xichong"
+    },
+    {
+      "id": 21041,
+      "name": "应县(朔州)",
+      "pinyin": "yingxian"
+    },
+    {
+      "id": 21042,
+      "name": "沧县(沧州)",
+      "pinyin": "cangxian"
+    },
+    {
+      "id": 21043,
+      "name": "东辽(辽源)",
+      "pinyin": "dongliao"
+    },
+    {
+      "id": 21044,
+      "name": "科左后旗(通辽)",
+      "pinyin": "kezuohouqi"
+    },
+    {
+      "id": 21045,
+      "name": "光泽(南平)",
+      "pinyin": "guangze"
+    },
+    {
+      "id": 21046,
+      "name": "柘荣(宁德)",
+      "pinyin": "zherong"
+    },
+    {
+      "id": 21047,
+      "name": "绛县(运城)",
+      "pinyin": "jiangxian"
+    },
+    {
+      "id": 21048,
+      "name": "双峰(娄底)",
+      "pinyin": "shuangfeng"
+    },
+    {
+      "id": 21049,
+      "name": "武城(德州)",
+      "pinyin": "wucheng"
+    },
+    {
+      "id": 21050,
+      "name": "亚东(日喀则)",
+      "pinyin": "yadong"
+    },
+    {
+      "id": 21051,
+      "name": "阿克塞(酒泉)",
+      "pinyin": "akesai"
+    },
+    {
+      "id": 21052,
+      "name": "长阳(宜昌)",
+      "pinyin": "changyang"
+    },
+    {
+      "id": 21053,
+      "name": "沿河(铜仁)",
+      "pinyin": "yanhe"
+    },
+    {
+      "id": 21054,
+      "name": "正宁(庆阳)",
+      "pinyin": "zhengning"
+    },
+    {
+      "id": 21055,
+      "name": "呼玛(大兴安岭)",
+      "pinyin": "huma"
+    },
+    {
+      "id": 21056,
+      "name": "芦溪(萍乡)",
+      "pinyin": "luxi"
+    },
+    {
+      "id": 21057,
+      "name": "雷波",
+      "pinyin": "leibo"
+    },
+    {
+      "id": 21058,
+      "name": "平远(梅州)",
+      "pinyin": "pingyuan"
+    },
+    {
+      "id": 21059,
+      "name": "融水(柳州)",
+      "pinyin": "rongshui"
+    },
+    {
+      "id": 21060,
+      "name": "雄县(保定)",
+      "pinyin": "xiongxian"
+    },
+    {
+      "id": 21061,
+      "name": "汉川(孝感)",
+      "pinyin": "hanchuan"
+    },
+    {
+      "id": 21062,
+      "name": "台安(鞍山)",
+      "pinyin": "taian"
+    },
+    {
+      "id": 21064,
+      "name": "寿宁(宁德)",
+      "pinyin": "shouning"
+    },
+    {
+      "id": 21065,
+      "name": "望奎(绥化)",
+      "pinyin": "wangkui"
+    },
+    {
+      "id": 21066,
+      "name": "洪洞(临汾)",
+      "pinyin": "hongtong"
+    },
+    {
+      "id": 21067,
+      "name": "塔什库尔干(喀什)",
+      "pinyin": "tashikuergan"
+    },
+    {
+      "id": 21068,
+      "name": "噶尔(阿里)",
+      "pinyin": "gaer"
+    },
+    {
+      "id": 21069,
+      "name": "洛浦",
+      "pinyin": "luopu"
+    },
+    {
+      "id": 21070,
+      "name": "友谊(双鸭山)",
+      "pinyin": "youyi"
+    },
+    {
+      "id": 21071,
+      "name": "宾阳(南宁)",
+      "pinyin": "binyang"
+    },
+    {
+      "id": 21072,
+      "name": "淇县(鹤壁)",
+      "pinyin": "qixian"
+    },
+    {
+      "id": 21073,
+      "name": "上林(南宁)",
+      "pinyin": "shanglin"
+    },
+    {
+      "id": 21075,
+      "name": "龙门(惠州)",
+      "pinyin": "longmen"
+    },
+    {
+      "id": 21076,
+      "name": "姚安",
+      "pinyin": "yaoan"
+    },
+    {
+      "id": 21077,
+      "name": "威远(内江)",
+      "pinyin": "weiyuan"
+    },
+    {
+      "id": 21078,
+      "name": "临猗(运城)",
+      "pinyin": "linyi"
+    },
+    {
+      "id": 21080,
+      "name": "榕江",
+      "pinyin": "rongjiang"
+    },
+    {
+      "id": 21081,
+      "name": "印江(铜仁)",
+      "pinyin": "yinjiang"
+    },
+    {
+      "id": 21082,
+      "name": "濮阳县(濮阳)",
+      "pinyin": "puyangxian"
+    },
+    {
+      "id": 21083,
+      "name": "长子(长治)",
+      "pinyin": "changzi"
+    },
+    {
+      "id": 21084,
+      "name": "阿鲁科尔沁旗(赤峰)",
+      "pinyin": "alukeerqinqi"
+    },
+    {
+      "id": 21085,
+      "name": "克山(齐齐哈尔)",
+      "pinyin": "keshan"
+    },
+    {
+      "id": 21086,
+      "name": "南县(益阳)",
+      "pinyin": "nanxian"
+    },
+    {
+      "id": 21087,
+      "name": "三穗",
+      "pinyin": "sansui"
+    },
+    {
+      "id": 21088,
+      "name": "资溪(抚州)",
+      "pinyin": "zixi"
+    },
+    {
+      "id": 21089,
+      "name": "涞水(保定)",
+      "pinyin": "laishui"
+    },
+    {
+      "id": 21090,
+      "name": "华安(漳州)",
+      "pinyin": "huaan"
+    },
+    {
+      "id": 21091,
+      "name": "霍林郭勒(通辽)",
+      "pinyin": "huolinguole"
+    },
+    {
+      "id": 21092,
+      "name": "荣县(自贡)",
+      "pinyin": "rongxian"
+    },
+    {
+      "id": 21093,
+      "name": "息烽(贵阳)",
+      "pinyin": "xifeng"
+    },
+    {
+      "id": 21094,
+      "name": "固始(信阳)",
+      "pinyin": "gushi"
+    },
+    {
+      "id": 21095,
+      "name": "藤县(梧州)",
+      "pinyin": "tengxian"
+    },
+    {
+      "id": 21096,
+      "name": "雅江",
+      "pinyin": "yajiang"
+    },
+    {
+      "id": 21097,
+      "name": "阳曲(太原)",
+      "pinyin": "yangqu"
+    },
+    {
+      "id": 21098,
+      "name": "马龙(曲靖)",
+      "pinyin": "malong"
+    },
+    {
+      "id": 21099,
+      "name": "土默特右旗(包头)",
+      "pinyin": "tumoteyouqi"
+    },
+    {
+      "id": 21100,
+      "name": "徐闻(湛江)",
+      "pinyin": "xuwen"
+    },
+    {
+      "id": 21101,
+      "name": "循化(海东)",
+      "pinyin": "xunhua"
+    },
+    {
+      "id": 21102,
+      "name": "方正(哈尔滨)",
+      "pinyin": "fangzheng"
+    },
+    {
+      "id": 21103,
+      "name": "龙陵(保山)",
+      "pinyin": "longling"
+    },
+    {
+      "id": 21104,
+      "name": "马边(乐山)",
+      "pinyin": "mabian"
+    },
+    {
+      "id": 21105,
+      "name": "凤冈(遵义)",
+      "pinyin": "fenggang"
+    },
+    {
+      "id": 21106,
+      "name": "旺苍(广元)",
+      "pinyin": "wangcang"
+    },
+    {
+      "id": 21108,
+      "name": "和林格尔(呼和浩特)",
+      "pinyin": "helingeer"
+    },
+    {
+      "id": 21109,
+      "name": "木垒",
+      "pinyin": "mulei"
+    },
+    {
+      "id": 21110,
+      "name": "杞县(开封)",
+      "pinyin": "qixian"
+    },
+    {
+      "id": 21111,
+      "name": "沭阳(宿迁)",
+      "pinyin": "shuyang"
+    },
+    {
+      "id": 21112,
+      "name": "通江(巴中)",
+      "pinyin": "tongjiang"
+    },
+    {
+      "id": 21113,
+      "name": "定襄(忻州)",
+      "pinyin": "dingxiang"
+    },
+    {
+      "id": 21115,
+      "name": "金寨(六安)",
+      "pinyin": "jinzhai"
+    },
+    {
+      "id": 21116,
+      "name": "色达",
+      "pinyin": "seda"
+    },
+    {
+      "id": 21117,
+      "name": "西畴",
+      "pinyin": "xichou"
+    },
+    {
+      "id": 21118,
+      "name": "西吉(固原)",
+      "pinyin": "xiji"
+    },
+    {
+      "id": 21119,
+      "name": "中阳(吕梁)",
+      "pinyin": "zhongyang"
+    },
+    {
+      "id": 21120,
+      "name": "八宿(昌都)",
+      "pinyin": "basu"
+    },
+    {
+      "id": 21121,
+      "name": "长海(大连)",
+      "pinyin": "changhai"
+    },
+    {
+      "id": 21122,
+      "name": "彭阳(固原)",
+      "pinyin": "pengyang"
+    },
+    {
+      "id": 21123,
+      "name": "万载(宜春)",
+      "pinyin": "wanzai"
+    },
+    {
+      "id": 21124,
+      "name": "永新(吉安)",
+      "pinyin": "yongxin"
+    },
+    {
+      "id": 21125,
+      "name": "马关",
+      "pinyin": "maguan"
+    },
+    {
+      "id": 21126,
+      "name": "平舆(驻马店)",
+      "pinyin": "pingyu"
+    },
+    {
+      "id": 21127,
+      "name": "屏南(宁德)",
+      "pinyin": "pingnan"
+    },
+    {
+      "id": 21128,
+      "name": "通榆(白城)",
+      "pinyin": "tongyu"
+    },
+    {
+      "id": 21129,
+      "name": "卓尼",
+      "pinyin": "zhuoni"
+    },
+    {
+      "id": 21131,
+      "name": "宝清(双鸭山)",
+      "pinyin": "baoqing"
+    },
+    {
+      "id": 21132,
+      "name": "松桃(铜仁)",
+      "pinyin": "songtao"
+    },
+    {
+      "id": 21133,
+      "name": "新蔡(驻马店)",
+      "pinyin": "xincai"
+    },
+    {
+      "id": 21134,
+      "name": "抚顺县(抚顺)",
+      "pinyin": "fushunxian"
+    },
+    {
+      "id": 21136,
+      "name": "玛多",
+      "pinyin": "maduo"
+    },
+    {
+      "id": 21137,
+      "name": "定日(日喀则)",
+      "pinyin": "dingri"
+    },
+    {
+      "id": 21138,
+      "name": "巨野(菏泽)",
+      "pinyin": "juye"
+    },
+    {
+      "id": 21139,
+      "name": "科右中旗",
+      "pinyin": "keyouzhongqi"
+    },
+    {
+      "id": 21140,
+      "name": "潜山(安庆)",
+      "pinyin": "qianshan"
+    },
+    {
+      "id": 21141,
+      "name": "巍山",
+      "pinyin": "weishan"
+    },
+    {
+      "id": 21142,
+      "name": "金平",
+      "pinyin": "jinping"
+    },
+    {
+      "id": 21143,
+      "name": "卫辉(新乡)",
+      "pinyin": "weihui"
+    },
+    {
+      "id": 21145,
+      "name": "芦山(雅安)",
+      "pinyin": "lushan"
+    },
+    {
+      "id": 21146,
+      "name": "牟定",
+      "pinyin": "mouding"
+    },
+    {
+      "id": 21148,
+      "name": "乌审旗(鄂尔多斯)",
+      "pinyin": "wushenqi"
+    },
+    {
+      "id": 21149,
+      "name": "仲巴(日喀则)",
+      "pinyin": "zhongba"
+    },
+    {
+      "id": 21150,
+      "name": "大姚",
+      "pinyin": "dayao"
+    },
+    {
+      "id": 21151,
+      "name": "碌曲",
+      "pinyin": "luqu"
+    },
+    {
+      "id": 21152,
+      "name": "蔚县(张家口)",
+      "pinyin": "yuxian"
+    },
+    {
+      "id": 21153,
+      "name": "阳原(张家口)",
+      "pinyin": "yangyuan"
+    },
+    {
+      "id": 21155,
+      "name": "竹山(十堰)",
+      "pinyin": "zhushan"
+    },
+    {
+      "id": 21156,
+      "name": "大荔(渭南)",
+      "pinyin": "dali"
+    },
+    {
+      "id": 21157,
+      "name": "利辛(亳州)",
+      "pinyin": "lixin"
+    },
+    {
+      "id": 21158,
+      "name": "麟游(宝鸡)",
+      "pinyin": "linyou"
+    },
+    {
+      "id": 21159,
+      "name": "西平(驻马店)",
+      "pinyin": "xiping"
+    },
+    {
+      "id": 21160,
+      "name": "察右中旗(乌兰察布)",
+      "pinyin": "chayouzhongqi"
+    },
+    {
+      "id": 21161,
+      "name": "南皮(沧州)",
+      "pinyin": "nanpi"
+    },
+    {
+      "id": 21162,
+      "name": "阳西(阳江)",
+      "pinyin": "yangxi"
+    },
+    {
+      "id": 21163,
+      "name": "左贡(昌都)",
+      "pinyin": "zuogong"
+    },
+    {
+      "id": 21164,
+      "name": "上蔡(驻马店)",
+      "pinyin": "shangcai"
+    },
+    {
+      "id": 21165,
+      "name": "额敏",
+      "pinyin": "emin"
+    },
+    {
+      "id": 21167,
+      "name": "日土(阿里)",
+      "pinyin": "ritu"
+    },
+    {
+      "id": 21168,
+      "name": "汶上(济宁)",
+      "pinyin": "wenshang"
+    },
+    {
+      "id": 21169,
+      "name": "江达(昌都)",
+      "pinyin": "jiangda"
+    },
+    {
+      "id": 21170,
+      "name": "交城(吕梁)",
+      "pinyin": "jiaocheng"
+    },
+    {
+      "id": 21171,
+      "name": "三都(黔南)",
+      "pinyin": "sandu"
+    },
+    {
+      "id": 21172,
+      "name": "昭平(贺州)",
+      "pinyin": "zhaoping"
+    },
+    {
+      "id": 21173,
+      "name": "正安(遵义)",
+      "pinyin": "zhengan"
+    },
+    {
+      "id": 21174,
+      "name": "民丰",
+      "pinyin": "minfeng"
+    },
+    {
+      "id": 21175,
+      "name": "沁源(长治)",
+      "pinyin": "qinyuan"
+    },
+    {
+      "id": 21176,
+      "name": "昂仁(日喀则)",
+      "pinyin": "angren"
+    },
+    {
+      "id": 21178,
+      "name": "墨竹工卡(拉萨)",
+      "pinyin": "mozhugongka"
+    },
+    {
+      "id": 21179,
+      "name": "黔南",
+      "pinyin": "qiannan"
+    },
+    {
+      "id": 21180,
+      "name": "兰陵(临沂)",
+      "pinyin": "lanling"
+    },
+    {
+      "id": 21181,
+      "name": "高青(淄博)",
+      "pinyin": "gaoqing"
+    },
+    {
+      "id": 21182,
+      "name": "盐源",
+      "pinyin": "yanyuan"
+    },
+    {
+      "id": 21184,
+      "name": "乌拉特中旗(巴彦淖尔)",
+      "pinyin": "wulatezhongqi"
+    },
+    {
+      "id": 21185,
+      "name": "项城(周口)",
+      "pinyin": "xiangcheng"
+    },
+    {
+      "id": 21187,
+      "name": "澄城(渭南)",
+      "pinyin": "chengcheng"
+    },
+    {
+      "id": 21188,
+      "name": "陵川(晋城)",
+      "pinyin": "lingchuan"
+    },
+    {
+      "id": 21189,
+      "name": "孟村(沧州)",
+      "pinyin": "mengcun"
+    },
+    {
+      "id": 21191,
+      "name": "丹棱(眉山)",
+      "pinyin": "danleng"
+    },
+    {
+      "id": 21193,
+      "name": "思南(铜仁)",
+      "pinyin": "sinan"
+    },
+    {
+      "id": 21194,
+      "name": "中牟(郑州)",
+      "pinyin": "zhongmou"
+    },
+    {
+      "id": 21195,
+      "name": "集贤(双鸭山)",
+      "pinyin": "jixian"
+    },
+    {
+      "id": 21196,
+      "name": "永昌(金昌)",
+      "pinyin": "yongchang"
+    },
+    {
+      "id": 21197,
+      "name": "卓资(乌兰察布)",
+      "pinyin": "zhuozi"
+    },
+    {
+      "id": 21198,
+      "name": "磴口(巴彦淖尔)",
+      "pinyin": "dengkou"
+    },
+    {
+      "id": 21199,
+      "name": "黔西(毕节)",
+      "pinyin": "qianxi"
+    },
+    {
+      "id": 21200,
+      "name": "新巴尔虎左旗(呼伦贝尔)",
+      "pinyin": "xinbaerhuzuoqi"
+    },
+    {
+      "id": 21201,
+      "name": "府谷(榆林)",
+      "pinyin": "fugu"
+    },
+    {
+      "id": 21202,
+      "name": "宝兴(雅安)",
+      "pinyin": "baoxing"
+    },
+    {
+      "id": 21203,
+      "name": "习水(遵义)",
+      "pinyin": "xishui"
+    },
+    {
+      "id": 21204,
+      "name": "新邵(邵阳)",
+      "pinyin": "xinshao"
+    },
+    {
+      "id": 21205,
+      "name": "新丰(韶关)",
+      "pinyin": "xinfeng"
+    },
+    {
+      "id": 21206,
+      "name": "修水(九江)",
+      "pinyin": "xiushui"
+    },
+    {
+      "id": 21207,
+      "name": "浚县(鹤壁)",
+      "pinyin": "junxian"
+    },
+    {
+      "id": 21208,
+      "name": "勐腊",
+      "pinyin": "mengla"
+    },
+    {
+      "id": 21209,
+      "name": "天镇(大同)",
+      "pinyin": "tianzhen"
+    },
+    {
+      "id": 21210,
+      "name": "五台(忻州)",
+      "pinyin": "wutai"
+    },
+    {
+      "id": 21211,
+      "name": "奉新(宜春)",
+      "pinyin": "fengxin"
+    },
+    {
+      "id": 21212,
+      "name": "霍州(临汾)",
+      "pinyin": "huozhou"
+    },
+    {
+      "id": 21213,
+      "name": "合江(泸州)",
+      "pinyin": "hejiang"
+    },
+    {
+      "id": 21215,
+      "name": "大悟(孝感)",
+      "pinyin": "dawu"
+    },
+    {
+      "id": 21216,
+      "name": "始兴(韶关)",
+      "pinyin": "shixing"
+    },
+    {
+      "id": 21217,
+      "name": "衡东(衡阳)",
+      "pinyin": "hengdong"
+    },
+    {
+      "id": 21218,
+      "name": "鲁甸(昭通)",
+      "pinyin": "ludian"
+    },
+    {
+      "id": 21219,
+      "name": "临湘(岳阳)",
+      "pinyin": "linxiang"
+    },
+    {
+      "id": 21220,
+      "name": "巧家(昭通)",
+      "pinyin": "qiaojia"
+    },
+    {
+      "id": 21221,
+      "name": "永丰(吉安)",
+      "pinyin": "yongfeng"
+    },
+    {
+      "id": 21223,
+      "name": "浦城(南平)",
+      "pinyin": "pucheng"
+    },
+    {
+      "id": 21225,
+      "name": "久治",
+      "pinyin": "jiuzhi"
+    },
+    {
+      "id": 21226,
+      "name": "内黄(安阳)",
+      "pinyin": "neihuang"
+    },
+    {
+      "id": 21227,
+      "name": "宜川(延安)",
+      "pinyin": "yichuan"
+    },
+    {
+      "id": 21229,
+      "name": "金溪(抚州)",
+      "pinyin": "jinxi"
+    },
+    {
+      "id": 21230,
+      "name": "阜宁(盐城)",
+      "pinyin": "funing"
+    },
+    {
+      "id": 21231,
+      "name": "剑河",
+      "pinyin": "jianhe"
+    },
+    {
+      "id": 21232,
+      "name": "武胜(广安)",
+      "pinyin": "wusheng"
+    },
+    {
+      "id": 21233,
+      "name": "东丰(辽源)",
+      "pinyin": "dongfeng"
+    },
+    {
+      "id": 21234,
+      "name": "凌海(锦州)",
+      "pinyin": "linghai"
+    },
+    {
+      "id": 21235,
+      "name": "奈曼旗(通辽)",
+      "pinyin": "naimanqi"
+    },
+    {
+      "id": 21236,
+      "name": "镇平(南阳)",
+      "pinyin": "zhenping"
+    },
+    {
+      "id": 21237,
+      "name": "辽阳县(辽阳)",
+      "pinyin": "liaoyangxian"
+    },
+    {
+      "id": 21238,
+      "name": "崇义(赣州)",
+      "pinyin": "chongyi"
+    },
+    {
+      "id": 21239,
+      "name": "武宁(九江)",
+      "pinyin": "wuning"
+    },
+    {
+      "id": 21240,
+      "name": "原阳(新乡)",
+      "pinyin": "yuanyang"
+    },
+    {
+      "id": 21242,
+      "name": "肇源(大庆)",
+      "pinyin": "zhaoyuan"
+    },
+    {
+      "id": 21243,
+      "name": "铅山(上饶)",
+      "pinyin": "yanshan"
+    },
+    {
+      "id": 21244,
+      "name": "通海(玉溪)",
+      "pinyin": "tonghai"
+    },
+    {
+      "id": 21245,
+      "name": "宜城(襄阳)",
+      "pinyin": "yicheng"
+    },
+    {
+      "id": 21246,
+      "name": "福贡",
+      "pinyin": "fugong"
+    },
+    {
+      "id": 21247,
+      "name": "石渠",
+      "pinyin": "shiqu"
+    },
+    {
+      "id": 21248,
+      "name": "盐亭(绵阳)",
+      "pinyin": "yanting"
+    },
+    {
+      "id": 21249,
+      "name": "阜康",
+      "pinyin": "fukang"
+    },
+    {
+      "id": 21250,
+      "name": "筠连(宜宾)",
+      "pinyin": "junlian"
+    },
+    {
+      "id": 21251,
+      "name": "湄潭(遵义)",
+      "pinyin": "meitan"
+    },
+    {
+      "id": 21252,
+      "name": "云县(临沧)",
+      "pinyin": "yunxian"
+    },
+    {
+      "id": 21253,
+      "name": "枣强(衡水)",
+      "pinyin": "zaoqiang"
+    },
+    {
+      "id": 21255,
+      "name": "海丰(汕尾)",
+      "pinyin": "haifeng"
+    },
+    {
+      "id": 21256,
+      "name": "横县(南宁)",
+      "pinyin": "hengxian"
+    },
+    {
+      "id": 21257,
+      "name": "岷县(定西)",
+      "pinyin": "minxian"
+    },
+    {
+      "id": 21258,
+      "name": "唐县(保定)",
+      "pinyin": "tangxian"
+    },
+    {
+      "id": 21260,
+      "name": "昔阳(晋中)",
+      "pinyin": "xiyang"
+    },
+    {
+      "id": 21261,
+      "name": "沙洋(荆门)",
+      "pinyin": "shayang"
+    },
+    {
+      "id": 21262,
+      "name": "红河县",
+      "pinyin": "honghexian"
+    },
+    {
+      "id": 21263,
+      "name": "肇州(大庆)",
+      "pinyin": "zhaozhou"
+    },
+    {
+      "id": 21264,
+      "name": "昌宁(保山)",
+      "pinyin": "changning"
+    },
+    {
+      "id": 21265,
+      "name": "凉城(乌兰察布)",
+      "pinyin": "liangcheng"
+    },
+    {
+      "id": 21266,
+      "name": "江城(普洱)",
+      "pinyin": "jiangcheng"
+    },
+    {
+      "id": 21267,
+      "name": "弥渡",
+      "pinyin": "midu"
+    },
+    {
+      "id": 21269,
+      "name": "阿拉善左旗",
+      "pinyin": "alashanzuoqi"
+    },
+    {
+      "id": 21270,
+      "name": "兰坪",
+      "pinyin": "lanping"
+    },
+    {
+      "id": 21271,
+      "name": "灵台(平凉)",
+      "pinyin": "lingtai"
+    },
+    {
+      "id": 21272,
+      "name": "会理",
+      "pinyin": "huili"
+    },
+    {
+      "id": 21273,
+      "name": "合阳(渭南)",
+      "pinyin": "heyang"
+    },
+    {
+      "id": 21274,
+      "name": "攸县(株洲)",
+      "pinyin": "youxian"
+    },
+    {
+      "id": 21275,
+      "name": "永清(廊坊)",
+      "pinyin": "yongqing"
+    },
+    {
+      "id": 21276,
+      "name": "乐安(抚州)",
+      "pinyin": "lean"
+    },
+    {
+      "id": 21277,
+      "name": "石城(赣州)",
+      "pinyin": "shicheng"
+    },
+    {
+      "id": 21279,
+      "name": "左权(晋中)",
+      "pinyin": "zuoquan"
+    },
+    {
+      "id": 21280,
+      "name": "道真(遵义)",
+      "pinyin": "daozhen"
+    },
+    {
+      "id": 21281,
+      "name": "环县(庆阳)",
+      "pinyin": "huanxian"
+    },
+    {
+      "id": 21282,
+      "name": "南乐(濮阳)",
+      "pinyin": "nanle"
+    },
+    {
+      "id": 21283,
+      "name": "西峡(南阳)",
+      "pinyin": "xixia"
+    },
+    {
+      "id": 21284,
+      "name": "扎赉特旗",
+      "pinyin": "zhalaiteqi"
+    },
+    {
+      "id": 21285,
+      "name": "浪卡子",
+      "pinyin": "langqiazi"
+    },
+    {
+      "id": 21286,
+      "name": "雷山",
+      "pinyin": "leishan"
+    },
+    {
+      "id": 21287,
+      "name": "兴仁",
+      "pinyin": "xingren"
+    },
+    {
+      "id": 21288,
+      "name": "阿克陶",
+      "pinyin": "aketao"
+    },
+    {
+      "id": 21289,
+      "name": "改则(阿里)",
+      "pinyin": "gaize"
+    },
+    {
+      "id": 21290,
+      "name": "札达(阿里)",
+      "pinyin": "zhada"
+    },
+    {
+      "id": 21291,
+      "name": "常宁(衡阳)",
+      "pinyin": "changning"
+    },
+    {
+      "id": 21292,
+      "name": "喜德",
+      "pinyin": "xide"
+    },
+    {
+      "id": 21293,
+      "name": "犍为(乐山)",
+      "pinyin": "qianwei"
+    },
+    {
+      "id": 21294,
+      "name": "平乐(桂林)",
+      "pinyin": "pingle"
+    },
+    {
+      "id": 21296,
+      "name": "岑溪(梧州)",
+      "pinyin": "cenxi"
+    },
+    {
+      "id": 21297,
+      "name": "鹿邑(周口)",
+      "pinyin": "luyi"
+    },
+    {
+      "id": 21298,
+      "name": "芮城(运城)",
+      "pinyin": "ruicheng"
+    },
+    {
+      "id": 21300,
+      "name": "察右后旗(乌兰察布)",
+      "pinyin": "chayouhouqi"
+    },
+    {
+      "id": 21301,
+      "name": "南部县(南充)",
+      "pinyin": "nanbuxian"
+    },
+    {
+      "id": 21302,
+      "name": "本溪县(本溪)",
+      "pinyin": "benxixian"
+    },
+    {
+      "id": 21303,
+      "name": "德江(铜仁)",
+      "pinyin": "dejiang"
+    },
+    {
+      "id": 21304,
+      "name": "恭城(桂林)",
+      "pinyin": "gongcheng"
+    },
+    {
+      "id": 21306,
+      "name": "高县(宜宾)",
+      "pinyin": "gaoxian"
+    },
+    {
+      "id": 21307,
+      "name": "广平(邯郸)",
+      "pinyin": "guangping"
+    },
+    {
+      "id": 21308,
+      "name": "霍邱(六安)",
+      "pinyin": "huoqiu"
+    },
+    {
+      "id": 21309,
+      "name": "隆德(固原)",
+      "pinyin": "longde"
+    },
+    {
+      "id": 21311,
+      "name": "莫力达瓦旗(呼伦贝尔)",
+      "pinyin": "molidawaqi"
+    },
+    {
+      "id": 21312,
+      "name": "易县(保定)",
+      "pinyin": "yixian"
+    },
+    {
+      "id": 21313,
+      "name": "镇雄(昭通)",
+      "pinyin": "zhenxiong"
+    },
+    {
+      "id": 21314,
+      "name": "甘南县(齐齐哈尔)",
+      "pinyin": "gannanxian"
+    },
+    {
+      "id": 21315,
+      "name": "丁青(昌都)",
+      "pinyin": "dingqing"
+    },
+    {
+      "id": 21317,
+      "name": "会宁(白银)",
+      "pinyin": "huining"
+    },
+    {
+      "id": 21318,
+      "name": "宁县(庆阳)",
+      "pinyin": "ningxian"
+    },
+    {
+      "id": 21319,
+      "name": "云霄(漳州)",
+      "pinyin": "yunxiao"
+    },
+    {
+      "id": 21320,
+      "name": "清丰(濮阳)",
+      "pinyin": "qingfeng"
+    },
+    {
+      "id": 21321,
+      "name": "策勒",
+      "pinyin": "cele"
+    },
+    {
+      "id": 21322,
+      "name": "武强(衡水)",
+      "pinyin": "wuqiang"
+    },
+    {
+      "id": 21323,
+      "name": "肃南(张掖)",
+      "pinyin": "sunan"
+    },
+    {
+      "id": 21324,
+      "name": "庄浪(平凉)",
+      "pinyin": "zhuanglang"
+    },
+    {
+      "id": 21326,
+      "name": "浮山(临汾)",
+      "pinyin": "fushan"
+    },
+    {
+      "id": 21327,
+      "name": "嘉禾(郴州)",
+      "pinyin": "jiahe"
+    },
+    {
+      "id": 21328,
+      "name": "平利(安康)",
+      "pinyin": "pingli"
+    },
+    {
+      "id": 21329,
+      "name": "普格",
+      "pinyin": "puge"
+    },
+    {
+      "id": 21330,
+      "name": "迁西(唐山)",
+      "pinyin": "qianxi"
+    },
+    {
+      "id": 21331,
+      "name": "临邑(德州)",
+      "pinyin": "linyi"
+    },
+    {
+      "id": 21332,
+      "name": "宁都(赣州)",
+      "pinyin": "ningdu"
+    },
+    {
+      "id": 21333,
+      "name": "顺平(保定)",
+      "pinyin": "shunping"
+    },
+    {
+      "id": 21334,
+      "name": "墨江(普洱)",
+      "pinyin": "mojiang"
+    },
+    {
+      "id": 21335,
+      "name": "温宿",
+      "pinyin": "wensu"
+    },
+    {
+      "id": 21336,
+      "name": "和硕",
+      "pinyin": "heshuo"
+    },
+    {
+      "id": 21339,
+      "name": "额济纳旗",
+      "pinyin": "ejinaqi"
+    },
+    {
+      "id": 21341,
+      "name": "苏尼特左旗(锡林郭勒盟)",
+      "pinyin": "sunitezuoqi"
+    },
+    {
+      "id": 21342,
+      "name": "托克逊(吐鲁番)",
+      "pinyin": "tuokexun"
+    },
+    {
+      "id": 21343,
+      "name": "冠县(聊城)",
+      "pinyin": "guanxian"
+    },
+    {
+      "id": 21344,
+      "name": "西盟(普洱)",
+      "pinyin": "ximeng"
+    },
+    {
+      "id": 21345,
+      "name": "永善(昭通)",
+      "pinyin": "yongshan"
+    },
+    {
+      "id": 21346,
+      "name": "宁南",
+      "pinyin": "ningnan"
+    },
+    {
+      "id": 21347,
+      "name": "翁源(韶关)",
+      "pinyin": "wengyuan"
+    },
+    {
+      "id": 21348,
+      "name": "新龙",
+      "pinyin": "xinlong"
+    },
+    {
+      "id": 21349,
+      "name": "房县(十堰)",
+      "pinyin": "fangxian"
+    },
+    {
+      "id": 21350,
+      "name": "工布江达(林芝)",
+      "pinyin": "gongbujiangda"
+    },
+    {
+      "id": 21351,
+      "name": "莘县(聊城)",
+      "pinyin": "shenxian"
+    },
+    {
+      "id": 21352,
+      "name": "大宁(临汾)",
+      "pinyin": "daning"
+    },
+    {
+      "id": 21354,
+      "name": "霍城",
+      "pinyin": "huocheng"
+    },
+    {
+      "id": 21356,
+      "name": "上思(防城港)",
+      "pinyin": "shangsi"
+    },
+    {
+      "id": 21357,
+      "name": "元江(玉溪)",
+      "pinyin": "yuanjiang"
+    },
+    {
+      "id": 21358,
+      "name": "喀什",
+      "pinyin": "kashi"
+    },
+    {
+      "id": 21359,
+      "name": "广宗(邢台)",
+      "pinyin": "guangzong"
+    },
+    {
+      "id": 21360,
+      "name": "玉龙(丽江)",
+      "pinyin": "yulong"
+    },
+    {
+      "id": 21363,
+      "name": "洛隆(昌都)",
+      "pinyin": "luolong"
+    },
+    {
+      "id": 21365,
+      "name": "松溪(南平)",
+      "pinyin": "songxi"
+    },
+    {
+      "id": 21366,
+      "name": "道孚",
+      "pinyin": "daofu"
+    },
+    {
+      "id": 21367,
+      "name": "留坝(汉中)",
+      "pinyin": "liuba"
+    },
+    {
+      "id": 21368,
+      "name": "米林(林芝)",
+      "pinyin": "milin"
+    },
+    {
+      "id": 21369,
+      "name": "红安(黄冈)",
+      "pinyin": "hongan"
+    },
+    {
+      "id": 21370,
+      "name": "隆子",
+      "pinyin": "longzi"
+    },
+    {
+      "id": 21371,
+      "name": "山阴(朔州)",
+      "pinyin": "shanyin"
+    },
+    {
+      "id": 21372,
+      "name": "荥经(雅安)",
+      "pinyin": "yingjing"
+    },
+    {
+      "id": 21373,
+      "name": "正蓝旗(锡林郭勒盟)",
+      "pinyin": "zhenglanqi"
+    },
+    {
+      "id": 21374,
+      "name": "巴彦(哈尔滨)",
+      "pinyin": "bayan"
+    },
+    {
+      "id": 21375,
+      "name": "佛冈(清远)",
+      "pinyin": "fogang"
+    },
+    {
+      "id": 21376,
+      "name": "海原(中卫)",
+      "pinyin": "haiyuan"
+    },
+    {
+      "id": 21377,
+      "name": "娄烦(太原)",
+      "pinyin": "loufan"
+    },
+    {
+      "id": 21378,
+      "name": "渭源(定西)",
+      "pinyin": "weiyuan"
+    },
+    {
+      "id": 21379,
+      "name": "阿克苏市",
+      "pinyin": "akesushi"
+    },
+    {
+      "id": 21380,
+      "name": "寿县(淮南)",
+      "pinyin": "shouxian"
+    },
+    {
+      "id": 21381,
+      "name": "永德(临沧)",
+      "pinyin": "yongde"
+    },
+    {
+      "id": 21382,
+      "name": "祁阳(永州)",
+      "pinyin": "qiyang"
+    },
+    {
+      "id": 21383,
+      "name": "沅江(益阳)",
+      "pinyin": "yuanjiang"
+    },
+    {
+      "id": 21384,
+      "name": "朝阳县(朝阳)",
+      "pinyin": "chaoyangxian"
+    },
+    {
+      "id": 21385,
+      "name": "费县(临沂)",
+      "pinyin": "feixian"
+    },
+    {
+      "id": 21386,
+      "name": "富顺(自贡)",
+      "pinyin": "fushun"
+    },
+    {
+      "id": 21388,
+      "name": "正阳(驻马店)",
+      "pinyin": "zhengyang"
+    },
+    {
+      "id": 21389,
+      "name": "河南蒙古族自治县",
+      "pinyin": "henanmengguzuzizhixian"
+    },
+    {
+      "id": 21390,
+      "name": "保靖",
+      "pinyin": "baojing"
+    },
+    {
+      "id": 21391,
+      "name": "杭锦旗(鄂尔多斯)",
+      "pinyin": "hangjinqi"
+    },
+    {
+      "id": 21393,
+      "name": "峡江(吉安)",
+      "pinyin": "xiajiang"
+    },
+    {
+      "id": 21394,
+      "name": "志丹(延安)",
+      "pinyin": "zhidan"
+    },
+    {
+      "id": 21396,
+      "name": "达日",
+      "pinyin": "dari"
+    },
+    {
+      "id": 21397,
+      "name": "壶关(长治)",
+      "pinyin": "huguan"
+    },
+    {
+      "id": 21398,
+      "name": "上栗(萍乡)",
+      "pinyin": "shangli"
+    },
+    {
+      "id": 21399,
+      "name": "鄄城(菏泽)",
+      "pinyin": "juancheng"
+    },
+    {
+      "id": 21400,
+      "name": "沅陵(怀化)",
+      "pinyin": "yuanling"
+    },
+    {
+      "id": 21401,
+      "name": "安多(那曲)",
+      "pinyin": "anduo"
+    },
+    {
+      "id": 21402,
+      "name": "敖汉旗(赤峰)",
+      "pinyin": "aohanqi"
+    },
+    {
+      "id": 21403,
+      "name": "巴青(那曲)",
+      "pinyin": "baqing"
+    },
+    {
+      "id": 21405,
+      "name": "乳源(韶关)",
+      "pinyin": "ruyuan"
+    },
+    {
+      "id": 21406,
+      "name": "东乌旗(锡林郭勒盟)",
+      "pinyin": "dongwuqi"
+    },
+    {
+      "id": 21407,
+      "name": "新平(玉溪)",
+      "pinyin": "xinping"
+    },
+    {
+      "id": 21408,
+      "name": "江口(铜仁)",
+      "pinyin": "jiangkou"
+    },
+    {
+      "id": 21409,
+      "name": "石台(池州)",
+      "pinyin": "shitai"
+    },
+    {
+      "id": 21410,
+      "name": "涡阳(亳州)",
+      "pinyin": "woyang"
+    },
+    {
+      "id": 21411,
+      "name": "周至(西安)",
+      "pinyin": "zhouzhi"
+    },
+    {
+      "id": 21413,
+      "name": "乡宁(临汾)",
+      "pinyin": "xiangning"
+    },
+    {
+      "id": 21415,
+      "name": "乌拉特前旗(巴彦淖尔)",
+      "pinyin": "wulateqianqi"
+    },
+    {
+      "id": 21416,
+      "name": "南靖(漳州)",
+      "pinyin": "nanjing"
+    },
+    {
+      "id": 21417,
+      "name": "靖西(百色)",
+      "pinyin": "jingxi"
+    },
+    {
+      "id": 21418,
+      "name": "宁津(德州)",
+      "pinyin": "ningjin"
+    },
+    {
+      "id": 21419,
+      "name": "兴海",
+      "pinyin": "xinghai"
+    },
+    {
+      "id": 21420,
+      "name": "嘉荫(伊春)",
+      "pinyin": "jiayin"
+    },
+    {
+      "id": 21421,
+      "name": "长沙县(长沙)",
+      "pinyin": "changshaxian"
+    },
+    {
+      "id": 21423,
+      "name": "静宁(平凉)",
+      "pinyin": "jingning"
+    },
+    {
+      "id": 21425,
+      "name": "万全(张家口)",
+      "pinyin": "wanquan"
+    },
+    {
+      "id": 21426,
+      "name": "五寨(忻州)",
+      "pinyin": "wuzhai"
+    },
+    {
+      "id": 21427,
+      "name": "宜阳(洛阳)",
+      "pinyin": "yiyang"
+    },
+    {
+      "id": 21428,
+      "name": "萧县(宿州)",
+      "pinyin": "xiaoxian"
+    },
+    {
+      "id": 21429,
+      "name": "永兴(郴州)",
+      "pinyin": "yongxing"
+    },
+    {
+      "id": 21431,
+      "name": "秭归(宜昌)",
+      "pinyin": "zigui"
+    },
+    {
+      "id": 21432,
+      "name": "鄂托克前旗(鄂尔多斯)",
+      "pinyin": "etuokeqianqi"
+    },
+    {
+      "id": 21433,
+      "name": "宜章(郴州)",
+      "pinyin": "yizhang"
+    },
+    {
+      "id": 21434,
+      "name": "灵璧(宿州)",
+      "pinyin": "lingbi"
+    },
+    {
+      "id": 21435,
+      "name": "秦安(天水)",
+      "pinyin": "qinan"
+    },
+    {
+      "id": 21436,
+      "name": "织金(毕节)",
+      "pinyin": "zhijin"
+    },
+    {
+      "id": 21437,
+      "name": "灌云(连云港)",
+      "pinyin": "guanyun"
+    },
+    {
+      "id": 21439,
+      "name": "麦盖提(喀什)",
+      "pinyin": "maigaiti"
+    },
+    {
+      "id": 21440,
+      "name": "南华",
+      "pinyin": "nanhua"
+    },
+    {
+      "id": 21442,
+      "name": "石首(荆州)",
+      "pinyin": "shishou"
+    },
+    {
+      "id": 21443,
+      "name": "武定",
+      "pinyin": "wuding"
+    },
+    {
+      "id": 21444,
+      "name": "旬邑(咸阳)",
+      "pinyin": "xunyi"
+    },
+    {
+      "id": 21445,
+      "name": "保康(襄阳)",
+      "pinyin": "baokang"
+    },
+    {
+      "id": 21446,
+      "name": "华坪(丽江)",
+      "pinyin": "huaping"
+    },
+    {
+      "id": 21447,
+      "name": "文县(陇南)",
+      "pinyin": "wenxian"
+    },
+    {
+      "id": 21448,
+      "name": "馆陶(邯郸)",
+      "pinyin": "guantao"
+    },
+    {
+      "id": 21449,
+      "name": "文水(吕梁)",
+      "pinyin": "wenshui"
+    },
+    {
+      "id": 21450,
+      "name": "临武(郴州)",
+      "pinyin": "linwu"
+    },
+    {
+      "id": 21451,
+      "name": "桃源(常德)",
+      "pinyin": "taoyuan"
+    },
+    {
+      "id": 21452,
+      "name": "永春(泉州)",
+      "pinyin": "yongchun"
+    },
+    {
+      "id": 21453,
+      "name": "越西",
+      "pinyin": "yuexi"
+    },
+    {
+      "id": 21454,
+      "name": "张家川(天水)",
+      "pinyin": "zhangjiachuan"
+    },
+    {
+      "id": 21456,
+      "name": "盘山(盘锦)",
+      "pinyin": "panshan"
+    },
+    {
+      "id": 21457,
+      "name": "汾西(临汾)",
+      "pinyin": "fenxi"
+    },
+    {
+      "id": 21458,
+      "name": "夹江(乐山)",
+      "pinyin": "jiajiang"
+    },
+    {
+      "id": 21459,
+      "name": "泸溪",
+      "pinyin": "luxi"
+    },
+    {
+      "id": 21460,
+      "name": "明溪(三明)",
+      "pinyin": "mingxi"
+    },
+    {
+      "id": 21461,
+      "name": "昭苏",
+      "pinyin": "zhaosu"
+    },
+    {
+      "id": 21462,
+      "name": "安仁(郴州)",
+      "pinyin": "anren"
+    },
+    {
+      "id": 21463,
+      "name": "都昌(九江)",
+      "pinyin": "duchang"
+    },
+    {
+      "id": 21464,
+      "name": "抚松(白山)",
+      "pinyin": "fusong"
+    },
+    {
+      "id": 21465,
+      "name": "共青城(九江)",
+      "pinyin": "gongqingcheng"
+    },
+    {
+      "id": 21466,
+      "name": "津市(常德)",
+      "pinyin": "jinshi"
+    },
+    {
+      "id": 21467,
+      "name": "临县(吕梁)",
+      "pinyin": "linxian"
+    },
+    {
+      "id": 21469,
+      "name": "博爱(焦作)",
+      "pinyin": "boai"
+    },
+    {
+      "id": 21471,
+      "name": "凌云(百色)",
+      "pinyin": "lingyun"
+    },
+    {
+      "id": 21473,
+      "name": "岳西(安庆)",
+      "pinyin": "yuexi"
+    },
+    {
+      "id": 21474,
+      "name": "勐海",
+      "pinyin": "menghai"
+    },
+    {
+      "id": 21475,
+      "name": "华容(岳阳)",
+      "pinyin": "huarong"
+    },
+    {
+      "id": 21476,
+      "name": "金阳",
+      "pinyin": "jinyang"
+    },
+    {
+      "id": 21477,
+      "name": "贵南",
+      "pinyin": "guinan"
+    },
+    {
+      "id": 21478,
+      "name": "泾源(固原)",
+      "pinyin": "jingyuan"
+    },
+    {
+      "id": 21479,
+      "name": "柳城(柳州)",
+      "pinyin": "liucheng"
+    },
+    {
+      "id": 21481,
+      "name": "纳雍(毕节)",
+      "pinyin": "nayong"
+    },
+    {
+      "id": 21483,
+      "name": "吴起(延安)",
+      "pinyin": "wuqi"
+    },
+    {
+      "id": 21485,
+      "name": "赞皇(石家庄)",
+      "pinyin": "zanhuang"
+    },
+    {
+      "id": 21486,
+      "name": "定边(榆林)",
+      "pinyin": "dingbian"
+    },
+    {
+      "id": 21487,
+      "name": "兰西(绥化)",
+      "pinyin": "lanxi"
+    },
+    {
+      "id": 21488,
+      "name": "肥西(合肥)",
+      "pinyin": "feixi"
+    },
+    {
+      "id": 21490,
+      "name": "文安(廊坊)",
+      "pinyin": "wenan"
+    },
+    {
+      "id": 21491,
+      "name": "郸城(周口)",
+      "pinyin": "dancheng"
+    },
+    {
+      "id": 21492,
+      "name": "屏山(宜宾)",
+      "pinyin": "pingshan"
+    },
+    {
+      "id": 21493,
+      "name": "环江(河池)",
+      "pinyin": "huanjiang"
+    },
+    {
+      "id": 21494,
+      "name": "建平(朝阳)",
+      "pinyin": "jianping"
+    },
+    {
+      "id": 21496,
+      "name": "晴隆",
+      "pinyin": "qinglong"
+    },
+    {
+      "id": 21497,
+      "name": "阜城(衡水)",
+      "pinyin": "fucheng"
+    },
+    {
+      "id": 21498,
+      "name": "尼玛(那曲)",
+      "pinyin": "nima"
+    },
+    {
+      "id": 21499,
+      "name": "镇宁(安顺)",
+      "pinyin": "zhenning"
+    },
+    {
+      "id": 21500,
+      "name": "宜丰(宜春)",
+      "pinyin": "yifeng"
+    },
+    {
+      "id": 21501,
+      "name": "凤台(淮南)",
+      "pinyin": "fengtai"
+    },
+    {
+      "id": 21502,
+      "name": "湖口(九江)",
+      "pinyin": "hukou"
+    },
+    {
+      "id": 21503,
+      "name": "神池(忻州)",
+      "pinyin": "shenchi"
+    },
+    {
+      "id": 21504,
+      "name": "通许(开封)",
+      "pinyin": "tongxu"
+    },
+    {
+      "id": 21505,
+      "name": "孝昌(孝感)",
+      "pinyin": "xiaochang"
+    },
+    {
+      "id": 21506,
+      "name": "襄城(许昌)",
+      "pinyin": "xiangcheng"
+    },
+    {
+      "id": 21507,
+      "name": "界首(阜阳)",
+      "pinyin": "jieshou"
+    },
+    {
+      "id": 21508,
+      "name": "永顺",
+      "pinyin": "yongshun"
+    },
+    {
+      "id": 21509,
+      "name": "连江(福州)",
+      "pinyin": "lianjiang"
+    },
+    {
+      "id": 21510,
+      "name": "鱼台(济宁)",
+      "pinyin": "yutai"
+    },
+    {
+      "id": 21511,
+      "name": "祁县(晋中)",
+      "pinyin": "qixian"
+    },
+    {
+      "id": 21512,
+      "name": "崇阳(咸宁)",
+      "pinyin": "chongyang"
+    },
+    {
+      "id": 21513,
+      "name": "翼城(临汾)",
+      "pinyin": "yicheng"
+    },
+    {
+      "id": 21515,
+      "name": "商河(济南)",
+      "pinyin": "shanghe"
+    },
+    {
+      "id": 21516,
+      "name": "诏安(漳州)",
+      "pinyin": "zhaoan"
+    },
+    {
+      "id": 21518,
+      "name": "贡嘎",
+      "pinyin": "gongga"
+    },
+    {
+      "id": 21519,
+      "name": "那坡(百色)",
+      "pinyin": "napo"
+    },
+    {
+      "id": 21520,
+      "name": "桦川(佳木斯)",
+      "pinyin": "huachuan"
+    },
+    {
+      "id": 21521,
+      "name": "龙井",
+      "pinyin": "longjing"
+    },
+    {
+      "id": 21522,
+      "name": "垣曲(运城)",
+      "pinyin": "yuanqu"
+    },
+    {
+      "id": 21523,
+      "name": "科左中旗(通辽)",
+      "pinyin": "kezuozhongqi"
+    },
+    {
+      "id": 21524,
+      "name": "临泉(阜阳)",
+      "pinyin": "linquan"
+    },
+    {
+      "id": 21525,
+      "name": "陇川",
+      "pinyin": "longchuan"
+    },
+    {
+      "id": 21526,
+      "name": "罗山(信阳)",
+      "pinyin": "luoshan"
+    },
+    {
+      "id": 21527,
+      "name": "奇台",
+      "pinyin": "qitai"
+    },
+    {
+      "id": 21528,
+      "name": "嵩明(昆明)",
+      "pinyin": "songming"
+    },
+    {
+      "id": 21529,
+      "name": "五河(蚌埠)",
+      "pinyin": "wuhe"
+    },
+    {
+      "id": 21530,
+      "name": "鹤庆",
+      "pinyin": "heqing"
+    },
+    {
+      "id": 21531,
+      "name": "霍山(六安)",
+      "pinyin": "huoshan"
+    },
+    {
+      "id": 21532,
+      "name": "嘉鱼(咸宁)",
+      "pinyin": "jiayu"
+    },
+    {
+      "id": 21533,
+      "name": "类乌齐(昌都)",
+      "pinyin": "leiwuqi"
+    },
+    {
+      "id": 21534,
+      "name": "镇沅(普洱)",
+      "pinyin": "zhenyuan"
+    },
+    {
+      "id": 21535,
+      "name": "徽县(陇南)",
+      "pinyin": "huixian"
+    },
+    {
+      "id": 21536,
+      "name": "康马(日喀则)",
+      "pinyin": "kangma"
+    },
+    {
+      "id": 21537,
+      "name": "库伦旗(通辽)",
+      "pinyin": "kulunqi"
+    },
+    {
+      "id": 21538,
+      "name": "索县(那曲)",
+      "pinyin": "suoxian"
+    },
+    {
+      "id": 21539,
+      "name": "望谟",
+      "pinyin": "wangmo"
+    },
+    {
+      "id": 21540,
+      "name": "英吉沙(喀什)",
+      "pinyin": "yingjisha"
+    },
+    {
+      "id": 21541,
+      "name": "连南(清远)",
+      "pinyin": "liannan"
+    },
+    {
+      "id": 21542,
+      "name": "于都(赣州)",
+      "pinyin": "yudu"
+    },
+    {
+      "id": 21543,
+      "name": "榆中(兰州)",
+      "pinyin": "yuzhong"
+    },
+    {
+      "id": 21544,
+      "name": "珙县(宜宾)",
+      "pinyin": "gongxian"
+    },
+    {
+      "id": 21545,
+      "name": "叶县(平顶山)",
+      "pinyin": "yexian"
+    },
+    {
+      "id": 21546,
+      "name": "贡山",
+      "pinyin": "gongshan"
+    },
+    {
+      "id": 21547,
+      "name": "廉江(湛江)",
+      "pinyin": "lianjiang"
+    },
+    {
+      "id": 21548,
+      "name": "临颍(漯河)",
+      "pinyin": "linying"
+    },
+    {
+      "id": 21549,
+      "name": "萨嘎(日喀则)",
+      "pinyin": "saga"
+    },
+    {
+      "id": 21550,
+      "name": "连平(河源)",
+      "pinyin": "lianping"
+    },
+    {
+      "id": 21551,
+      "name": "新源",
+      "pinyin": "xinyuan"
+    },
+    {
+      "id": 21552,
+      "name": "仪陇(南充)",
+      "pinyin": "yilong"
+    },
+    {
+      "id": 21553,
+      "name": "蠡县(保定)",
+      "pinyin": "lixian"
+    },
+    {
+      "id": 21555,
+      "name": "青川(广元)",
+      "pinyin": "qingchuan"
+    },
+    {
+      "id": 21557,
+      "name": "巴塘",
+      "pinyin": "batang"
+    },
+    {
+      "id": 21558,
+      "name": "木里",
+      "pinyin": "muli"
+    },
+    {
+      "id": 21559,
+      "name": "平乡(邢台)",
+      "pinyin": "pingxiang"
+    },
+    {
+      "id": 21560,
+      "name": "仙游(莆田)",
+      "pinyin": "xianyou"
+    },
+    {
+      "id": 21561,
+      "name": "蓝山(永州)",
+      "pinyin": "lanshan"
+    },
+    {
+      "id": 21562,
+      "name": "民勤(武威)",
+      "pinyin": "minqin"
+    },
+    {
+      "id": 21563,
+      "name": "曲沃(临汾)",
+      "pinyin": "quwo"
+    },
+    {
+      "id": 21564,
+      "name": "什邡(德阳)",
+      "pinyin": "shifang"
+    },
+    {
+      "id": 21565,
+      "name": "寻甸(昆明)",
+      "pinyin": "xundian"
+    },
+    {
+      "id": 21566,
+      "name": "东兰(河池)",
+      "pinyin": "donglan"
+    },
+    {
+      "id": 21567,
+      "name": "泸水",
+      "pinyin": "lushui"
+    },
+    {
+      "id": 21568,
+      "name": "钟山(贺州)",
+      "pinyin": "zhongshan"
+    },
+    {
+      "id": 21569,
+      "name": "连山(清远)",
+      "pinyin": "lianshan"
+    },
+    {
+      "id": 21570,
+      "name": "囊谦",
+      "pinyin": "nangqian"
+    },
+    {
+      "id": 21571,
+      "name": "饶河(双鸭山)",
+      "pinyin": "raohe"
+    },
+    {
+      "id": 21572,
+      "name": "西丰(铁岭)",
+      "pinyin": "xifeng"
+    },
+    {
+      "id": 21573,
+      "name": "莲花(萍乡)",
+      "pinyin": "lianhua"
+    },
+    {
+      "id": 21574,
+      "name": "泰宁(三明)",
+      "pinyin": "taining"
+    },
+    {
+      "id": 21575,
+      "name": "赫章(毕节)",
+      "pinyin": "hezhang"
+    },
+    {
+      "id": 21576,
+      "name": "江华(永州)",
+      "pinyin": "jianghua"
+    },
+    {
+      "id": 21577,
+      "name": "林甸(大庆)",
+      "pinyin": "lindian"
+    },
+    {
+      "id": 21578,
+      "name": "宜黄(抚州)",
+      "pinyin": "yihuang"
+    },
+    {
+      "id": 21579,
+      "name": "泽州(晋城)",
+      "pinyin": "zezhou"
+    },
+    {
+      "id": 21580,
+      "name": "阜南(阜阳)",
+      "pinyin": "funan"
+    },
+    {
+      "id": 21581,
+      "name": "京山(荆门)",
+      "pinyin": "jingshan"
+    },
+    {
+      "id": 21582,
+      "name": "靖安(宜春)",
+      "pinyin": "jingan"
+    },
+    {
+      "id": 21583,
+      "name": "卢氏(三门峡)",
+      "pinyin": "lushi"
+    },
+    {
+      "id": 21584,
+      "name": "巴林左旗(赤峰)",
+      "pinyin": "balinzuoqi"
+    },
+    {
+      "id": 21585,
+      "name": "广宁(肇庆)",
+      "pinyin": "guangning"
+    },
+    {
+      "id": 21586,
+      "name": "南丰(抚州)",
+      "pinyin": "nanfeng"
+    },
+    {
+      "id": 21587,
+      "name": "深泽(石家庄)",
+      "pinyin": "shenze"
+    },
+    {
+      "id": 21588,
+      "name": "华蓥(广安)",
+      "pinyin": "huaying"
+    },
+    {
+      "id": 21589,
+      "name": "台江",
+      "pinyin": "taijiang"
+    },
+    {
+      "id": 21590,
+      "name": "建湖(盐城)",
+      "pinyin": "jianhu"
+    },
+    {
+      "id": 21591,
+      "name": "蒙山(梧州)",
+      "pinyin": "mengshan"
+    },
+    {
+      "id": 21592,
+      "name": "淳化(咸阳)",
+      "pinyin": "chunhua"
+    },
+    {
+      "id": 21593,
+      "name": "谢通门(日喀则)",
+      "pinyin": "xietongmen"
+    },
+    {
+      "id": 21594,
+      "name": "当雄(拉萨)",
+      "pinyin": "dangxiong"
+    },
+    {
+      "id": 21595,
+      "name": "封开(肇庆)",
+      "pinyin": "fengkai"
+    },
+    {
+      "id": 21596,
+      "name": "澜沧(普洱)",
+      "pinyin": "lancang"
+    },
+    {
+      "id": 21598,
+      "name": "温县(焦作)",
+      "pinyin": "wenxian"
+    },
+    {
+      "id": 21599,
+      "name": "易门(玉溪)",
+      "pinyin": "yimen"
+    },
+    {
+      "id": 21600,
+      "name": "拜城",
+      "pinyin": "baicheng"
+    },
+    {
+      "id": 21601,
+      "name": "固安(廊坊)",
+      "pinyin": "guan"
+    },
+    {
+      "id": 21602,
+      "name": "漾濞",
+      "pinyin": "yangbi"
+    },
+    {
+      "id": 21603,
+      "name": "射阳(盐城)",
+      "pinyin": "sheyang"
+    },
+    {
+      "id": 21604,
+      "name": "孟连(普洱)",
+      "pinyin": "menglian"
+    },
+    {
+      "id": 21605,
+      "name": "苍溪(广元)",
+      "pinyin": "cangxi"
+    },
+    {
+      "id": 21607,
+      "name": "泸县(泸州)",
+      "pinyin": "luxian"
+    },
+    {
+      "id": 21608,
+      "name": "宁洱(普洱)",
+      "pinyin": "ninger"
+    },
+    {
+      "id": 21609,
+      "name": "小金",
+      "pinyin": "xiaojin"
+    },
+    {
+      "id": 21611,
+      "name": "双江(临沧)",
+      "pinyin": "shuangjiang"
+    },
+    {
+      "id": 21612,
+      "name": "扎鲁特旗(通辽)",
+      "pinyin": "zhaluteqi"
+    },
+    {
+      "id": 21615,
+      "name": "保德(忻州)",
+      "pinyin": "baode"
+    },
+    {
+      "id": 21616,
+      "name": "闽清(福州)",
+      "pinyin": "minqing"
+    },
+    {
+      "id": 21617,
+      "name": "武邑(衡水)",
+      "pinyin": "wuyi"
+    },
+    {
+      "id": 21618,
+      "name": "罗城(河池)",
+      "pinyin": "luocheng"
+    },
+    {
+      "id": 21619,
+      "name": "遂平(驻马店)",
+      "pinyin": "suiping"
+    },
+    {
+      "id": 21620,
+      "name": "镇巴(汉中)",
+      "pinyin": "zhenba"
+    },
+    {
+      "id": 21621,
+      "name": "来凤",
+      "pinyin": "laifeng"
+    },
+    {
+      "id": 21622,
+      "name": "务川(遵义)",
+      "pinyin": "wuchuan"
+    },
+    {
+      "id": 21623,
+      "name": "绿春",
+      "pinyin": "lvchun"
+    },
+    {
+      "id": 21624,
+      "name": "献县(沧州)",
+      "pinyin": "xianxian"
+    },
+    {
+      "id": 21625,
+      "name": "麻栗坡",
+      "pinyin": "malipo"
+    },
+    {
+      "id": 21626,
+      "name": "玛曲",
+      "pinyin": "maqu"
+    },
+    {
+      "id": 21627,
+      "name": "高阳(保定)",
+      "pinyin": "gaoyang"
+    },
+    {
+      "id": 21628,
+      "name": "皮山",
+      "pinyin": "pishan"
+    },
+    {
+      "id": 21629,
+      "name": "金沙(毕节)",
+      "pinyin": "jinsha"
+    },
+    {
+      "id": 21630,
+      "name": "温泉县",
+      "pinyin": "wenquanxian"
+    },
+    {
+      "id": 21631,
+      "name": "富民(昆明)",
+      "pinyin": "fumin"
+    },
+    {
+      "id": 21632,
+      "name": "科右前旗",
+      "pinyin": "keyouqianqi"
+    },
+    {
+      "id": 21633,
+      "name": "湘阴(岳阳)",
+      "pinyin": "xiangyin"
+    },
+    {
+      "id": 21634,
+      "name": "郁南(云浮)",
+      "pinyin": "yunan"
+    },
+    {
+      "id": 21635,
+      "name": "漳县(定西)",
+      "pinyin": "zhangxian"
+    },
+    {
+      "id": 21636,
+      "name": "安岳(资阳)",
+      "pinyin": "anyue"
+    },
+    {
+      "id": 21637,
+      "name": "商南(商洛)",
+      "pinyin": "shangnan"
+    },
+    {
+      "id": 21638,
+      "name": "湘潭县(湘潭)",
+      "pinyin": "xiangtanxian"
+    },
+    {
+      "id": 21639,
+      "name": "开鲁(通辽)",
+      "pinyin": "kailu"
+    },
+    {
+      "id": 21640,
+      "name": "成安(邯郸)",
+      "pinyin": "chengan"
+    },
+    {
+      "id": 21641,
+      "name": "门源",
+      "pinyin": "menyuan"
+    },
+    {
+      "id": 21642,
+      "name": "班玛",
+      "pinyin": "banma"
+    },
+    {
+      "id": 21644,
+      "name": "加查",
+      "pinyin": "jiacha"
+    },
+    {
+      "id": 21645,
+      "name": "大埔(梅州)",
+      "pinyin": "dabu"
+    },
+    {
+      "id": 21646,
+      "name": "东光(沧州)",
+      "pinyin": "dongguang"
+    },
+    {
+      "id": 21647,
+      "name": "杜尔伯特(大庆)",
+      "pinyin": "duerbote"
+    },
+    {
+      "id": 21648,
+      "name": "无为(芜湖)",
+      "pinyin": "wuwei"
+    },
+    {
+      "id": 21649,
+      "name": "竹溪(十堰)",
+      "pinyin": "zhuxi"
+    },
+    {
+      "id": 21650,
+      "name": "喀喇沁左翼(朝阳)",
+      "pinyin": "kalaqinzuoyi"
+    },
+    {
+      "id": 21651,
+      "name": "桐柏(南阳)",
+      "pinyin": "tongbai"
+    },
+    {
+      "id": 21652,
+      "name": "大田(三明)",
+      "pinyin": "datian"
+    },
+    {
+      "id": 21653,
+      "name": "峨边(乐山)",
+      "pinyin": "ebian"
+    },
+    {
+      "id": 21654,
+      "name": "合作",
+      "pinyin": "hezuo"
+    },
+    {
+      "id": 21655,
+      "name": "古蔺(泸州)",
+      "pinyin": "gulin"
+    },
+    {
+      "id": 21656,
+      "name": "新宁(邵阳)",
+      "pinyin": "xinning"
+    },
+    {
+      "id": 21657,
+      "name": "班戈(那曲)",
+      "pinyin": "bange"
+    },
+    {
+      "id": 21659,
+      "name": "博白(玉林)",
+      "pinyin": "bobai"
+    },
+    {
+      "id": 21660,
+      "name": "昌邑(潍坊)",
+      "pinyin": "changyi"
+    },
+    {
+      "id": 21661,
+      "name": "建宁(三明)",
+      "pinyin": "jianning"
+    },
+    {
+      "id": 21662,
+      "name": "准格尔旗(鄂尔多斯)",
+      "pinyin": "zhungeerqi"
+    },
+    {
+      "id": 21663,
+      "name": "鹤峰",
+      "pinyin": "hefeng"
+    },
+    {
+      "id": 21664,
+      "name": "邵阳县(邵阳)",
+      "pinyin": "shaoyangxian"
+    },
+    {
+      "id": 21665,
+      "name": "阜新县(阜新)",
+      "pinyin": "fuxinxian"
+    },
+    {
+      "id": 21666,
+      "name": "吉安县(吉安)",
+      "pinyin": "jianxian"
+    },
+    {
+      "id": 21667,
+      "name": "巴林右旗(赤峰)",
+      "pinyin": "balinyouqi"
+    },
+    {
+      "id": 21668,
+      "name": "迭部",
+      "pinyin": "diebu"
+    },
+    {
+      "id": 21669,
+      "name": "怀宁(安庆)",
+      "pinyin": "huaining"
+    },
+    {
+      "id": 21670,
+      "name": "南雄(韶关)",
+      "pinyin": "nanxiong"
+    },
+    {
+      "id": 21671,
+      "name": "盐池(吴忠)",
+      "pinyin": "yanchi"
+    },
+    {
+      "id": 21672,
+      "name": "甘孜县",
+      "pinyin": "ganzixian"
+    },
+    {
+      "id": 21673,
+      "name": "左云(大同)",
+      "pinyin": "zuoyun"
+    },
+    {
+      "id": 21674,
+      "name": "凤县(宝鸡)",
+      "pinyin": "fengxian"
+    },
+    {
+      "id": 21675,
+      "name": "桂阳(郴州)",
+      "pinyin": "guiyang"
+    },
+    {
+      "id": 21676,
+      "name": "马山(南宁)",
+      "pinyin": "mashan"
+    },
+    {
+      "id": 21677,
+      "name": "沛县(徐州)",
+      "pinyin": "peixian"
+    },
+    {
+      "id": 21679,
+      "name": "岑巩",
+      "pinyin": "cengong"
+    },
+    {
+      "id": 21680,
+      "name": "成武(菏泽)",
+      "pinyin": "chengwu"
+    },
+    {
+      "id": 21681,
+      "name": "商水(周口)",
+      "pinyin": "shangshui"
+    },
+    {
+      "id": 21682,
+      "name": "托里",
+      "pinyin": "tuoli"
+    },
+    {
+      "id": 21683,
+      "name": "威宁(毕节)",
+      "pinyin": "weining"
+    },
+    {
+      "id": 21684,
+      "name": "咸丰",
+      "pinyin": "xianfeng"
+    },
+    {
+      "id": 21685,
+      "name": "遂川(吉安)",
+      "pinyin": "suichuan"
+    },
+    {
+      "id": 21686,
+      "name": "天峨(河池)",
+      "pinyin": "tiane"
+    },
+    {
+      "id": 21687,
+      "name": "蒲江(成都)",
+      "pinyin": "pujiang"
+    },
+    {
+      "id": 21688,
+      "name": "唐河(南阳)",
+      "pinyin": "tanghe"
+    },
+    {
+      "id": 21689,
+      "name": "平昌(巴中)",
+      "pinyin": "pingchang"
+    },
+    {
+      "id": 21690,
+      "name": "尉犁",
+      "pinyin": "yuli"
+    },
+    {
+      "id": 21691,
+      "name": "北流(玉林)",
+      "pinyin": "beiliu"
+    },
+    {
+      "id": 21692,
+      "name": "河曲(忻州)",
+      "pinyin": "hequ"
+    },
+    {
+      "id": 21693,
+      "name": "团风(黄冈)",
+      "pinyin": "tuanfeng"
+    },
+    {
+      "id": 21695,
+      "name": "礼县(陇南)",
+      "pinyin": "lixian"
+    },
+    {
+      "id": 21696,
+      "name": "饶平(潮州)",
+      "pinyin": "raoping"
+    },
+    {
+      "id": 21697,
+      "name": "延川(延安)",
+      "pinyin": "yanchuan"
+    },
+    {
+      "id": 21698,
+      "name": "富宁",
+      "pinyin": "funing"
+    },
+    {
+      "id": 21699,
+      "name": "孟州(焦作)",
+      "pinyin": "mengzhou"
+    },
+    {
+      "id": 21701,
+      "name": "南漳(襄阳)",
+      "pinyin": "nanzhang"
+    },
+    {
+      "id": 21702,
+      "name": "锦屏",
+      "pinyin": "jinping"
+    },
+    {
+      "id": 21703,
+      "name": "乾县(咸阳)",
+      "pinyin": "qianxian"
+    },
+    {
+      "id": 21704,
+      "name": "中江(德阳)",
+      "pinyin": "zhongjiang"
+    },
+    {
+      "id": 21705,
+      "name": "丰镇(乌兰察布)",
+      "pinyin": "fengzhen"
+    },
+    {
+      "id": 21706,
+      "name": "桓仁(本溪)",
+      "pinyin": "huanren"
+    },
+    {
+      "id": 21707,
+      "name": "磁县(邯郸)",
+      "pinyin": "cixian"
+    },
+    {
+      "id": 21708,
+      "name": "峨山(玉溪)",
+      "pinyin": "eshan"
+    },
+    {
+      "id": 21709,
+      "name": "通化县(通化)",
+      "pinyin": "tonghuaxian"
+    },
+    {
+      "id": 21710,
+      "name": "眉县(宝鸡)",
+      "pinyin": "meixian"
+    },
+    {
+      "id": 21711,
+      "name": "全南(赣州)",
+      "pinyin": "quannan"
+    },
+    {
+      "id": 21712,
+      "name": "特克斯",
+      "pinyin": "tekesi"
+    },
+    {
+      "id": 21713,
+      "name": "逊克(黑河)",
+      "pinyin": "xunke"
+    },
+    {
+      "id": 21715,
+      "name": "桃江(益阳)",
+      "pinyin": "taojiang"
+    },
+    {
+      "id": 21716,
+      "name": "紫金(河源)",
+      "pinyin": "zijin"
+    },
+    {
+      "id": 21718,
+      "name": "乾安(松原)",
+      "pinyin": "qianan"
+    },
+    {
+      "id": 21719,
+      "name": "叙永(泸州)",
+      "pinyin": "xuyong"
+    },
+    {
+      "id": 21720,
+      "name": "伽师(喀什)",
+      "pinyin": "jiashi"
+    },
+    {
+      "id": 21721,
+      "name": "瓜州(酒泉)",
+      "pinyin": "guazhou"
+    },
+    {
+      "id": 21722,
+      "name": "含山(马鞍山)",
+      "pinyin": "hanshan"
+    },
+    {
+      "id": 21723,
+      "name": "金塔(酒泉)",
+      "pinyin": "jinta"
+    },
+    {
+      "id": 21724,
+      "name": "静乐(忻州)",
+      "pinyin": "jingle"
+    },
+    {
+      "id": 21725,
+      "name": "礼泉(咸阳)",
+      "pinyin": "liquan"
+    },
+    {
+      "id": 21726,
+      "name": "宁化(三明)",
+      "pinyin": "ninghua"
+    },
+    {
+      "id": 21727,
+      "name": "融安(柳州)",
+      "pinyin": "rongan"
+    },
+    {
+      "id": 21728,
+      "name": "博罗(惠州)",
+      "pinyin": "boluo"
+    },
+    {
+      "id": 21729,
+      "name": "宁陕(安康)",
+      "pinyin": "ningshan"
+    },
+    {
+      "id": 21730,
+      "name": "山阳(商洛)",
+      "pinyin": "shanyang"
+    },
+    {
+      "id": 21731,
+      "name": "望江(安庆)",
+      "pinyin": "wangjiang"
+    },
+    {
+      "id": 21732,
+      "name": "息县(信阳)",
+      "pinyin": "xixian"
+    },
+    {
+      "id": 21734,
+      "name": "洞口(邵阳)",
+      "pinyin": "dongkou"
+    },
+    {
+      "id": 21736,
+      "name": "于田",
+      "pinyin": "yutian"
+    },
+    {
+      "id": 21737,
+      "name": "若羌",
+      "pinyin": "ruoqiang"
+    },
+    {
+      "id": 21738,
+      "name": "威县(邢台)",
+      "pinyin": "weixian"
+    },
+    {
+      "id": 21740,
+      "name": "永吉(吉林市)",
+      "pinyin": "yongji"
+    },
+    {
+      "id": 21741,
+      "name": "沧源(临沧)",
+      "pinyin": "cangyuan"
+    },
+    {
+      "id": 21742,
+      "name": "冕宁",
+      "pinyin": "mianning"
+    },
+    {
+      "id": 21743,
+      "name": "施甸(保山)",
+      "pinyin": "shidian"
+    },
+    {
+      "id": 21744,
+      "name": "岳普湖(喀什)",
+      "pinyin": "yuepuhu"
+    },
+    {
+      "id": 21745,
+      "name": "万安(吉安)",
+      "pinyin": "wanan"
+    },
+    {
+      "id": 21746,
+      "name": "政和(南平)",
+      "pinyin": "zhenghe"
+    },
+    {
+      "id": 21747,
+      "name": "阿瓦提",
+      "pinyin": "awati"
+    },
+    {
+      "id": 21748,
+      "name": "来安(滁州)",
+      "pinyin": "laian"
+    },
+    {
+      "id": 21749,
+      "name": "前郭(松原)",
+      "pinyin": "qianguo"
+    },
+    {
+      "id": 21750,
+      "name": "赵县(石家庄)",
+      "pinyin": "zhaoxian"
+    },
+    {
+      "id": 21751,
+      "name": "永仁",
+      "pinyin": "yongren"
+    },
+    {
+      "id": 21752,
+      "name": "镇原(庆阳)",
+      "pinyin": "zhenyuan"
+    },
+    {
+      "id": 21753,
+      "name": "陈巴尔虎旗(呼伦贝尔)",
+      "pinyin": "chenbaerhuqi"
+    },
+    {
+      "id": 21754,
+      "name": "沁水(晋城)",
+      "pinyin": "qinshui"
+    },
+    {
+      "id": 21755,
+      "name": "岳池(广安)",
+      "pinyin": "yuechi"
+    },
+    {
+      "id": 21756,
+      "name": "朗县(林芝)",
+      "pinyin": "langxian"
+    },
+    {
+      "id": 21757,
+      "name": "涿鹿(张家口)",
+      "pinyin": "zhuolu"
+    },
+    {
+      "id": 21758,
+      "name": "赤城(张家口)",
+      "pinyin": "chicheng"
+    },
+    {
+      "id": 21759,
+      "name": "大方(毕节)",
+      "pinyin": "dafang"
+    },
+    {
+      "id": 21761,
+      "name": "西和(陇南)",
+      "pinyin": "xihe"
+    },
+    {
+      "id": 21762,
+      "name": "东乡族",
+      "pinyin": "dongxiangzu"
+    },
+    {
+      "id": 21763,
+      "name": "墨玉",
+      "pinyin": "moyu"
+    },
+    {
+      "id": 21765,
+      "name": "太仆寺旗(锡林郭勒盟)",
+      "pinyin": "taipusiqi"
+    },
+    {
+      "id": 21767,
+      "name": "邱县(邯郸)",
+      "pinyin": "qiuxian"
+    },
+    {
+      "id": 21768,
+      "name": "通城(咸宁)",
+      "pinyin": "tongcheng"
+    },
+    {
+      "id": 21769,
+      "name": "井陉(石家庄)",
+      "pinyin": "jingxing"
+    },
+    {
+      "id": 21772,
+      "name": "富源(曲靖)",
+      "pinyin": "fuyuan"
+    },
+    {
+      "id": 21773,
+      "name": "辉县(新乡)",
+      "pinyin": "huixian"
+    },
+    {
+      "id": 21774,
+      "name": "普兰(阿里)",
+      "pinyin": "pulan"
+    },
+    {
+      "id": 21775,
+      "name": "镶黄旗(锡林郭勒盟)",
+      "pinyin": "xianghuangqi"
+    },
+    {
+      "id": 21777,
+      "name": "云梦(孝感)",
+      "pinyin": "yunmeng"
+    },
+    {
+      "id": 21780,
+      "name": "博湖",
+      "pinyin": "bohu"
+    },
+    {
+      "id": 21781,
+      "name": "察隅(林芝)",
+      "pinyin": "chayu"
+    },
+    {
+      "id": 21782,
+      "name": "革吉(阿里)",
+      "pinyin": "geji"
+    },
+    {
+      "id": 21783,
+      "name": "嘉祥(济宁)",
+      "pinyin": "jiaxiang"
+    },
+    {
+      "id": 21784,
+      "name": "滦南(唐山)",
+      "pinyin": "luannan"
+    },
+    {
+      "id": 21785,
+      "name": "岱山(舟山)",
+      "pinyin": "daishan"
+    },
+    {
+      "id": 21786,
+      "name": "清徐(太原)",
+      "pinyin": "qingxu"
+    },
+    {
+      "id": 21787,
+      "name": "安乡(常德)",
+      "pinyin": "anxiang"
+    },
+    {
+      "id": 21788,
+      "name": "白水(渭南)",
+      "pinyin": "baishui"
+    },
+    {
+      "id": 21789,
+      "name": "西林(百色)",
+      "pinyin": "xilin"
+    },
+    {
+      "id": 21790,
+      "name": "张北(张家口)",
+      "pinyin": "zhangbei"
+    },
+    {
+      "id": 21792,
+      "name": "青冈(绥化)",
+      "pinyin": "qinggang"
+    },
+    {
+      "id": 21794,
+      "name": "巴里坤(哈密市)",
+      "pinyin": "balikun"
+    },
+    {
+      "id": 21795,
+      "name": "滑县(安阳)",
+      "pinyin": "huaxian"
+    },
+    {
+      "id": 21796,
+      "name": "庆安(绥化)",
+      "pinyin": "qingan"
+    },
+    {
+      "id": 21797,
+      "name": "容县(玉林)",
+      "pinyin": "rongxian"
+    },
+    {
+      "id": 21798,
+      "name": "汤原(佳木斯)",
+      "pinyin": "tangyuan"
+    },
+    {
+      "id": 21799,
+      "name": "无极(石家庄)",
+      "pinyin": "wuji"
+    },
+    {
+      "id": 21800,
+      "name": "阿荣旗(呼伦贝尔)",
+      "pinyin": "arongqi"
+    },
+    {
+      "id": 21801,
+      "name": "尖扎",
+      "pinyin": "jianzha"
+    },
+    {
+      "id": 21802,
+      "name": "梁河",
+      "pinyin": "lianghe"
+    },
+    {
+      "id": 21803,
+      "name": "周宁(宁德)",
+      "pinyin": "zhouning"
+    },
+    {
+      "id": 21804,
+      "name": "阿合奇",
+      "pinyin": "aheqi"
+    },
+    {
+      "id": 21805,
+      "name": "白玉",
+      "pinyin": "baiyu"
+    },
+    {
+      "id": 21806,
+      "name": "江永(永州)",
+      "pinyin": "jiangyong"
+    },
+    {
+      "id": 21807,
+      "name": "丘北",
+      "pinyin": "qiubei"
+    },
+    {
+      "id": 21808,
+      "name": "凤庆(临沧)",
+      "pinyin": "fengqing"
+    },
+    {
+      "id": 21809,
+      "name": "叶城(喀什)",
+      "pinyin": "yecheng"
+    },
+    {
+      "id": 21810,
+      "name": "远安(宜昌)",
+      "pinyin": "yuanan"
+    },
+    {
+      "id": 21812,
+      "name": "内乡(南阳)",
+      "pinyin": "neixiang"
+    },
+    {
+      "id": 21813,
+      "name": "商城(信阳)",
+      "pinyin": "shangcheng"
+    },
+    {
+      "id": 21814,
+      "name": "玛沁",
+      "pinyin": "maqin"
+    },
+    {
+      "id": 21815,
+      "name": "阳新(黄石)",
+      "pinyin": "yangxin"
+    },
+    {
+      "id": 21816,
+      "name": "惠来(揭阳)",
+      "pinyin": "huilai"
+    },
+    {
+      "id": 21817,
+      "name": "新田(永州)",
+      "pinyin": "xintian"
+    },
+    {
+      "id": 21818,
+      "name": "广水(随州)",
+      "pinyin": "guangshui"
+    },
+    {
+      "id": 21819,
+      "name": "内丘(邢台)",
+      "pinyin": "neiqiu"
+    },
+    {
+      "id": 21821,
+      "name": "太白(宝鸡)",
+      "pinyin": "taibai"
+    },
+    {
+      "id": 21823,
+      "name": "兴业(玉林)",
+      "pinyin": "xingye"
+    },
+    {
+      "id": 21824,
+      "name": "鄂伦春旗(呼伦贝尔)",
+      "pinyin": "elunchunqi"
+    },
+    {
+      "id": 21825,
+      "name": "古丈",
+      "pinyin": "guzhang"
+    },
+    {
+      "id": 21826,
+      "name": "剑阁(广元)",
+      "pinyin": "jiange"
+    },
+    {
+      "id": 21827,
+      "name": "莎车(喀什)",
+      "pinyin": "shache"
+    },
+    {
+      "id": 21828,
+      "name": "延长(延安)",
+      "pinyin": "yanchang"
+    },
+    {
+      "id": 21829,
+      "name": "云龙",
+      "pinyin": "yunlong"
+    },
+    {
+      "id": 21830,
+      "name": "长丰(合肥)",
+      "pinyin": "changfeng"
+    },
+    {
+      "id": 21831,
+      "name": "鸡东(鸡西)",
+      "pinyin": "jidong"
+    },
+    {
+      "id": 21832,
+      "name": "罗甸(黔南)",
+      "pinyin": "luodian"
+    },
+    {
+      "id": 21833,
+      "name": "偏关(忻州)",
+      "pinyin": "pianguan"
+    },
+    {
+      "id": 21834,
+      "name": "疏勒(喀什)",
+      "pinyin": "shule"
+    },
+    {
+      "id": 21835,
+      "name": "芒康(昌都)",
+      "pinyin": "mangkang"
+    },
+    {
+      "id": 21836,
+      "name": "乐业(百色)",
+      "pinyin": "leye"
+    },
+    {
+      "id": 21837,
+      "name": "禄劝(昆明)",
+      "pinyin": "luquan"
+    },
+    {
+      "id": 21838,
+      "name": "彭泽(九江)",
+      "pinyin": "pengze"
+    },
+    {
+      "id": 21839,
+      "name": "上高(宜春)",
+      "pinyin": "shanggao"
+    },
+    {
+      "id": 21840,
+      "name": "景谷(普洱)",
+      "pinyin": "jinggu"
+    },
+    {
+      "id": 21841,
+      "name": "乌恰",
+      "pinyin": "wuqia"
+    },
+    {
+      "id": 21843,
+      "name": "监利(荆州)",
+      "pinyin": "jianli"
+    },
+    {
+      "id": 21844,
+      "name": "南城(抚州)",
+      "pinyin": "nancheng"
+    },
+    {
+      "id": 21845,
+      "name": "定结(日喀则)",
+      "pinyin": "dingjie"
+    },
+    {
+      "id": 21846,
+      "name": "福海",
+      "pinyin": "fuhai"
+    },
+    {
+      "id": 21847,
+      "name": "泾川(平凉)",
+      "pinyin": "jingchuan"
+    },
+    {
+      "id": 21849,
+      "name": "天柱",
+      "pinyin": "tianzhu"
+    },
+    {
+      "id": 21850,
+      "name": "治多",
+      "pinyin": "zhiduo"
+    },
+    {
+      "id": 21851,
+      "name": "松阳(丽水)",
+      "pinyin": "songyang"
+    },
+    {
+      "id": 21852,
+      "name": "呼图壁",
+      "pinyin": "hutubi"
+    },
+    {
+      "id": 21853,
+      "name": "通河(哈尔滨)",
+      "pinyin": "tonghe"
+    },
+    {
+      "id": 21854,
+      "name": "沙雅",
+      "pinyin": "shaya"
+    },
+    {
+      "id": 21855,
+      "name": "拜泉(齐齐哈尔)",
+      "pinyin": "baiquan"
+    },
+    {
+      "id": 21856,
+      "name": "沐川(乐山)",
+      "pinyin": "muchuan"
+    },
+    {
+      "id": 21857,
+      "name": "宾川",
+      "pinyin": "binchuan"
+    },
+    {
+      "id": 21858,
+      "name": "怀来(张家口)",
+      "pinyin": "huailai"
+    },
+    {
+      "id": 21859,
+      "name": "曲松",
+      "pinyin": "qusong"
+    },
+    {
+      "id": 21863,
+      "name": "阿拉善右旗",
+      "pinyin": "alashanyouqi"
+    },
+    {
+      "id": 21864,
+      "name": "鄂温克族旗(呼伦贝尔)",
+      "pinyin": "ewenkezuqi"
+    },
+    {
+      "id": 21865,
+      "name": "石棉(雅安)",
+      "pinyin": "shimian"
+    },
+    {
+      "id": 21866,
+      "name": "耿马(临沧)",
+      "pinyin": "gengma"
+    },
+    {
+      "id": 21867,
+      "name": "临漳(邯郸)",
+      "pinyin": "linzhang"
+    },
+    {
+      "id": 21868,
+      "name": "全椒(滁州)",
+      "pinyin": "quanjiao"
+    },
+    {
+      "id": 21869,
+      "name": "桑植(张家界)",
+      "pinyin": "sangzhi"
+    },
+    {
+      "id": 21870,
+      "name": "故城(衡水)",
+      "pinyin": "gucheng"
+    },
+    {
+      "id": 21871,
+      "name": "泾县(宣城)",
+      "pinyin": "jingxian"
+    },
+    {
+      "id": 21872,
+      "name": "容城(保定)",
+      "pinyin": "rongcheng"
+    },
+    {
+      "id": 21873,
+      "name": "东宁(牡丹江)",
+      "pinyin": "dongning"
+    },
+    {
+      "id": 21874,
+      "name": "交口(吕梁)",
+      "pinyin": "jiaokou"
+    },
+    {
+      "id": 21876,
+      "name": "屏边",
+      "pinyin": "pingbian"
+    },
+    {
+      "id": 21877,
+      "name": "安阳县(安阳)",
+      "pinyin": "anyangxian"
+    },
+    {
+      "id": 21878,
+      "name": "富川(贺州)",
+      "pinyin": "fuchuan"
+    },
+    {
+      "id": 21879,
+      "name": "阳高(大同)",
+      "pinyin": "yanggao"
+    },
+    {
+      "id": 21880,
+      "name": "巴东",
+      "pinyin": "badong"
+    },
+    {
+      "id": 21881,
+      "name": "阜平(保定)",
+      "pinyin": "fuping"
+    },
+    {
+      "id": 21882,
+      "name": "曲麻莱",
+      "pinyin": "qumalai"
+    },
+    {
+      "id": 21883,
+      "name": "汶川",
+      "pinyin": "wenchuan"
+    },
+    {
+      "id": 21885,
+      "name": "合浦(北海)",
+      "pinyin": "hepu"
+    },
+    {
+      "id": 21886,
+      "name": "喀喇沁旗(赤峰)",
+      "pinyin": "kalaqinqi"
+    },
+    {
+      "id": 21887,
+      "name": "尚义(张家口)",
+      "pinyin": "shangyi"
+    },
+    {
+      "id": 21888,
+      "name": "图木舒克",
+      "pinyin": "tumushuke"
+    },
+    {
+      "id": 21889,
+      "name": "威信(昭通)",
+      "pinyin": "weixin"
+    },
+    {
+      "id": 21890,
+      "name": "铁岭县(铁岭)",
+      "pinyin": "tielingxian"
+    },
+    {
+      "id": 21891,
+      "name": "平陆(运城)",
+      "pinyin": "pinglu"
+    },
+    {
+      "id": 21893,
+      "name": "海兴(沧州)",
+      "pinyin": "haixing"
+    },
+    {
+      "id": 21894,
+      "name": "黄平",
+      "pinyin": "huangping"
+    },
+    {
+      "id": 21895,
+      "name": "会东",
+      "pinyin": "huidong"
+    },
+    {
+      "id": 21897,
+      "name": "深州(衡水)",
+      "pinyin": "shenzhou"
+    },
+    {
+      "id": 21898,
+      "name": "翁牛特旗(赤峰)",
+      "pinyin": "wengniuteqi"
+    },
+    {
+      "id": 21899,
+      "name": "剑川",
+      "pinyin": "jianchuan"
+    },
+    {
+      "id": 21900,
+      "name": "安新(保定)",
+      "pinyin": "anxin"
+    },
+    {
+      "id": 21901,
+      "name": "华宁(玉溪)",
+      "pinyin": "huaning"
+    },
+    {
+      "id": 21902,
+      "name": "闽侯(福州)",
+      "pinyin": "minhou"
+    },
+    {
+      "id": 21903,
+      "name": "平江(岳阳)",
+      "pinyin": "pingjiang"
+    },
+    {
+      "id": 21904,
+      "name": "清流(三明)",
+      "pinyin": "qingliu"
+    },
+    {
+      "id": 21905,
+      "name": "隰县(临汾)",
+      "pinyin": "xixian"
+    },
+    {
+      "id": 21906,
+      "name": "新河(邢台)",
+      "pinyin": "xinhe"
+    },
+    {
+      "id": 21907,
+      "name": "尤溪(三明)",
+      "pinyin": "youxi"
+    },
+    {
+      "id": 21908,
+      "name": "安国(保定)",
+      "pinyin": "anguo"
+    },
+    {
+      "id": 21909,
+      "name": "平武(绵阳)",
+      "pinyin": "pingwu"
+    },
+    {
+      "id": 21910,
+      "name": "罗江(德阳)",
+      "pinyin": "luojiang"
+    },
+    {
+      "id": 21911,
+      "name": "长岭(松原)",
+      "pinyin": "changling"
+    },
+    {
+      "id": 21912,
+      "name": "青龙(秦皇岛)",
+      "pinyin": "qinglong"
+    },
+    {
+      "id": 21913,
+      "name": "贞丰",
+      "pinyin": "zhenfeng"
+    },
+    {
+      "id": 21914,
+      "name": "南陵(芜湖)",
+      "pinyin": "nanling"
+    },
+    {
+      "id": 21915,
+      "name": "余庆(遵义)",
+      "pinyin": "yuqing"
+    },
+    {
+      "id": 21916,
+      "name": "宾县(哈尔滨)",
+      "pinyin": "binxian"
+    },
+    {
+      "id": 21917,
+      "name": "行唐(石家庄)",
+      "pinyin": "xingtang"
+    },
+    {
+      "id": 21918,
+      "name": "德庆(肇庆)",
+      "pinyin": "deqing"
+    },
+    {
+      "id": 21919,
+      "name": "承德县(承德)",
+      "pinyin": "chengdexian"
+    },
+    {
+      "id": 21920,
+      "name": "关岭(安顺)",
+      "pinyin": "guanling"
+    },
+    {
+      "id": 21921,
+      "name": "郎溪(宣城)",
+      "pinyin": "langxi"
+    },
+    {
+      "id": 21922,
+      "name": "忻城(来宾)",
+      "pinyin": "xincheng"
+    },
+    {
+      "id": 21923,
+      "name": "新巴尔虎右旗(呼伦贝尔)",
+      "pinyin": "xinbaerhuyouqi"
+    },
+    {
+      "id": 21924,
+      "name": "广灵(大同)",
+      "pinyin": "guangling"
+    },
+    {
+      "id": 21925,
+      "name": "哈巴河",
+      "pinyin": "habahe"
+    },
+    {
+      "id": 21926,
+      "name": "确山(驻马店)",
+      "pinyin": "queshan"
+    },
+    {
+      "id": 21927,
+      "name": "民乐(张掖)",
+      "pinyin": "minyue"
+    },
+    {
+      "id": 21928,
+      "name": "黑水",
+      "pinyin": "heishui"
+    },
+    {
+      "id": 21929,
+      "name": "兴和(乌兰察布)",
+      "pinyin": "xinghe"
+    },
+    {
+      "id": 21930,
+      "name": "新乡县(新乡)",
+      "pinyin": "xinxiangxian"
+    },
+    {
+      "id": 21931,
+      "name": "甘洛",
+      "pinyin": "ganluo"
+    },
+    {
+      "id": 21933,
+      "name": "淅川(南阳)",
+      "pinyin": "xichuan"
+    },
+    {
+      "id": 21934,
+      "name": "都安(河池)",
+      "pinyin": "duan"
+    },
+    {
+      "id": 21935,
+      "name": "方山(吕梁)",
+      "pinyin": "fangshan"
+    },
+    {
+      "id": 21936,
+      "name": "德化(泉州)",
+      "pinyin": "dehua"
+    },
+    {
+      "id": 21937,
+      "name": "辉南(通化)",
+      "pinyin": "huinan"
+    },
+    {
+      "id": 21938,
+      "name": "临洮(定西)",
+      "pinyin": "lintao"
+    },
+    {
+      "id": 21939,
+      "name": "南澳(汕头)",
+      "pinyin": "nanao"
+    },
+    {
+      "id": 21940,
+      "name": "宣恩",
+      "pinyin": "xuanen"
+    },
+    {
+      "id": 21941,
+      "name": "和政",
+      "pinyin": "hezheng"
+    },
+    {
+      "id": 21942,
+      "name": "普安",
+      "pinyin": "puan"
+    },
+    {
+      "id": 21943,
+      "name": "抚远(佳木斯)",
+      "pinyin": "fuyuan"
+    },
+    {
+      "id": 21944,
+      "name": "万荣(运城)",
+      "pinyin": "wanrong"
+    },
+    {
+      "id": 21945,
+      "name": "永寿(咸阳)",
+      "pinyin": "yongshou"
+    },
+    {
+      "id": 21946,
+      "name": "嘉黎(那曲)",
+      "pinyin": "jiali"
+    },
+    {
+      "id": 21947,
+      "name": "绥江(昭通)",
+      "pinyin": "suijiang"
+    },
+    {
+      "id": 21948,
+      "name": "贡觉(昌都)",
+      "pinyin": "gongjue"
+    },
+    {
+      "id": 21949,
+      "name": "化德(乌兰察布)",
+      "pinyin": "huade"
+    },
+    {
+      "id": 21950,
+      "name": "镇坪(安康)",
+      "pinyin": "zhenping"
+    },
+    {
+      "id": 21951,
+      "name": "阿勒泰市",
+      "pinyin": "aletaishi"
+    },
+    {
+      "id": 21952,
+      "name": "大竹(达州)",
+      "pinyin": "dazhu"
+    },
+    {
+      "id": 21953,
+      "name": "兴山(宜昌)",
+      "pinyin": "xingshan"
+    },
+    {
+      "id": 21954,
+      "name": "漳浦(漳州)",
+      "pinyin": "zhangpu"
+    },
+    {
+      "id": 21957,
+      "name": "兴县(吕梁)",
+      "pinyin": "xingxian"
+    },
+    {
+      "id": 21958,
+      "name": "阿坝县",
+      "pinyin": "abaxian"
+    },
+    {
+      "id": 21959,
+      "name": "南昌县(南昌)",
+      "pinyin": "nanchangxian"
+    },
+    {
+      "id": 21960,
+      "name": "方城(南阳)",
+      "pinyin": "fangcheng"
+    },
+    {
+      "id": 21961,
+      "name": "梨树(四平)",
+      "pinyin": "lishu"
+    },
+    {
+      "id": 21962,
+      "name": "平塘(黔南)",
+      "pinyin": "pingtang"
+    },
+    {
+      "id": 21964,
+      "name": "曲阳(保定)",
+      "pinyin": "quyang"
+    },
+    {
+      "id": 21965,
+      "name": "泽库",
+      "pinyin": "zeku"
+    },
+    {
+      "id": 21966,
+      "name": "通山(咸宁)",
+      "pinyin": "tongshan"
+    },
+    {
+      "id": 21967,
+      "name": "乌鲁木齐县(乌鲁木齐)",
+      "pinyin": "wulumuqixian"
+    },
+    {
+      "id": 21969,
+      "name": "南宫(邢台)",
+      "pinyin": "nangong"
+    },
+    {
+      "id": 21970,
+      "name": "雷州(湛江)",
+      "pinyin": "leizhou"
+    },
+    {
+      "id": 21971,
+      "name": "尼勒克",
+      "pinyin": "nileke"
+    },
+    {
+      "id": 21972,
+      "name": "乡城",
+      "pinyin": "xiangcheng"
+    },
+    {
+      "id": 21973,
+      "name": "柘城(商丘)",
+      "pinyin": "zhecheng"
+    },
+    {
+      "id": 21974,
+      "name": "安远(赣州)",
+      "pinyin": "anyuan"
+    },
+    {
+      "id": 21975,
+      "name": "固阳(包头)",
+      "pinyin": "guyang"
+    },
+    {
+      "id": 21976,
+      "name": "惠东(惠州)",
+      "pinyin": "huidong"
+    },
+    {
+      "id": 21978,
+      "name": "宜君(铜川)",
+      "pinyin": "yijun"
+    },
+    {
+      "id": 21979,
+      "name": "波密(林芝)",
+      "pinyin": "bomi"
+    },
+    {
+      "id": 21980,
+      "name": "南江(巴中)",
+      "pinyin": "nanjiang"
+    },
+    {
+      "id": 21982,
+      "name": "武宣(来宾)",
+      "pinyin": "wuxuan"
+    },
+    {
+      "id": 21983,
+      "name": "新宾(抚顺)",
+      "pinyin": "xinbin"
+    },
+    {
+      "id": 21984,
+      "name": "隆林(百色)",
+      "pinyin": "longlin"
+    },
+    {
+      "id": 21985,
+      "name": "清河(邢台)",
+      "pinyin": "qinghe"
+    },
+    {
+      "id": 21986,
+      "name": "察右前旗(乌兰察布)",
+      "pinyin": "chayouqianqi"
+    },
+    {
+      "id": 21987,
+      "name": "土默特左旗(呼和浩特)",
+      "pinyin": "tumotezuoqi"
+    },
+    {
+      "id": 21989,
+      "name": "东源(河源)",
+      "pinyin": "dongyuan"
+    },
+    {
+      "id": 21990,
+      "name": "绥宁(邵阳)",
+      "pinyin": "suining"
+    },
+    {
+      "id": 21991,
+      "name": "尉氏(开封)",
+      "pinyin": "weishi"
+    },
+    {
+      "id": 21992,
+      "name": "英山(黄冈)",
+      "pinyin": "yingshan"
+    },
+    {
+      "id": 21993,
+      "name": "惠民(滨州)",
+      "pinyin": "huimin"
+    },
+    {
+      "id": 21994,
+      "name": "和县(马鞍山)",
+      "pinyin": "hexian"
+    },
+    {
+      "id": 21995,
+      "name": "稷山(运城)",
+      "pinyin": "jishan"
+    },
+    {
+      "id": 21996,
+      "name": "利津(东营)",
+      "pinyin": "lijin"
+    },
+    {
+      "id": 21997,
+      "name": "平顺(长治)",
+      "pinyin": "pingshun"
+    },
+    {
+      "id": 21998,
+      "name": "苏尼特右旗(锡林郭勒盟)",
+      "pinyin": "suniteyouqi"
+    },
+    {
+      "id": 21999,
+      "name": "德格",
+      "pinyin": "dege"
+    },
+    {
+      "id": 22000,
+      "name": "道县(永州)",
+      "pinyin": "daoxian"
+    },
+    {
+      "id": 22001,
+      "name": "仁寿(眉山)",
+      "pinyin": "renshou"
+    },
+    {
+      "id": 22002,
+      "name": "祥云",
+      "pinyin": "xiangyun"
+    },
+    {
+      "id": 22003,
+      "name": "揭西(揭阳)",
+      "pinyin": "jiexi"
+    },
+    {
+      "id": 22004,
+      "name": "临清(聊城)",
+      "pinyin": "linqing"
+    },
+    {
+      "id": 22005,
+      "name": "大城(廊坊)",
+      "pinyin": "dacheng"
+    },
+    {
+      "id": 22006,
+      "name": "砚山",
+      "pinyin": "yanshan"
+    },
+    {
+      "id": 22007,
+      "name": "颍上(阜阳)",
+      "pinyin": "yingshang"
+    },
+    {
+      "id": 22009,
+      "name": "浦北(钦州)",
+      "pinyin": "pubei"
+    },
+    {
+      "id": 22010,
+      "name": "托克托(呼和浩特)",
+      "pinyin": "tuoketuo"
+    },
+    {
+      "id": 22011,
+      "name": "化隆(海东)",
+      "pinyin": "hualong"
+    },
+    {
+      "id": 22012,
+      "name": "罗源(福州)",
+      "pinyin": "luoyuan"
+    },
+    {
+      "id": 22013,
+      "name": "同江(佳木斯)",
+      "pinyin": "tongjiang"
+    },
+    {
+      "id": 22014,
+      "name": "同仁",
+      "pinyin": "tongren"
+    },
+    {
+      "id": 22015,
+      "name": "镇康(临沧)",
+      "pinyin": "zhenkang"
+    },
+    {
+      "id": 22016,
+      "name": "鄱阳(上饶)",
+      "pinyin": "poyang"
+    },
+    {
+      "id": 22017,
+      "name": "化州(茂名)",
+      "pinyin": "huazhou"
+    },
+    {
+      "id": 22018,
+      "name": "永靖",
+      "pinyin": "yongjing"
+    },
+    {
+      "id": 22020,
+      "name": "伊通(四平)",
+      "pinyin": "yitong"
+    },
+    {
+      "id": 22021,
+      "name": "子洲(榆林)",
+      "pinyin": "zizhou"
+    },
+    {
+      "id": 22022,
+      "name": "西华(周口)",
+      "pinyin": "xihua"
+    },
+    {
+      "id": 22023,
+      "name": "吉隆(日喀则)",
+      "pinyin": "jilong"
+    },
+    {
+      "id": 22024,
+      "name": "绥滨(鹤岗)",
+      "pinyin": "suibin"
+    },
+    {
+      "id": 22025,
+      "name": "伊宁县",
+      "pinyin": "yiningxian"
+    },
+    {
+      "id": 22026,
+      "name": "西乌旗(锡林郭勒盟)",
+      "pinyin": "xiwuqi"
+    },
+    {
+      "id": 22027,
+      "name": "繁峙(忻州)",
+      "pinyin": "fanshi"
+    },
+    {
+      "id": 22029,
+      "name": "塔城市",
+      "pinyin": "tachengshi"
+    },
+    {
+      "id": 22031,
+      "name": "毕节",
+      "pinyin": "bijie"
+    },
+    {
+      "id": 22033,
+      "name": "铜仁",
+      "pinyin": "tongren"
+    },
+    {
+      "id": 22034,
+      "name": "和顺(晋中)",
+      "pinyin": "heshun"
+    },
+    {
+      "id": 62229,
+      "name": "随县(随州)",
+      "pinyin": "suixian"
+    },
+    {
+      "id": 62442,
+      "name": "共和",
+      "pinyin": "gonghe"
+    },
+    {
+      "id": 63090,
+      "name": "清水河(呼和浩特)",
+      "pinyin": "qingshuihe"
+    },
+    {
+      "id": 77537,
+      "name": "北屯",
+      "pinyin": "beitun"
+    },
+    {
+      "id": 78690,
+      "name": "九龙",
+      "pinyin": "jiulong"
+    },
+    {
+      "id": 78702,
+      "name": "霍尔果斯",
+      "pinyin": "huoerguosi"
+    },
+    {
+      "id": 78900,
+      "name": "铁门关",
+      "pinyin": "tiemenguan"
+    },
+    {
+      "id": 78901,
+      "name": "双河",
+      "pinyin": "shuanghe"
+    },
+    {
+      "id": 650358,
+      "name": "嘉义县",
+      "pinyin": "jiayixian"
+    },
+    {
+      "id": 669326,
+      "name": "大理白族自治州",
+      "pinyin": "dalibaizuzizhizhou"
+    },
+    {
+      "id": 669327,
+      "name": "和布克赛尔",
+      "pinyin": "hebukesaier"
+    },
+    {
+      "id": 669328,
+      "name": "新竹县",
+      "pinyin": "xinzhuxian"
+    },
+    {
+      "id": 679693,
+      "name": "昆玉",
+      "pinyin": "kunyu"
+    },
+    {
+      "id": 680003,
+      "name": "可克达拉",
+      "pinyin": "kekedala"
+    },
+    {
+      "id": 684989,
+      "name": "城口(重庆)",
+      "pinyin": "chengkou"
+    },
+    {
+      "id": 684990,
+      "name": "垫江(重庆)",
+      "pinyin": "dianjiang"
+    },
+    {
+      "id": 684991,
+      "name": "丰都(重庆)",
+      "pinyin": "fengdu"
+    },
+    {
+      "id": 684992,
+      "name": "奉节(重庆)",
+      "pinyin": "fengjie"
+    },
+    {
+      "id": 684993,
+      "name": "彭水(重庆)",
+      "pinyin": "pengshui"
+    },
+    {
+      "id": 684994,
+      "name": "石柱(重庆)",
+      "pinyin": "shizhu"
+    },
+    {
+      "id": 684995,
+      "name": "巫山(重庆)",
+      "pinyin": "wushan"
+    },
+    {
+      "id": 684996,
+      "name": "巫溪(重庆)",
+      "pinyin": "wuxi"
+    },
+    {
+      "id": 684997,
+      "name": "秀山(重庆)",
+      "pinyin": "xiushan"
+    },
+    {
+      "id": 684998,
+      "name": "酉阳(重庆)",
+      "pinyin": "youyang"
+    },
+    {
+      "id": 684999,
+      "name": "云阳(重庆)",
+      "pinyin": "yunyang"
+    },
+    {
+      "id": 685000,
+      "name": "忠县(重庆)",
+      "pinyin": "zhongxian"
+    },
+    {
+      "id": 695955,
+      "name": "龙港(温州)",
+      "pinyin": "longgang"
+    },
+    {
+      "id": 696158,
+      "name": "茫崖(海西)",
+      "pinyin": "mangya"
+    },
+    {
+      "id": 696970,
+      "name": "汤旺(伊春)",
+      "pinyin": "tangwangqu"
+    },
+    {
+      "id": 696971,
+      "name": "丰林(伊春)",
+      "pinyin": "fenglinxian"
+    },
+    {
+      "id": 696972,
+      "name": "南岔(伊春)",
+      "pinyin": "nanchaxian"
+    },
+    {
+      "id": 696973,
+      "name": "大箐山(伊春)",
+      "pinyin": "daqingshanxian"
+    }
+  ]
+}

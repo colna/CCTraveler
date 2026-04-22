@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException
 
-from .ctrip.fetcher import fetch_all_pages
+from .ctrip.fetcher import fetch_all_pages, resolve_city_id, _load_city_lookup
 from .ctrip.parser import parse_hotel_list
 from .ctrip.types import ScrapeRequest, ScrapeResponse
 
@@ -64,6 +64,25 @@ async def scrape_hotels(req: ScrapeRequest):
         total=len(all_hotels),
         scraped_at=datetime.now(timezone.utc).isoformat(),
     )
+
+
+@app.get("/cities")
+async def list_cities(q: str | None = None):
+    """List supported cities. Optionally filter by query string."""
+    lookup = _load_city_lookup()
+    # Build deduplicated list from the full cities JSON
+    from pathlib import Path
+    import json
+    cities_path = Path(__file__).resolve().parents[3] / "data" / "ctrip_cities.json"
+    if not cities_path.exists():
+        return {"total": 0, "cities": []}
+    with open(cities_path, encoding="utf-8") as f:
+        data = json.load(f)
+    cities = data.get("cities", [])
+    if q:
+        q_lower = q.lower()
+        cities = [c for c in cities if q_lower in c["name"] or q_lower in c["pinyin"]]
+    return {"total": len(cities), "cities": cities}
 
 
 if __name__ == "__main__":

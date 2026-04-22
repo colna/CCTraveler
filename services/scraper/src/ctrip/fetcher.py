@@ -2,30 +2,32 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import random
+from pathlib import Path
 
 import httpx
 
 logger = logging.getLogger(__name__)
 
-# Known Ctrip city ID mappings
-CITY_IDS: dict[str, str] = {
-    "zunyi": "558", "遵义": "558",
-    "guiyang": "30", "贵阳": "30",
-    "chengdu": "28", "成都": "28",
-    "chongqing": "4", "重庆": "4",
-    "beijing": "1", "北京": "1",
-    "shanghai": "2", "上海": "2",
-    "guangzhou": "32", "广州": "32",
-    "shenzhen": "26", "深圳": "26",
-    "hangzhou": "14", "杭州": "14",
-    "nanjing": "9", "南京": "9",
-    "xian": "7", "西安": "7",
-    "kunming": "31", "昆明": "31",
-    "dali": "135", "大理": "135",
-    "sanya": "43", "三亚": "43",
-}
+# Load city lookup from JSON (pinyin + Chinese name -> city ID)
+_CITY_LOOKUP: dict[str, int] = {}
+
+
+def _load_city_lookup() -> dict[str, int]:
+    global _CITY_LOOKUP
+    if _CITY_LOOKUP:
+        return _CITY_LOOKUP
+    lookup_path = Path(__file__).resolve().parents[4] / "data" / "city_lookup.json"
+    if lookup_path.exists():
+        with open(lookup_path, encoding="utf-8") as f:
+            _CITY_LOOKUP = json.load(f)
+        logger.info("Loaded %d city mappings from %s", len(_CITY_LOOKUP), lookup_path)
+    else:
+        logger.warning("City lookup file not found: %s", lookup_path)
+    return _CITY_LOOKUP
+
 
 HEADERS = {
     "User-Agent": (
@@ -44,10 +46,17 @@ HEADERS = {
 
 
 def resolve_city_id(city: str) -> str:
-    """Resolve city name to Ctrip city ID. If already numeric, return as-is."""
+    """Resolve city name/pinyin to Ctrip city ID. If already numeric, return as-is."""
     if city.isdigit():
         return city
-    return CITY_IDS.get(city.lower(), CITY_IDS.get(city, city))
+    lookup = _load_city_lookup()
+    # Try exact match, then lowercase
+    if city in lookup:
+        return str(lookup[city])
+    if city.lower() in lookup:
+        return str(lookup[city.lower()])
+    logger.warning("City '%s' not found in lookup, using as-is", city)
+    return city
 
 
 async def fetch_hotel_list_page(
