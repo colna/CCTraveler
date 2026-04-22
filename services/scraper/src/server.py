@@ -23,10 +23,11 @@ async def health():
 
 @app.post("/scrape/hotels", response_model=ScrapeResponse)
 async def scrape_hotels(req: ScrapeRequest):
-    """Scrape hotel listings from Ctrip for given city and dates."""
+    """Scrape hotel listings. Uses Trip.com (with prices) by default."""
+    source = req.source
     logger.info(
-        "Scraping hotels: city=%s, %s to %s, max_pages=%d",
-        req.city, req.checkin, req.checkout, req.max_pages,
+        "Scraping hotels: city=%s, %s to %s, max_pages=%d, source=%s",
+        req.city, req.checkin, req.checkout, req.max_pages, source,
     )
 
     try:
@@ -35,6 +36,7 @@ async def scrape_hotels(req: ScrapeRequest):
             checkin=req.checkin,
             checkout=req.checkout,
             max_pages=req.max_pages,
+            source=source,
         )
     except Exception as e:
         logger.exception("Failed to fetch pages")

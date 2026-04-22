@@ -8,12 +8,14 @@ class ScrapeRequest(BaseModel):
     checkin: str
     checkout: str
     max_pages: int = 5
+    source: str = "trip"  # "trip" (with prices) or "ctrip" (no prices in SSR)
 
 
 class ScrapedRoom(BaseModel):
     name: str
     price: float | None = None
     original_price: float | None = None
+    currency: str = "CNY"
     bed_type: str | None = None
     has_breakfast: bool | None = None
     has_free_cancel: bool | None = None

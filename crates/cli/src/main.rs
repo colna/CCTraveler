@@ -107,6 +107,7 @@ async fn main() -> Result<()> {
                 checkin: checkin.clone(),
                 checkout: checkout.clone(),
                 max_pages,
+                source: "trip".to_string(),
             };
 
             let resp = tools::scrape::scrape_hotels(&config.scraper.base_url, &req).await?;

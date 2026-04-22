@@ -1,4 +1,8 @@
-"""Ctrip hotel list fetcher using httpx with browser-like headers."""
+"""Hotel list fetcher — supports both Trip.com (with prices) and Ctrip.
+
+Trip.com (international) includes prices in SSR; Ctrip (domestic) does not.
+We default to Trip.com for complete data. City IDs are shared between them.
+"""
 from __future__ import annotations
 
 import asyncio
@@ -59,24 +63,47 @@ def resolve_city_id(city: str) -> str:
     return city
 
 
+def _build_url(
+    city_id: str,
+    checkin: str,
+    checkout: str,
+    page: int = 1,
+    source: str = "trip",
+) -> str:
+    """Build hotel list URL for the given source."""
+    if source == "ctrip":
+        return (
+            f"https://hotels.ctrip.com/hotels/list"
+            f"?countryId=1&city={city_id}"
+            f"&checkin={checkin}&checkout={checkout}"
+            f"&optionId=1&optionValue=1&direct=0"
+            f"&barCur498=&pageNo={page}"
+        )
+    # Trip.com — includes prices in SSR
+    return (
+        f"https://www.trip.com/hotels/list"
+        f"?city={city_id}"
+        f"&checkin={checkin}&checkout={checkout}"
+        f"&curr=CNY&pageNo={page}"
+    )
+
+
 async def fetch_hotel_list_page(
     city_id: str,
     checkin: str,
     checkout: str,
     page: int = 1,
+    source: str = "trip",
 ) -> str | None:
-    """Fetch a single page of Ctrip hotel listings.
+    """Fetch a single page of hotel listings.
+
+    Args:
+        source: "trip" (default, with prices) or "ctrip" (no prices in SSR).
 
     Returns the HTML content or None on failure.
     """
-    url = (
-        f"https://hotels.ctrip.com/hotels/list"
-        f"?countryId=1&city={city_id}"
-        f"&checkin={checkin}&checkout={checkout}"
-        f"&optionId=1&optionValue=1&direct=0"
-        f"&barCur498=&pageNo={page}"
-    )
-    logger.info("Fetching page %d: %s", page, url)
+    url = _build_url(city_id, checkin, checkout, page, source)
+    logger.info("Fetching page %d from %s: %s", page, source, url)
 
     try:
         async with httpx.AsyncClient(
@@ -99,13 +126,14 @@ async def fetch_all_pages(
     checkin: str,
     checkout: str,
     max_pages: int = 5,
+    source: str = "trip",
 ) -> list[str]:
     """Fetch multiple pages of hotel listings with delays."""
     city_id = resolve_city_id(city)
     pages: list[str] = []
 
     for page_num in range(1, max_pages + 1):
-        html = await fetch_hotel_list_page(city_id, checkin, checkout, page_num)
+        html = await fetch_hotel_list_page(city_id, checkin, checkout, page_num, source)
         if html:
             pages.append(html)
         else:

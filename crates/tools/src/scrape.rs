@@ -7,6 +7,13 @@ pub struct ScrapeRequest {
     pub checkin: String,
     pub checkout: String,
     pub max_pages: u32,
+    #[serde(default = "default_source")]
+    pub source: String,
+}
+
+#[allow(dead_code)]
+fn default_source() -> String {
+    "trip".to_string()
 }
 
 #[derive(Debug, Deserialize)]

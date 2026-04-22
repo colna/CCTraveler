@@ -34,6 +34,7 @@ impl TravelerToolExecutor {
             checkin: params.checkin.clone(),
             checkout: params.checkout.clone(),
             max_pages: params.max_pages.unwrap_or(5),
+            source: "trip".to_string(),
         };
 
         // Bridge async scrape to sync via block_in_place
@@ -337,7 +338,7 @@ pub fn store_scraped_hotel(
                 checkin: checkin.to_string(),
                 checkout: checkout.to_string(),
                 scraped_at: now.to_string(),
-                source: "ctrip".to_string(),
+                source: "trip.com".to_string(),
             };
             db.insert_price(&price)?;
         }
