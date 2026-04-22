@@ -36,11 +36,11 @@ pub struct ScrapedHotel {
 #[derive(Debug, Deserialize)]
 pub struct ScrapedRoom {
     pub name: String,
-    pub price: f64,
+    pub price: Option<f64>,
     pub original_price: Option<f64>,
     pub bed_type: Option<String>,
     pub has_breakfast: Option<bool>,
-    pub has_window: Option<bool>,
+    pub has_free_cancel: Option<bool>,
 }
 
 /// Call the Python scraper service via HTTP

@@ -12,11 +12,11 @@ class ScrapeRequest(BaseModel):
 
 class ScrapedRoom(BaseModel):
     name: str
-    price: float
+    price: float | None = None
     original_price: float | None = None
     bed_type: str | None = None
     has_breakfast: bool | None = None
-    has_window: bool | None = None
+    has_free_cancel: bool | None = None
 
 
 class ScrapedHotel(BaseModel):

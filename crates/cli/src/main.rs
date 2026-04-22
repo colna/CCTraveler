@@ -218,24 +218,26 @@ fn store_scraped_hotel(
             bed_type: room.bed_type.clone(),
             max_guests: 2,
             area: None,
-            has_window: room.has_window.unwrap_or(false),
+            has_window: false,
             has_breakfast: room.has_breakfast.unwrap_or(false),
-            cancellation_policy: None,
+            cancellation_policy: room.has_free_cancel.and_then(|v| if v { Some("免费取消".to_string()) } else { None }),
         };
         db.insert_room(&r)?;
 
-        let price = PriceSnapshot {
-            id: uuid::Uuid::new_v4().to_string(),
-            room_id,
-            hotel_id: hotel.id.clone(),
-            price: room.price,
-            original_price: room.original_price,
-            checkin: checkin.to_string(),
-            checkout: checkout.to_string(),
-            scraped_at: now.to_string(),
-            source: "ctrip".to_string(),
-        };
-        db.insert_price(&price)?;
+        if let Some(price_val) = room.price {
+            let price = PriceSnapshot {
+                id: uuid::Uuid::new_v4().to_string(),
+                room_id,
+                hotel_id: hotel.id.clone(),
+                price: price_val,
+                original_price: room.original_price,
+                checkin: checkin.to_string(),
+                checkout: checkout.to_string(),
+                scraped_at: now.to_string(),
+                source: "ctrip".to_string(),
+            };
+            db.insert_price(&price)?;
+        }
     }
 
     Ok(())
@@ -243,23 +245,24 @@ fn store_scraped_hotel(
 
 fn print_hotel_table(hotels: &[ScrapedHotel]) {
     println!(
-        "\n{:<30} {:>5} {:>6} {:>10}",
-        "Name", "Star", "Rating", "Min Price"
+        "\n{:<30} {:>5} {:>6} {:>10}  {}",
+        "Name", "Star", "Rating", "Price", "Room"
     );
-    println!("{}", "-".repeat(55));
+    println!("{}", "-".repeat(80));
     for h in hotels {
         let min_price = h
             .rooms
             .iter()
-            .map(|r| r.price)
-            .reduce(f64::min)
-            .unwrap_or(0.0);
+            .filter_map(|r| r.price)
+            .reduce(f64::min);
+        let room_name = h.rooms.first().map_or("-", |r| r.name.as_str());
         println!(
-            "{:<30} {:>5} {:>6} {:>10}",
+            "{:<30} {:>5} {:>6} {:>10}  {}",
             truncate(&h.name, 30),
             h.star.map_or("-".to_string(), |s| format!("{s}")),
             h.rating.map_or("-".to_string(), |r| format!("{r:.1}")),
-            format!("¥{min_price:.0}"),
+            min_price.map_or("-".to_string(), |p| format!("¥{p:.0}")),
+            truncate(room_name, 25),
         );
     }
 }
