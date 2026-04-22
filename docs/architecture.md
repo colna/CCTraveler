@@ -9,9 +9,23 @@
 
 CCTraveler is a **monorepo** project that combines:
 
-1. **Agent Core** (Rust) — An AI agent harness inspired by [claw-code](https://github.com/colna/claw-code), responsible for task orchestration, tool execution, and intelligent scraping workflow management.
-2. **Scraper Service** (Python) — A Scrapling-based stealth scraping microservice that handles Ctrip's anti-bot protections (TLS fingerprinting, Cloudflare bypass, browser automation).
+1. **Agent Core** (Rust) — An AI agent harness modeled after [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code), implementing the same `ConversationRuntime<C: ApiClient, T: ToolExecutor>` pattern for task orchestration with tool-use agent loops.
+2. **Scraper Service** (Python) — A [Scrapling](https://github.com/D4Vinci/Scrapling)-based stealth scraping microservice that handles Ctrip's anti-bot protections (TLS fingerprinting, Cloudflare bypass, browser automation).
 3. **Web Frontend** (TypeScript/Next.js) — A dashboard to browse, search, and analyze scraped hotel data.
+
+### Reference Architecture: claw-code
+
+Our Rust agent core adopts the following patterns from `ultraworkers/claw-code`:
+
+| claw-code Pattern | CCTraveler Adoption |
+|-------------------|---------------------|
+| `ConversationRuntime<C: ApiClient, T: ToolExecutor>` — generic agent loop | Same pattern: generic runtime parameterized over API client + tool executor traits |
+| `ToolSpec` + `GlobalToolRegistry` + match-dispatch | Same pattern: 4 domain tools (scrape, search, analyze, export) registered via `ToolSpec` |
+| `Session` JSONL persistence with rotation | Simplified: single JSONL session file per task |
+| `ConfigLoader` 3-layer merge (User > Project > Local) | Adapted: TOML-based config with workspace-level defaults |
+| `SystemPromptBuilder` with instruction file discovery | Adapted: static system prompt tailored for hotel scraping domain |
+| `PermissionPolicy` + `PermissionPrompter` trait | Simplified: no permission prompting (all tools pre-authorized) |
+| Cargo workspace with 9 crates | Scaled down: 5 crates focused on scraping domain |
 
 ### Why This Architecture?
 
@@ -29,47 +43,58 @@ CCTraveler is a **monorepo** project that combines:
 ```
 CCTraveler/
 ├── turbo.json                    # Turborepo pipeline config
-├── package.json                  # Root workspace config
+├── package.json                  # Root workspace config (pnpm)
 ├── pnpm-workspace.yaml           # pnpm workspace definition
 ├── Cargo.toml                    # Rust workspace root
+├── Cargo.lock
 │
 ├── crates/                       # ═══ Rust Agent Core ═══
-│   ├── agent-core/               # Core agent loop, conversation runtime
+│   ├── runtime/                  # Core: conversation loop, session, config, prompt
+│   │   ├── Cargo.toml
+│   │   └── src/
+│   │       ├── lib.rs            # Public re-exports
+│   │       ├── conversation.rs   # ConversationRuntime<C,T> — the agent loop
+│   │       ├── session.rs        # Session struct, JSONL persistence
+│   │       ├── config.rs         # ConfigLoader, RuntimeConfig (TOML)
+│   │       ├── prompt.rs         # SystemPromptBuilder for scraping domain
+│   │       └── types.rs          # ConversationMessage, ContentBlock, MessageRole
+│   │
+│   ├── api/                      # LLM provider abstraction
 │   │   ├── Cargo.toml
 │   │   └── src/
 │   │       ├── lib.rs
-│   │       ├── runtime.rs        # Agent conversation loop
-│   │       ├── config.rs         # Config loading (TOML/JSON)
-│   │       └── session.rs        # Session persistence
+│   │       ├── client.rs         # ProviderClient enum (Anthropic/OpenAI-compat)
+│   │       ├── types.rs          # MessageRequest, MessageResponse, ToolDefinition
+│   │       ├── sse.rs            # SSE frame parser for streaming
+│   │       └── providers/
+│   │           ├── mod.rs        # Provider trait, ProviderKind enum
+│   │           ├── anthropic.rs  # AnthropicClient (AuthSource, streaming, retries)
+│   │           └── openai_compat.rs  # OpenAI/xAI compatible client
 │   │
-│   ├── tools/                    # Tool registry & execution
+│   ├── tools/                    # Tool definitions and dispatch
 │   │   ├── Cargo.toml
 │   │   └── src/
-│   │       ├── lib.rs            # ToolSpec, GlobalToolRegistry
-│   │       ├── scrape.rs         # Scrape tool — calls Python scraper
-│   │       ├── search.rs         # Search tool — query scraped data
-│   │       ├── analyze.rs        # Analyze tool — price comparison
-│   │       └── export.rs         # Export tool — CSV/JSON output
-│   │
-│   ├── scraper-bridge/           # Rust ↔ Python scraper communication
-│   │   ├── Cargo.toml
-│   │   └── src/
-│   │       ├── lib.rs
-│   │       ├── client.rs         # HTTP client to scraper service
-│   │       └── types.rs          # Shared data types (Hotel, Room, Price)
+│   │       ├── lib.rs            # ToolSpec, GlobalToolRegistry, execute_tool()
+│   │       ├── scrape.rs         # scrape_hotels — calls Python scraper service
+│   │       ├── search.rs         # search_hotels — query local SQLite DB
+│   │       ├── analyze.rs        # analyze_prices — price comparison logic
+│   │       └── export.rs         # export_report — CSV/JSON output
 │   │
 │   ├── storage/                  # Data persistence layer
 │   │   ├── Cargo.toml
 │   │   └── src/
 │   │       ├── lib.rs
-│   │       ├── db.rs             # SQLite storage
-│   │       ├── models.rs         # Hotel, Room, PriceSnapshot
-│   │       └── queries.rs        # Query builders
+│   │       ├── db.rs             # SQLite connection pool
+│   │       ├── models.rs         # Hotel, Room, PriceSnapshot (Rust structs)
+│   │       └── queries.rs        # Query builders (insert, search, aggregate)
 │   │
 │   └── cli/                      # CLI binary entry point
 │       ├── Cargo.toml
+│       ├── build.rs              # Injects GIT_SHA, BUILD_DATE
 │       └── src/
-│           └── main.rs           # CLI args, REPL, one-shot mode
+│           ├── main.rs           # main(), CLI arg parsing, REPL
+│           ├── render.rs         # Terminal output, spinner, markdown
+│           └── input.rs          # LineEditor (rustyline wrapper)
 │
 ├── services/                     # ═══ Python Scraper Service ═══
 │   └── scraper/
@@ -77,12 +102,12 @@ CCTraveler/
 │       ├── requirements.txt
 │       ├── src/
 │       │   ├── __init__.py
-│       │   ├── server.py         # FastAPI HTTP service
+│       │   ├── server.py         # FastAPI HTTP service (port 8300)
 │       │   ├── ctrip/
 │       │   │   ├── __init__.py
 │       │   │   ├── fetcher.py    # StealthyFetcher wrapper for Ctrip
 │       │   │   ├── parser.py     # HTML → structured hotel data
-│       │   │   ├── session.py    # Login session management
+│       │   │   ├── session.py    # Browser session persistence + cookies
 │       │   │   └── types.py      # Pydantic models
 │       │   ├── anti_detect/
 │       │   │   ├── __init__.py
@@ -137,53 +162,127 @@ CCTraveler/
 
 ---
 
-## 3. Component Architecture
+## 3. Core Rust Architecture (from claw-code)
 
-### 3.1 Agent Core (Rust)
+### 3.1 Key Traits
 
-Inspired by claw-code's architecture, the agent core implements a **model-in-the-loop** pattern:
+Following claw-code's trait-based polymorphism pattern for testability:
 
-```
-                    ┌──────────────────────────────┐
-                    │         Agent Runtime         │
-                    │                               │
-User/Schedule ──────►  System Prompt + Context      │
-                    │         │                     │
-                    │         ▼                     │
-                    │    LLM API Call               │
-                    │    (Anthropic/OpenAI)          │
-                    │         │                     │
-                    │         ▼                     │
-                    │    Response Stream             │
-                    │    ├── Text (status updates)   │
-                    │    └── ToolUse                 │
-                    │         │                     │
-                    │         ▼                     │
-                    │    Tool Executor               │
-                    │    ├── ScrapeHotels            │
-                    │    ├── SearchData              │
-                    │    ├── AnalyzePrices           │
-                    │    └── ExportReport            │
-                    │         │                     │
-                    │         ▼                     │
-                    │    Tool Result → next turn     │
-                    │    (loop until done)           │
-                    └──────────────────────────────┘
+```rust
+/// API client trait — abstracts over LLM providers (Anthropic, OpenAI, etc.)
+/// Synchronous interface; async is handled internally via tokio::Runtime.
+pub trait ApiClient {
+    fn stream(&mut self, request: ApiRequest) -> Result<Vec<AssistantEvent>, RuntimeError>;
+}
+
+/// Tool executor trait — abstracts over tool dispatch
+pub trait ToolExecutor {
+    fn execute(&mut self, tool_name: &str, input: &str) -> Result<String, ToolError>;
+}
 ```
 
-#### Key Crates
+Production implementations:
+- `AnthropicRuntimeClient` implements `ApiClient` — wraps `ProviderClient` enum + tokio runtime
+- `TravelerToolExecutor` implements `ToolExecutor` — dispatches to scrape/search/analyze/export handlers
+
+Test implementations:
+- `MockApiClient` — returns scripted responses for deterministic testing
+- `MockToolExecutor` — records calls and returns preset results
+
+### 3.2 The Agent Conversation Loop
+
+`ConversationRuntime<C: ApiClient, T: ToolExecutor>` — the core agent loop, directly adapted from claw-code's `conversation.rs`:
+
+```
+run_turn(user_input) -> Result<TurnSummary, RuntimeError>
+
+1. Push user message to session
+2. Enter agentic loop:
+   a. Build ApiRequest { system_prompt, messages }
+   b. Call api_client.stream(request) → Vec<AssistantEvent>
+   c. Parse response → ConversationMessage (text + tool_uses)
+   d. Push assistant message to session
+   e. If no tool_uses → break (done)
+   f. For each ToolUse { id, name, input }:
+      - Call tool_executor.execute(name, input) → result
+      - Build ToolResult message, push to session
+   g. Loop back to (a)
+3. Return TurnSummary
+```
+
+### 3.3 Core Types
+
+```rust
+/// A conversation message (user, assistant, or tool result)
+pub struct ConversationMessage {
+    pub role: MessageRole,           // System | User | Assistant | Tool
+    pub content: Vec<ContentBlock>,
+    pub usage: Option<TokenUsage>,
+}
+
+/// Content within a message
+pub enum ContentBlock {
+    Text { text: String },
+    ToolUse { id: String, name: String, input: Value },
+    ToolResult { tool_use_id: String, tool_name: String, output: String, is_error: bool },
+}
+
+/// Session state persisted as JSONL
+pub struct Session {
+    pub session_id: String,
+    pub messages: Vec<ConversationMessage>,
+    pub workspace_root: PathBuf,
+    pub model: String,
+    pub created_at: DateTime<Utc>,
+}
+
+/// Tool definition exposed to the LLM
+pub struct ToolSpec {
+    pub name: &'static str,
+    pub description: &'static str,
+    pub input_schema: Value,  // JSON Schema
+}
+
+/// Merged tool registry
+pub struct GlobalToolRegistry {
+    tools: Vec<ToolSpec>,
+}
+```
+
+### 3.4 Crate Dependency Graph
+
+```
+cli (binary: "cctraveler")
+  ├── api          (LLM provider clients)
+  │   └── runtime  (core types, session, config)
+  ├── tools        (tool specs + execution)
+  │   ├── api
+  │   ├── runtime
+  │   └── storage
+  └── storage      (SQLite persistence)
+      └── runtime
+```
 
 | Crate | Responsibility |
 |-------|---------------|
-| `agent-core` | Conversation loop, session management, config. Defines `AgentRuntime` trait |
-| `tools` | Tool registry with `ToolSpec` definitions. Each tool has name, description, JSON Schema input, and execute fn |
-| `scraper-bridge` | HTTP client that talks to the Python scraper service. Handles request/response serialization |
-| `storage` | SQLite-backed persistence for hotels, rooms, price snapshots. Uses `rusqlite` |
-| `cli` | Binary entry point. Supports REPL mode and one-shot commands |
+| `runtime` | Core engine: `ConversationRuntime<C,T>`, session persistence, config loading, system prompt builder, core types (`ConversationMessage`, `ContentBlock`) |
+| `api` | LLM provider abstraction: `ProviderClient` enum, SSE streaming, Anthropic + OpenAI-compat clients, retry logic |
+| `tools` | Tool inventory: `ToolSpec` definitions, `GlobalToolRegistry`, `execute_tool()` match dispatch to typed handlers |
+| `storage` | Data layer: SQLite via `rusqlite`, Hotel/Room/PriceSnapshot models, query builders |
+| `cli` | Binary entry point: CLI arg parsing via `clap`, REPL mode, one-shot prompt mode, terminal rendering |
 
-#### Rust Workspace Dependencies
+### 3.5 Rust Workspace Config
 
 ```toml
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
 [workspace.dependencies]
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
@@ -196,9 +295,21 @@ tracing-subscriber = "0.3"
 anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1", features = ["v4", "serde"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+missing_panics_doc = "allow"
+missing_errors_doc = "allow"
 ```
 
-### 3.2 Scraper Service (Python)
+---
+
+## 4. Scraper Service (Python)
 
 A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific scraping:
 
@@ -212,7 +323,7 @@ A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific s
               │    ├── filters (price, star, etc)  │
               │    │                               │
               │    ▼                               │
-              │  CripFetcher                       │
+              │  CtripFetcher                      │
               │    ├── StealthyFetcher             │
               │    │   ├── Patchright browser       │
               │    │   ├── TLS impersonation        │
@@ -230,7 +341,7 @@ A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific s
               └─────────────────────────────────┘
 ```
 
-#### Ctrip Scraping Strategy
+### Ctrip Scraping Strategy
 
 1. **Anti-detection**: Use `StealthyFetcher` with:
    - `hide_canvas=True` — defeat canvas fingerprinting
@@ -254,7 +365,7 @@ A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific s
    - Max concurrent browser instances: 3
    - Backoff on 403/429 responses
 
-#### API Endpoints
+### API Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -263,11 +374,11 @@ A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific s
 | `GET` | `/health` | Health check |
 | `GET` | `/sessions` | List active browser sessions |
 
-### 3.3 Web Frontend (Next.js)
+---
 
-A modern dashboard for viewing and analyzing scraped data:
+## 5. Web Frontend (Next.js)
 
-#### Pages
+### Pages
 
 | Route | Description |
 |-------|-------------|
@@ -275,7 +386,7 @@ A modern dashboard for viewing and analyzing scraped data:
 | `/hotels` | Hotel list — cards with name, price, rating, photo |
 | `/hotels/[id]` | Hotel detail — room types, price history chart, amenities |
 
-#### Key Components
+### Key Components
 
 - **SearchForm** — City autocomplete, date picker, guest count, star filter
 - **HotelCard** — Compact hotel preview with key info and lowest price
@@ -283,10 +394,10 @@ A modern dashboard for viewing and analyzing scraped data:
 - **FilterPanel** — Price range slider, star rating, distance, amenities
 - **DataTable** — Sortable, paginated table view of all scraped data
 
-#### Data Flow
+### Data Flow
 
 ```
-Frontend ──► Next.js API Routes ──► Rust Agent CLI (subprocess)
+Frontend ──► Next.js API Routes ──► Rust CLI (subprocess / HTTP)
                                          │
                                          ├── SQLite (read scraped data)
                                          └── Scraper Service (trigger new scrapes)
@@ -294,59 +405,59 @@ Frontend ──► Next.js API Routes ──► Rust Agent CLI (subprocess)
 
 ---
 
-## 4. Data Model
+## 6. Data Model
 
 ### Hotel
 
-```typescript
-interface Hotel {
-  id: string;              // Ctrip hotel ID
-  name: string;
-  nameEn: string;
-  star: number;            // 1-5
-  rating: number;          // User rating (0-5.0)
-  ratingCount: number;     // Number of reviews
-  address: string;
-  latitude: number;
-  longitude: number;
-  imageUrl: string;
-  amenities: string[];
-  city: string;
-  district: string;
-  createdAt: string;       // ISO 8601
-  updatedAt: string;
+```rust
+pub struct Hotel {
+    pub id: String,              // Ctrip hotel ID
+    pub name: String,
+    pub name_en: Option<String>,
+    pub star: u8,                // 1-5
+    pub rating: f64,             // User rating (0-5.0)
+    pub rating_count: u32,
+    pub address: String,
+    pub latitude: f64,
+    pub longitude: f64,
+    pub image_url: Option<String>,
+    pub amenities: Vec<String>,
+    pub city: String,
+    pub district: Option<String>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
 }
 ```
 
 ### Room
 
-```typescript
-interface Room {
-  id: string;
-  hotelId: string;
-  name: string;            // "大床房", "双床房", etc.
-  bedType: string;
-  maxGuests: number;
-  area: number;            // sqm
-  hasWindow: boolean;
-  hasBreakfast: boolean;
-  cancellationPolicy: string;
+```rust
+pub struct Room {
+    pub id: String,
+    pub hotel_id: String,
+    pub name: String,            // "大床房", "双床房", etc.
+    pub bed_type: Option<String>,
+    pub max_guests: u8,
+    pub area: Option<f64>,       // sqm
+    pub has_window: bool,
+    pub has_breakfast: bool,
+    pub cancellation_policy: Option<String>,
 }
 ```
 
 ### PriceSnapshot
 
-```typescript
-interface PriceSnapshot {
-  id: string;
-  roomId: string;
-  hotelId: string;
-  price: number;           // CNY per night
-  originalPrice: number;   // Before discount
-  checkin: string;         // Date
-  checkout: string;
-  scrapedAt: string;       // When this price was captured
-  source: string;          // "ctrip"
+```rust
+pub struct PriceSnapshot {
+    pub id: String,
+    pub room_id: String,
+    pub hotel_id: String,
+    pub price: f64,              // CNY per night
+    pub original_price: Option<f64>,
+    pub checkin: NaiveDate,
+    pub checkout: NaiveDate,
+    pub scraped_at: DateTime<Utc>,
+    pub source: String,          // "ctrip"
 }
 ```
 
@@ -354,45 +465,45 @@ interface PriceSnapshot {
 
 ```sql
 CREATE TABLE hotels (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  name_en TEXT,
-  star INTEGER,
-  rating REAL,
-  rating_count INTEGER,
-  address TEXT,
-  latitude REAL,
-  longitude REAL,
-  image_url TEXT,
-  amenities TEXT,           -- JSON array
-  city TEXT NOT NULL,
-  district TEXT,
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    name_en TEXT,
+    star INTEGER,
+    rating REAL,
+    rating_count INTEGER,
+    address TEXT,
+    latitude REAL,
+    longitude REAL,
+    image_url TEXT,
+    amenities TEXT,           -- JSON array
+    city TEXT NOT NULL,
+    district TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
 );
 
 CREATE TABLE rooms (
-  id TEXT PRIMARY KEY,
-  hotel_id TEXT NOT NULL REFERENCES hotels(id),
-  name TEXT NOT NULL,
-  bed_type TEXT,
-  max_guests INTEGER,
-  area REAL,
-  has_window BOOLEAN,
-  has_breakfast BOOLEAN,
-  cancellation_policy TEXT
+    id TEXT PRIMARY KEY,
+    hotel_id TEXT NOT NULL REFERENCES hotels(id),
+    name TEXT NOT NULL,
+    bed_type TEXT,
+    max_guests INTEGER,
+    area REAL,
+    has_window BOOLEAN,
+    has_breakfast BOOLEAN,
+    cancellation_policy TEXT
 );
 
 CREATE TABLE price_snapshots (
-  id TEXT PRIMARY KEY,
-  room_id TEXT NOT NULL REFERENCES rooms(id),
-  hotel_id TEXT NOT NULL REFERENCES hotels(id),
-  price REAL NOT NULL,
-  original_price REAL,
-  checkin TEXT NOT NULL,
-  checkout TEXT NOT NULL,
-  scraped_at TEXT NOT NULL,
-  source TEXT DEFAULT 'ctrip'
+    id TEXT PRIMARY KEY,
+    room_id TEXT NOT NULL REFERENCES rooms(id),
+    hotel_id TEXT NOT NULL REFERENCES hotels(id),
+    price REAL NOT NULL,
+    original_price REAL,
+    checkin TEXT NOT NULL,
+    checkout TEXT NOT NULL,
+    scraped_at TEXT NOT NULL,
+    source TEXT DEFAULT 'ctrip'
 );
 
 CREATE INDEX idx_prices_hotel ON price_snapshots(hotel_id);
@@ -403,34 +514,34 @@ CREATE INDEX idx_hotels_city ON hotels(city);
 
 ---
 
-## 5. Agent Tool Definitions
+## 7. Agent Tool Definitions
 
-The Rust agent exposes these tools to the LLM:
+Following claw-code's `ToolSpec` pattern — each tool has name, description, JSON Schema, and a typed execute handler:
 
 ### `scrape_hotels`
 
 ```json
 {
-  "name": "scrape_hotels",
-  "description": "Scrape hotel listings from Ctrip for a given city and date range",
-  "input_schema": {
-    "type": "object",
-    "properties": {
-      "city": { "type": "string", "description": "City name or Ctrip city ID" },
-      "checkin": { "type": "string", "description": "Check-in date (YYYY-MM-DD)" },
-      "checkout": { "type": "string", "description": "Check-out date (YYYY-MM-DD)" },
-      "max_pages": { "type": "integer", "description": "Max pages to scrape (default 5)" },
-      "filters": {
+    "name": "scrape_hotels",
+    "description": "Scrape hotel listings from Ctrip for a given city and date range. Calls the Python scraper service to handle anti-bot bypass and browser automation.",
+    "input_schema": {
         "type": "object",
         "properties": {
-          "min_star": { "type": "integer" },
-          "max_price": { "type": "number" },
-          "keywords": { "type": "string" }
-        }
-      }
-    },
-    "required": ["city", "checkin", "checkout"]
-  }
+            "city": { "type": "string", "description": "City name or Ctrip city ID" },
+            "checkin": { "type": "string", "description": "Check-in date (YYYY-MM-DD)" },
+            "checkout": { "type": "string", "description": "Check-out date (YYYY-MM-DD)" },
+            "max_pages": { "type": "integer", "description": "Max pages to scrape (default 5)" },
+            "filters": {
+                "type": "object",
+                "properties": {
+                    "min_star": { "type": "integer" },
+                    "max_price": { "type": "number" },
+                    "keywords": { "type": "string" }
+                }
+            }
+        },
+        "required": ["city", "checkin", "checkout"]
+    }
 }
 ```
 
@@ -438,20 +549,20 @@ The Rust agent exposes these tools to the LLM:
 
 ```json
 {
-  "name": "search_hotels",
-  "description": "Search previously scraped hotel data from local database",
-  "input_schema": {
-    "type": "object",
-    "properties": {
-      "city": { "type": "string" },
-      "min_price": { "type": "number" },
-      "max_price": { "type": "number" },
-      "min_star": { "type": "integer" },
-      "min_rating": { "type": "number" },
-      "sort_by": { "type": "string", "enum": ["price", "rating", "star"] },
-      "limit": { "type": "integer" }
+    "name": "search_hotels",
+    "description": "Search previously scraped hotel data from local SQLite database.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "city": { "type": "string" },
+            "min_price": { "type": "number" },
+            "max_price": { "type": "number" },
+            "min_star": { "type": "integer" },
+            "min_rating": { "type": "number" },
+            "sort_by": { "type": "string", "enum": ["price", "rating", "star"] },
+            "limit": { "type": "integer" }
+        }
     }
-  }
 }
 ```
 
@@ -459,23 +570,23 @@ The Rust agent exposes these tools to the LLM:
 
 ```json
 {
-  "name": "analyze_prices",
-  "description": "Analyze price trends and compare hotels",
-  "input_schema": {
-    "type": "object",
-    "properties": {
-      "hotel_ids": { "type": "array", "items": { "type": "string" } },
-      "date_range": {
+    "name": "analyze_prices",
+    "description": "Analyze price trends and compare hotels across multiple snapshots.",
+    "input_schema": {
         "type": "object",
         "properties": {
-          "start": { "type": "string" },
-          "end": { "type": "string" }
-        }
-      },
-      "comparison_type": { "type": "string", "enum": ["trend", "cheapest", "best_value"] }
-    },
-    "required": ["hotel_ids"]
-  }
+            "hotel_ids": { "type": "array", "items": { "type": "string" } },
+            "date_range": {
+                "type": "object",
+                "properties": {
+                    "start": { "type": "string" },
+                    "end": { "type": "string" }
+                }
+            },
+            "comparison_type": { "type": "string", "enum": ["trend", "cheapest", "best_value"] }
+        },
+        "required": ["hotel_ids"]
+    }
 }
 ```
 
@@ -483,24 +594,24 @@ The Rust agent exposes these tools to the LLM:
 
 ```json
 {
-  "name": "export_report",
-  "description": "Export scraped data as CSV or JSON file",
-  "input_schema": {
-    "type": "object",
-    "properties": {
-      "format": { "type": "string", "enum": ["csv", "json"] },
-      "city": { "type": "string" },
-      "checkin": { "type": "string" },
-      "checkout": { "type": "string" }
-    },
-    "required": ["format"]
-  }
+    "name": "export_report",
+    "description": "Export scraped data as CSV or JSON file.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "format": { "type": "string", "enum": ["csv", "json"] },
+            "city": { "type": "string" },
+            "checkin": { "type": "string" },
+            "checkout": { "type": "string" }
+        },
+        "required": ["format"]
+    }
 }
 ```
 
 ---
 
-## 6. Build & Dev Workflow
+## 8. Build & Dev Workflow
 
 ### Prerequisites
 
@@ -512,25 +623,24 @@ The Rust agent exposes these tools to the LLM:
 ### Turborepo Pipeline
 
 ```json
-// turbo.json
 {
-  "$schema": "https://turbo.build/schema.json",
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "target/**"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {
-      "dependsOn": ["^build"]
-    },
-    "test": {
-      "dependsOn": ["build"]
+    "$schema": "https://turbo.build/schema.json",
+    "tasks": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": ["dist/**", ".next/**", "target/**"]
+        },
+        "dev": {
+            "cache": false,
+            "persistent": true
+        },
+        "lint": {
+            "dependsOn": ["^build"]
+        },
+        "test": {
+            "dependsOn": ["build"]
+        }
     }
-  }
 }
 ```
 
@@ -539,7 +649,7 @@ The Rust agent exposes these tools to the LLM:
 ```bash
 # Install all dependencies
 pnpm install                      # Node dependencies
-cd crates && cargo build          # Rust workspace
+cargo build --workspace           # Rust workspace
 cd services/scraper && uv sync    # Python dependencies
 
 # Development (starts all services)
@@ -564,7 +674,7 @@ pytest services/scraper/tests     # Python tests
 
 ---
 
-## 7. Configuration
+## 9. Configuration
 
 ### `config.toml` (Agent)
 
@@ -592,55 +702,33 @@ proxy_pool = []               # Optional proxy list
 
 ---
 
-## 8. Deployment
-
-### Local Development
-
-All services run locally. The Rust CLI acts as the orchestrator, the Python scraper runs as a sidecar, and the frontend connects to both.
-
-### Production (Future)
-
-```
-┌──────────┐     ┌──────────────┐     ┌──────────┐
-│ Frontend │────►│  Rust Agent   │────►│ Scraper  │
-│ (Vercel) │     │  (VPS/Docker) │     │ (Docker) │
-└──────────┘     └──────┬───────┘     └──────────┘
-                        │
-                   ┌────▼────┐
-                   │ SQLite  │
-                   │  / PG   │
-                   └─────────┘
-```
-
----
-
-## 9. Tech Stack Summary
+## 10. Tech Stack Summary
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| Agent Runtime | Rust (tokio, reqwest, clap) | Task orchestration, tool execution |
-| Scraper | Python (Scrapling, FastAPI) | Stealth web scraping with anti-bot bypass |
+| Agent Runtime | Rust (tokio, reqwest, clap, rustyline) | Task orchestration, tool execution, REPL |
+| LLM Provider | Anthropic API (SSE streaming) | Agent intelligence |
+| Scraper | Python (Scrapling, FastAPI, Patchright) | Stealth web scraping with anti-bot bypass |
 | Storage | SQLite (rusqlite) | Hotel & price data persistence |
-| Frontend | Next.js 15, Tailwind CSS | Dashboard UI |
+| Frontend | Next.js 15, Tailwind CSS, Recharts | Dashboard UI |
 | Monorepo | Turborepo + pnpm + Cargo workspace | Build orchestration |
-| Charts | Recharts | Price trend visualization |
 
 ---
 
-## 10. Roadmap
+## 11. Roadmap
 
 ### Phase 1 — MVP
-- [ ] Project scaffolding (monorepo, configs)
+- [ ] Project scaffolding (monorepo, configs, Cargo workspace)
 - [ ] Python scraper service with Ctrip hotel list parsing
 - [ ] Rust storage layer (SQLite)
-- [ ] Basic CLI to trigger scrapes and query data
+- [ ] Basic CLI with `scrape` and `search` commands
 - [ ] Minimal frontend with hotel list view
 
 ### Phase 2 — Agent Intelligence
-- [ ] Full agent loop with LLM integration
+- [ ] Full agent loop (`ConversationRuntime<C,T>`) with LLM integration
 - [ ] Tool definitions (scrape, search, analyze, export)
+- [ ] REPL mode with session persistence
 - [ ] Price comparison and trend analysis
-- [ ] Session management for multi-step workflows
 
 ### Phase 3 — Production Hardening
 - [ ] Proxy pool management
