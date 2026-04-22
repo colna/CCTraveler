@@ -16,9 +16,9 @@
     "test:rust": "cargo test --workspace",
     "setup": "./scripts/setup.sh",
     "setup:python": "cd services/scraper && python3 -m venv .venv && source .venv/bin/activate && pip install -e '.[dev]'",
-    "scrape": "cargo run -p cli -- scrape",
-    "search": "cargo run -p cli -- search",
-    "export": "cargo run -p cli -- export"
+    "scrape": "cargo run -p cctraveler -- scrape",
+    "search": "cargo run -p cctraveler -- search",
+    "export": "cargo run -p cctraveler -- export"
   },
   "devDependencies": {
     "turbo": "^2"

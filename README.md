@@ -113,9 +113,9 @@ pnpm export -- --format json --output hotels.json
 Or with `cargo` directly:
 
 ```bash
-cargo run -p cli -- scrape --city shanghai --checkin 2026-05-01 --checkout 2026-05-02
-cargo run -p cli -- search --city shanghai --max-price 800 --min-star 4
-cargo run -p cli -- export --format csv --output hotels.csv
+cargo run -p cctraveler -- scrape --city shanghai --checkin 2026-05-01 --checkout 2026-05-02
+cargo run -p cctraveler -- search --city shanghai --max-price 800 --min-star 4
+cargo run -p cctraveler -- export --format csv --output hotels.csv
 ```
 
 ### Supported Cities
