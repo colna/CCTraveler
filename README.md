@@ -34,7 +34,7 @@ CCTraveler is an **AI-powered full-chain travel planning platform**. It goes bey
 ┌─────────────┐
 │  Next.js     │
 │  (packages/) │
-│  Web :3000   │
+│  Web :3100   │
 │  Vercel      │
 └─────────────┘
 ```
@@ -219,7 +219,7 @@ Python 爬虫 (FastAPI :8300)
     ↓ JSON 解析
 Rust 存入 SQLite
     ↓
-Next.js 前端读取展示 (:3000)
+Next.js 前端读取展示 (:3100)
 ```
 
 ### 部署

@@ -21,7 +21,7 @@ cd ../..
 echo ""
 echo "Services running:"
 echo "  Scraper:  http://localhost:8300"
-echo "  Frontend: http://localhost:3000"
+echo "  Frontend: http://localhost:3100"
 echo ""
 echo "Press Ctrl+C to stop all services."
 
