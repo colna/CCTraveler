@@ -23,5 +23,8 @@ data/raw/
 .env
 .env.local
 
+# Config (may contain API keys)
+config.toml
+
 # OS
 .DS_Store
