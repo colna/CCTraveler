@@ -203,13 +203,14 @@ fn run_chat(config: &runtime::RuntimeConfig, db_path: &std::path::Path) -> Resul
     println!("╚════════════════════════════════════════╝");
     println!();
 
-    // Initialize API client
-    let api_client = AnthropicRuntimeClient::from_env().map_err(|e| {
+    // Initialize API client: config.toml > env var
+    let api_key = config.agent.resolve_api_key().ok_or_else(|| {
         anyhow::anyhow!(
-            "Failed to initialize Anthropic client: {e}\n\
-             Set ANTHROPIC_API_KEY environment variable."
+            "API key not found.\n\
+             Set api_key in config.toml [agent] section, or set ANTHROPIC_API_KEY env var."
         )
     })?;
+    let api_client = AnthropicRuntimeClient::new(api_key);
 
     // Initialize tool executor with its own database connection
     let db = Database::open(db_path)?;

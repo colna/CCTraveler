@@ -14,6 +14,18 @@ pub struct RuntimeConfig {
 pub struct AgentConfig {
     pub model: String,
     pub max_turns: u32,
+    #[serde(default)]
+    pub api_key: String,
+}
+
+impl AgentConfig {
+    /// Resolve API key: config file > env var ANTHROPIC_API_KEY.
+    pub fn resolve_api_key(&self) -> Option<String> {
+        if !self.api_key.is_empty() {
+            return Some(self.api_key.clone());
+        }
+        std::env::var("ANTHROPIC_API_KEY").ok()
+    }
 }
 
 #[derive(Debug, Deserialize)]

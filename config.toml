@@ -1,6 +1,7 @@
 [agent]
 model = "claude-sonnet-4-20250514"
 max_turns = 50
+api_key = ""  # Anthropic API key, or set ANTHROPIC_API_KEY env var
 
 [scraper]
 base_url = "http://localhost:8300"
