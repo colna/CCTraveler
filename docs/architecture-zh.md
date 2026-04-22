@@ -163,9 +163,54 @@ CCTraveler/
 
 ---
 
-## 3. Rust 核心架构（源自 claw-code）
+## 3. 系统架构图
 
-### 3.1 核心 Trait
+### 3.0 整体系统架构
+
+```mermaid
+graph TB
+    subgraph Frontend["前端面板 (Next.js)"]
+        UI["搜索/列表/详情页"]
+        API["API Routes"]
+    end
+
+    subgraph AgentCore["Agent 核心 (Rust)"]
+        CLI["CLI / REPL"]
+        RT["ConversationRuntime"]
+        Tools["工具注册表"]
+        Storage["SQLite 存储"]
+    end
+
+    subgraph Scraper["爬虫服务 (Python)"]
+        FastAPI["FastAPI Server :8300"]
+        Fetcher["StealthyFetcher"]
+        Parser["CtripParser"]
+    end
+
+    subgraph External["外部服务"]
+        LLM["Anthropic API"]
+        Ctrip["携程 hotels.ctrip.com"]
+    end
+
+    UI --> API
+    API --> CLI
+    CLI --> RT
+    RT -->|"stream"| LLM
+    LLM -->|"tool_use"| RT
+    RT --> Tools
+    Tools -->|"scrape_hotels"| FastAPI
+    Tools -->|"search/analyze"| Storage
+    FastAPI --> Fetcher
+    Fetcher -->|"反爬绕过"| Ctrip
+    Ctrip --> Parser
+    Parser --> FastAPI
+    FastAPI --> Tools
+    Tools --> RT
+```
+
+## 4. Rust 核心架构（源自 claw-code）
+
+### 4.1 核心 Trait
 
 遵循 claw-code 的 **trait 多态** 模式，实现可测试性：
 
@@ -190,28 +235,33 @@ pub trait ToolExecutor {
 - `MockApiClient` — 返回预设响应，用于确定性测试
 - `MockToolExecutor` — 记录调用并返回预设结果
 
-### 3.2 Agent 会话循环
+### 4.2 Agent 会话循环
 
 `ConversationRuntime<C: ApiClient, T: ToolExecutor>` — 核心 Agent 循环，直接源自 claw-code 的 `conversation.rs`：
 
+```mermaid
+flowchart TD
+    A["用户输入"] --> B["推入 Session"]
+    B --> C["构建 ApiRequest"]
+    C --> D["调用 LLM API stream"]
+    D --> E{"解析响应"}
+    E -->|"纯文本"| F["输出结果"]
+    E -->|"ToolUse"| G["提取工具调用"]
+    G --> H{"分发工具"}
+    H -->|"scrape_hotels"| I["调用 Python 爬虫"]
+    H -->|"search_hotels"| J["查询 SQLite"]
+    H -->|"analyze_prices"| K["价格分析"]
+    H -->|"export_report"| L["导出 CSV/JSON"]
+    I --> M["构建 ToolResult"]
+    J --> M
+    K --> M
+    L --> M
+    M --> N["推入 Session"]
+    N --> C
+    F --> O["返回 TurnSummary"]
 ```
-run_turn(user_input) -> Result<TurnSummary, RuntimeError>
 
-1. 将用户消息推入 Session
-2. 进入 Agent 循环：
-   a. 构建 ApiRequest { system_prompt, messages }
-   b. 调用 api_client.stream(request) → Vec<AssistantEvent>
-   c. 解析响应 → ConversationMessage (文本 + tool_uses)
-   d. 将 assistant 消息推入 Session
-   e. 如果没有 tool_uses → 跳出循环（完成）
-   f. 对每个 ToolUse { id, name, input }：
-      - 调用 tool_executor.execute(name, input) → result
-      - 构建 ToolResult 消息，推入 Session
-   g. 回到步骤 (a)
-3. 返回 TurnSummary
-```
-
-### 3.3 核心类型
+### 4.3 核心类型
 
 ```rust
 /// 会话消息（用户、助手或工具结果）
@@ -250,18 +300,24 @@ pub struct GlobalToolRegistry {
 }
 ```
 
-### 3.4 Crate 依赖关系图
+### 4.4 Crate 依赖关系图
 
-```
-cli (二进制文件: "cctraveler")
-  ├── api          (LLM 客户端)
-  │   └── runtime  (核心类型、会话、配置)
-  ├── tools        (工具定义 + 执行)
-  │   ├── api
-  │   ├── runtime
-  │   └── storage
-  └── storage      (SQLite 持久化)
-      └── runtime
+```mermaid
+graph BT
+    runtime["runtime\n核心引擎"]
+    api["api\nLLM 接口"]
+    tools["tools\n工具清单"]
+    storage["storage\n数据持久化"]
+    cli["cli\n二进制入口"]
+
+    api --> runtime
+    tools --> api
+    tools --> runtime
+    tools --> storage
+    storage --> runtime
+    cli --> api
+    cli --> tools
+    cli --> storage
 ```
 
 | Crate | 职责 |
@@ -272,7 +328,7 @@ cli (二进制文件: "cctraveler")
 | `storage` | 数据层：通过 `rusqlite` 操作 SQLite、Hotel/Room/PriceSnapshot 模型、查询构建器 |
 | `cli` | 二进制入口：通过 `clap` 解析 CLI 参数、REPL 模式、单次提示模式、终端渲染 |
 
-### 3.5 Rust Workspace 配置
+### 4.5 Rust Workspace 配置
 
 ```toml
 [workspace]
@@ -310,36 +366,27 @@ missing_errors_doc = "allow"
 
 ---
 
-## 4. 爬虫服务（Python）
+## 5. 爬虫服务（Python）
 
 基于 **FastAPI** 的轻量微服务，封装 Scrapling 实现携程专用爬取：
 
-```
-              ┌─────────────────────────────────┐
-              │         爬虫服务                  │
-              │       (FastAPI, 端口 8300)         │
-              │                                   │
-  HTTP ───────►  POST /scrape/hotels              │
-              │    ├── city, checkin, checkout     │
-              │    ├── filters (价格, 星级等)       │
-              │    │                               │
-              │    ▼                               │
-              │  CtripFetcher                      │
-              │    ├── StealthyFetcher             │
-              │    │   ├── Patchright 浏览器         │
-              │    │   ├── TLS 指纹伪装              │
-              │    │   ├── Canvas 噪声注入            │
-              │    │   ├── Cloudflare 自动解决        │
-              │    │   └── 代理轮换                   │
-              │    │                               │
-              │    ▼                               │
-              │  CtripParser                       │
-              │    ├── 提取酒店列表                    │
-              │    ├── 解析房型 + 价格                 │
-              │    └── 处理分页                       │
-              │                                   │
-              │  响应: List[Hotel]                  │
-              └─────────────────────────────────┘
+```mermaid
+flowchart LR
+    A["Rust Agent"] -->|"HTTP POST"| B["FastAPI :8300"]
+    B --> C["StealthyFetcher"]
+    C --> D{"反爬策略"}
+    D --> E["TLS 指纹伪装"]
+    D --> F["Canvas 噪声"]
+    D --> G["WebRTC 屏蔽"]
+    D --> H["Cloudflare 解决"]
+    E --> I["Patchright 浏览器"]
+    F --> I
+    G --> I
+    H --> I
+    I -->|"代理轮换"| J["携程页面"]
+    J --> K["CtripParser"]
+    K --> L["酒店数据 JSON"]
+    L --> M["写入 SQLite"]
 ```
 
 ### 携程爬取策略
@@ -377,7 +424,7 @@ missing_errors_doc = "allow"
 
 ---
 
-## 5. 前端面板（Next.js）
+## 6. 前端面板（Next.js）
 
 ### 页面路由
 
@@ -397,16 +444,17 @@ missing_errors_doc = "allow"
 
 ### 数据流
 
-```
-前端 ──► Next.js API Routes ──► Rust CLI（子进程 / HTTP）
-                                     │
-                                     ├── SQLite（读取爬取数据）
-                                     └── 爬虫服务（触发新的爬取任务）
+```mermaid
+flowchart LR
+    A["前端页面"] --> B["Next.js API Routes"]
+    B --> C["Rust CLI"]
+    C --> D["SQLite\n读取爬取数据"]
+    C --> E["爬虫服务\n触发新爬取"]
 ```
 
 ---
 
-## 6. 数据模型
+## 7. 数据模型
 
 ### 酒店 (Hotel)
 
@@ -515,7 +563,7 @@ CREATE INDEX idx_hotels_city ON hotels(city);
 
 ---
 
-## 7. Agent 工具定义
+## 8. Agent 工具定义
 
 遵循 claw-code 的 `ToolSpec` 模式 — 每个工具包含名称、描述、JSON Schema 输入和类型化执行函数：
 
@@ -612,7 +660,7 @@ CREATE INDEX idx_hotels_city ON hotels(city);
 
 ---
 
-## 8. 构建 & 开发流程
+## 9. 构建 & 开发流程
 
 ### 环境要求
 
@@ -675,7 +723,7 @@ pytest services/scraper/tests     # Python 测试
 
 ---
 
-## 9. 配置文件
+## 10. 配置文件
 
 ### `config.toml`（Agent 配置）
 
@@ -703,7 +751,7 @@ proxy_pool = []                      # 代理池（可选）
 
 ---
 
-## 10. 技术栈总览
+## 11. 技术栈总览
 
 | 层级 | 技术 | 用途 |
 |------|------|------|
@@ -716,7 +764,7 @@ proxy_pool = []                      # 代理池（可选）
 
 ---
 
-## 11. 路线图
+## 12. 路线图
 
 ### 第一阶段 — MVP
 - [ ] 项目脚手架（monorepo、配置文件、Cargo workspace）

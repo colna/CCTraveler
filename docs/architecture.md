@@ -162,9 +162,54 @@ CCTraveler/
 
 ---
 
-## 3. Core Rust Architecture (from claw-code)
+## 3. Architecture Diagrams
 
-### 3.1 Key Traits
+### 3.0 System Architecture
+
+```mermaid
+graph TB
+    subgraph Frontend["Frontend (Next.js)"]
+        UI["Search / List / Detail Pages"]
+        API["API Routes"]
+    end
+
+    subgraph AgentCore["Agent Core (Rust)"]
+        CLI["CLI / REPL"]
+        RT["ConversationRuntime"]
+        Tools["Tool Registry"]
+        Storage["SQLite Storage"]
+    end
+
+    subgraph Scraper["Scraper Service (Python)"]
+        FastAPI["FastAPI Server :8300"]
+        Fetcher["StealthyFetcher"]
+        Parser["CtripParser"]
+    end
+
+    subgraph External["External Services"]
+        LLM["Anthropic API"]
+        Ctrip["hotels.ctrip.com"]
+    end
+
+    UI --> API
+    API --> CLI
+    CLI --> RT
+    RT -->|"stream"| LLM
+    LLM -->|"tool_use"| RT
+    RT --> Tools
+    Tools -->|"scrape_hotels"| FastAPI
+    Tools -->|"search/analyze"| Storage
+    FastAPI --> Fetcher
+    Fetcher -->|"anti-bot bypass"| Ctrip
+    Ctrip --> Parser
+    Parser --> FastAPI
+    FastAPI --> Tools
+    Tools --> RT
+```
+
+## 4. Core Rust Architecture (from claw-code)
+
+### 4.1 Key Traits
 
 Following claw-code's trait-based polymorphism pattern for testability:
 
@@ -189,28 +234,33 @@ Test implementations:
 - `MockApiClient` — returns scripted responses for deterministic testing
 - `MockToolExecutor` — records calls and returns preset results
 
-### 3.2 The Agent Conversation Loop
+### 4.2 The Agent Conversation Loop
 
 `ConversationRuntime<C: ApiClient, T: ToolExecutor>` — the core agent loop, directly adapted from claw-code's `conversation.rs`:
 
+```mermaid
+flowchart TD
+    A["User Input"] --> B["Push to Session"]
+    B --> C["Build ApiRequest"]
+    C --> D["Call LLM API stream"]
+    D --> E{"Parse Response"}
+    E -->|"Text"| F["Output Result"]
+    E -->|"ToolUse"| G["Extract Tool Calls"]
+    G --> H{"Dispatch Tool"}
+    H -->|"scrape_hotels"| I["Call Python Scraper"]
+    H -->|"search_hotels"| J["Query SQLite"]
+    H -->|"analyze_prices"| K["Price Analysis"]
+    H -->|"export_report"| L["Export CSV/JSON"]
+    I --> M["Build ToolResult"]
+    J --> M
+    K --> M
+    L --> M
+    M --> N["Push to Session"]
+    N --> C
+    F --> O["Return TurnSummary"]
 ```
-run_turn(user_input) -> Result<TurnSummary, RuntimeError>
 
-1. Push user message to session
-2. Enter agentic loop:
-   a. Build ApiRequest { system_prompt, messages }
-   b. Call api_client.stream(request) → Vec<AssistantEvent>
-   c. Parse response → ConversationMessage (text + tool_uses)
-   d. Push assistant message to session
-   e. If no tool_uses → break (done)
-   f. For each ToolUse { id, name, input }:
-      - Call tool_executor.execute(name, input) → result
-      - Build ToolResult message, push to session
-   g. Loop back to (a)
-3. Return TurnSummary
-```
-
-### 3.3 Core Types
+### 4.3 Core Types
 
 ```rust
 /// A conversation message (user, assistant, or tool result)
@@ -249,18 +299,24 @@ pub struct GlobalToolRegistry {
 }
 ```
 
-### 3.4 Crate Dependency Graph
+### 4.4 Crate Dependency Graph
 
-```
-cli (binary: "cctraveler")
-  ├── api          (LLM provider clients)
-  │   └── runtime  (core types, session, config)
-  ├── tools        (tool specs + execution)
-  │   ├── api
-  │   ├── runtime
-  │   └── storage
-  └── storage      (SQLite persistence)
-      └── runtime
+```mermaid
+graph BT
+    runtime["runtime\nCore Engine"]
+    api["api\nLLM Providers"]
+    tools["tools\nTool Registry"]
+    storage["storage\nData Persistence"]
+    cli["cli\nBinary Entry"]
+
+    api --> runtime
+    tools --> api
+    tools --> runtime
+    tools --> storage
+    storage --> runtime
+    cli --> api
+    cli --> tools
+    cli --> storage
 ```
 
 | Crate | Responsibility |
@@ -271,7 +327,7 @@ cli (binary: "cctraveler")
 | `storage` | Data layer: SQLite via `rusqlite`, Hotel/Room/PriceSnapshot models, query builders |
 | `cli` | Binary entry point: CLI arg parsing via `clap`, REPL mode, one-shot prompt mode, terminal rendering |
 
-### 3.5 Rust Workspace Config
+### 4.5 Rust Workspace Config
 
 ```toml
 [workspace]
@@ -309,36 +365,27 @@ missing_errors_doc = "allow"
 
 ---
 
-## 4. Scraper Service (Python)
+## 5. Scraper Service (Python)
 
 A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific scraping:
 
-```
-              ┌─────────────────────────────────┐
-              │       Scraper Service            │
-              │       (FastAPI, port 8300)        │
-              │                                   │
-  HTTP ───────►  POST /scrape/hotels              │
-              │    ├── city, checkin, checkout     │
-              │    ├── filters (price, star, etc)  │
-              │    │                               │
-              │    ▼                               │
-              │  CtripFetcher                      │
-              │    ├── StealthyFetcher             │
-              │    │   ├── Patchright browser       │
-              │    │   ├── TLS impersonation        │
-              │    │   ├── Canvas noise              │
-              │    │   ├── Cloudflare solver          │
-              │    │   └── Proxy rotation             │
-              │    │                               │
-              │    ▼                               │
-              │  CtripParser                       │
-              │    ├── Extract hotel list            │
-              │    ├── Parse room types + prices     │
-              │    └── Handle pagination             │
-              │                                   │
-              │  Response: List[Hotel]              │
-              └─────────────────────────────────┘
+```mermaid
+flowchart LR
+    A["Rust Agent"] -->|"HTTP POST"| B["FastAPI :8300"]
+    B --> C["StealthyFetcher"]
+    C --> D{"Anti-Bot Strategy"}
+    D --> E["TLS Impersonation"]
+    D --> F["Canvas Noise"]
+    D --> G["WebRTC Blocking"]
+    D --> H["Cloudflare Solver"]
+    E --> I["Patchright Browser"]
+    F --> I
+    G --> I
+    H --> I
+    I -->|"Proxy Rotation"| J["Ctrip Page"]
+    J --> K["CtripParser"]
+    K --> L["Hotel Data JSON"]
+    L --> M["Write to SQLite"]
 ```
 
 ### Ctrip Scraping Strategy
@@ -376,7 +423,7 @@ A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific s
 
 ---
 
-## 5. Web Frontend (Next.js)
+## 6. Web Frontend (Next.js)
 
 ### Pages
 
@@ -396,16 +443,17 @@ A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific s
 
 ### Data Flow
 
-```
-Frontend ──► Next.js API Routes ──► Rust CLI (subprocess / HTTP)
-                                         │
-                                         ├── SQLite (read scraped data)
-                                         └── Scraper Service (trigger new scrapes)
+```mermaid
+flowchart LR
+    A["Frontend Pages"] --> B["Next.js API Routes"]
+    B --> C["Rust CLI"]
+    C --> D["SQLite\nRead Scraped Data"]
+    C --> E["Scraper Service\nTrigger New Scrapes"]
 ```
 
 ---
 
-## 6. Data Model
+## 7. Data Model
 
 ### Hotel
 
@@ -514,7 +562,7 @@ CREATE INDEX idx_hotels_city ON hotels(city);
 
 ---
 
-## 7. Agent Tool Definitions
+## 8. Agent Tool Definitions
 
 Following claw-code's `ToolSpec` pattern — each tool has name, description, JSON Schema, and a typed execute handler:
 
@@ -611,7 +659,7 @@ Following claw-code's `ToolSpec` pattern — each tool has name, description, JS
 
 ---
 
-## 8. Build & Dev Workflow
+## 9. Build & Dev Workflow
 
 ### Prerequisites
 
@@ -674,7 +722,7 @@ pytest services/scraper/tests     # Python tests
 
 ---
 
-## 9. Configuration
+## 10. Configuration
 
 ### `config.toml` (Agent)
 
@@ -702,7 +750,7 @@ proxy_pool = []               # Optional proxy list
 
 ---
 
-## 10. Tech Stack Summary
+## 11. Tech Stack Summary
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
@@ -715,7 +763,7 @@ proxy_pool = []               # Optional proxy list
 
 ---
 
-## 11. Roadmap
+## 12. Roadmap
 
 ### Phase 1 — MVP
 - [ ] Project scaffolding (monorepo, configs, Cargo workspace)
