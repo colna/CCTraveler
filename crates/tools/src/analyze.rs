@@ -1,2 +1,3 @@
-// Price analysis tool — stub for MVP.
-// Full implementation in P1 when we add the Agent conversation loop.
+// Price analysis logic.
+// Currently handled inline by TravelerToolExecutor::handle_analyze().
+// This module reserved for more advanced analysis algorithms in Phase 3.

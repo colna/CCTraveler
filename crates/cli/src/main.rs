@@ -1,9 +1,13 @@
 use anyhow::Result;
+use api::AnthropicRuntimeClient;
 use clap::{Parser, Subcommand};
+use runtime::{ConversationRuntime, SystemPromptBuilder};
+use rustyline::DefaultEditor;
 use std::path::PathBuf;
-use storage::models::{Hotel, PriceSnapshot, Room, SearchFilters, SortBy};
+use storage::models::{SearchFilters, SortBy};
 use storage::Database;
 use tools::scrape::{ScrapeRequest, ScrapedHotel};
+use tools::TravelerToolExecutor;
 
 #[derive(Parser)]
 #[command(name = "cctraveler", version, about = "AI Travel Planner — Hotel Price Intelligence")]
@@ -18,6 +22,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Start AI chat mode (natural language agent)
+    Chat,
     /// Scrape hotel listings from Ctrip
     Scrape {
         /// City name or Ctrip city ID
@@ -81,16 +87,20 @@ async fn main() -> Result<()> {
         std::fs::create_dir_all(parent)?;
     }
 
-    let db = Database::open(&db_path)?;
-
     match cli.command {
+        Commands::Chat => {
+            run_chat(&config, &db_path)?;
+        }
         Commands::Scrape {
             city,
             checkin,
             checkout,
             max_pages,
         } => {
-            println!("Scraping hotels: city={city}, {checkin} to {checkout}, max_pages={max_pages}");
+            let db = Database::open(&db_path)?;
+            println!(
+                "Scraping hotels: city={city}, {checkin} to {checkout}, max_pages={max_pages}"
+            );
 
             let req = ScrapeRequest {
                 city: city.clone(),
@@ -104,7 +114,7 @@ async fn main() -> Result<()> {
 
             let now = chrono::Utc::now().to_rfc3339();
             for hotel in &resp.hotels {
-                store_scraped_hotel(&db, hotel, &city, &checkin, &checkout, &now)?;
+                tools::store_scraped_hotel(&db, hotel, &city, &checkin, &checkout, &now)?;
             }
 
             println!("Stored {} hotels in database", resp.hotels.len());
@@ -118,6 +128,7 @@ async fn main() -> Result<()> {
             sort_by,
             limit,
         } => {
+            let db = Database::open(&db_path)?;
             let filters = SearchFilters {
                 city,
                 max_price,
@@ -136,8 +147,8 @@ async fn main() -> Result<()> {
 
             println!("Found {} hotels:\n", results.len());
             println!(
-                "{:<12} {:<30} {:>5} {:>6} {:>8} {}",
-                "ID", "Name", "Star", "Rating", "Price", "Room"
+                "{:<12} {:<30} {:>5} {:>6} {:>8} Room",
+                "ID", "Name", "Star", "Rating", "Price"
             );
             println!("{}", "-".repeat(85));
             for h in &results {
@@ -160,6 +171,7 @@ async fn main() -> Result<()> {
             city,
             output,
         } => {
+            let db = Database::open(&db_path)?;
             let filters = SearchFilters {
                 city,
                 ..Default::default()
@@ -182,71 +194,119 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-fn store_scraped_hotel(
-    db: &Database,
-    hotel: &ScrapedHotel,
-    city: &str,
-    checkin: &str,
-    checkout: &str,
-    now: &str,
-) -> Result<()> {
-    let h = Hotel {
-        id: hotel.id.clone(),
-        name: hotel.name.clone(),
-        name_en: hotel.name_en.clone(),
-        star: hotel.star,
-        rating: hotel.rating,
-        rating_count: hotel.rating_count.unwrap_or(0),
-        address: hotel.address.clone(),
-        latitude: hotel.latitude,
-        longitude: hotel.longitude,
-        image_url: hotel.image_url.clone(),
-        amenities: vec![],
-        city: city.to_string(),
-        district: hotel.district.clone(),
-        created_at: now.to_string(),
-        updated_at: now.to_string(),
-    };
-    db.upsert_hotel(&h)?;
+/// Run the AI chat REPL — `ConversationRuntime`<`AnthropicRuntimeClient`, `TravelerToolExecutor`>
+fn run_chat(config: &runtime::RuntimeConfig, db_path: &std::path::Path) -> Result<()> {
+    println!("╔════════════════════════════════════════╗");
+    println!("║   CCTraveler AI 旅行助手               ║");
+    println!("║   输入自然语言查询酒店信息               ║");
+    println!("║   输入 quit 或 exit 退出                ║");
+    println!("╚════════════════════════════════════════╝");
+    println!();
 
-    for (i, room) in hotel.rooms.iter().enumerate() {
-        let room_id = format!("{}-room-{i}", hotel.id);
-        let r = Room {
-            id: room_id.clone(),
-            hotel_id: hotel.id.clone(),
-            name: room.name.clone(),
-            bed_type: room.bed_type.clone(),
-            max_guests: 2,
-            area: None,
-            has_window: false,
-            has_breakfast: room.has_breakfast.unwrap_or(false),
-            cancellation_policy: room.has_free_cancel.and_then(|v| if v { Some("免费取消".to_string()) } else { None }),
+    // Initialize API client
+    let api_client = AnthropicRuntimeClient::from_env().map_err(|e| {
+        anyhow::anyhow!(
+            "Failed to initialize Anthropic client: {e}\n\
+             Set ANTHROPIC_API_KEY environment variable."
+        )
+    })?;
+
+    // Initialize tool executor with its own database connection
+    let db = Database::open(db_path)?;
+    let tool_executor = TravelerToolExecutor::new(db, config.scraper.base_url.clone());
+
+    // Build system prompt
+    let system_prompt = SystemPromptBuilder::build_default();
+
+    // Create ConversationRuntime
+    let mut rt = ConversationRuntime::new(
+        api_client,
+        tool_executor,
+        config.agent.model.clone(),
+        system_prompt,
+        config.agent.max_turns as usize,
+    );
+
+    // Set workspace root for session persistence
+    let cwd = std::env::current_dir()?;
+    rt.session.workspace_root = Some(cwd);
+
+    // REPL loop with rustyline
+    let mut editor = DefaultEditor::new()?;
+    let history_path = dirs_hint();
+    if let Some(ref path) = history_path {
+        let _ = editor.load_history(path);
+    }
+
+    loop {
+        let input = match editor.readline("you> ") {
+            Ok(line) => line,
+            Err(rustyline::error::ReadlineError::Interrupted) => {
+                println!("(Ctrl+C) 输入 quit 退出");
+                continue;
+            }
+            Err(rustyline::error::ReadlineError::Eof) => break,
+            Err(e) => {
+                eprintln!("Input error: {e}");
+                break;
+            }
         };
-        db.insert_room(&r)?;
 
-        if let Some(price_val) = room.price {
-            let price = PriceSnapshot {
-                id: uuid::Uuid::new_v4().to_string(),
-                room_id,
-                hotel_id: hotel.id.clone(),
-                price: price_val,
-                original_price: room.original_price,
-                checkin: checkin.to_string(),
-                checkout: checkout.to_string(),
-                scraped_at: now.to_string(),
-                source: "ctrip".to_string(),
-            };
-            db.insert_price(&price)?;
+        let input = input.trim();
+        if input.is_empty() {
+            continue;
         }
+
+        let _ = editor.add_history_entry(input);
+
+        if matches!(input, "quit" | "exit" | "q") {
+            println!("再见！");
+            break;
+        }
+
+        // Run a turn
+        match rt.run_turn(input) {
+            Ok(summary) => {
+                println!("\nassistant> {}", summary.assistant_text);
+                if summary.tool_calls_made > 0 {
+                    println!(
+                        "  [工具调用: {} 次 | tokens: {} in / {} out]",
+                        summary.tool_calls_made, summary.input_tokens, summary.output_tokens
+                    );
+                }
+                println!();
+            }
+            Err(e) => {
+                eprintln!("Error: {e}");
+                println!();
+            }
+        }
+    }
+
+    // Save session
+    if let Err(e) = rt.save_session() {
+        eprintln!("Warning: failed to save session: {e}");
+    }
+
+    // Save history
+    if let Some(ref path) = history_path {
+        let _ = editor.save_history(path);
     }
 
     Ok(())
 }
 
+fn dirs_hint() -> Option<PathBuf> {
+    let home = std::env::var("HOME").ok()?;
+    let dir = PathBuf::from(home).join(".cctraveler");
+    std::fs::create_dir_all(&dir).ok()?;
+    Some(dir.join("history.txt"))
+}
+
 fn print_hotel_table(hotels: &[ScrapedHotel]) {
     println!(
-        "\n{:<30} {:>5} {:>6} {:>10}  {}",
-        "Name", "Star", "Rating", "Price", "Room"
+        "\n{:<30} {:>5} {:>6} {:>10}  Room",
+        "Name", "Star", "Rating", "Price"
     );
     println!("{}", "-".repeat(80));
     for h in hotels {

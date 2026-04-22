@@ -1,5 +1,8 @@
-pub mod client;
-pub mod types;
+pub mod providers;
+pub mod sse;
 
-pub use client::ApiClient;
-pub use types::{ApiRequest, ApiResponse, ToolDefinition};
+// Re-export the Anthropic client as the primary provider
+pub use providers::anthropic::AnthropicRuntimeClient;
+
+// Re-export core traits from runtime for convenience
+pub use runtime::{ApiClient, ApiRequest, AssistantEvent, RuntimeError, ToolSpec};

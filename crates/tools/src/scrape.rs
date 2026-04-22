@@ -50,7 +50,7 @@ pub async fn scrape_hotels(base_url: &str, req: &ScrapeRequest) -> Result<Scrape
     let resp = client
         .post(&url)
         .json(req)
-        .timeout(std::time::Duration::from_secs(120))
+        .timeout(std::time::Duration::from_mins(2))
         .send()
         .await?;
 

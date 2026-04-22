@@ -120,7 +120,7 @@ impl Database {
         }
 
         let params_refs: Vec<&dyn rusqlite::types::ToSql> =
-            param_values.iter().map(|p| p.as_ref()).collect();
+            param_values.iter().map(std::convert::AsRef::as_ref).collect();
 
         let mut stmt = self.conn.prepare(&sql)?;
         let rows = stmt.query_map(params_refs.as_slice(), |row| {

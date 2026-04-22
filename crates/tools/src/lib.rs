@@ -1,18 +1,13 @@
+pub mod analyze;
+pub mod definitions;
+pub mod executor;
+pub mod export;
 pub mod scrape;
 pub mod search;
-pub mod analyze;
-pub mod export;
 
-use serde::{Deserialize, Serialize};
+// Re-export key types
+pub use definitions::all_tool_specs;
+pub use executor::{store_scraped_hotel, TravelerToolExecutor};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ToolSpec {
-    pub name: &'static str,
-    pub description: &'static str,
-    pub input_schema: serde_json::Value,
-}
-
-/// Tool executor trait — dispatches tool calls to handlers.
-pub trait ToolExecutor {
-    fn execute(&self, tool_name: &str, input: &str) -> anyhow::Result<String>;
-}
+// Re-export runtime traits for convenience
+pub use runtime::{ToolExecutor, ToolSpec};

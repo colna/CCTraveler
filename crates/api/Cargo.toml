@@ -4,9 +4,13 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+runtime = { path = "../runtime" }
 serde = { workspace = true }
 serde_json = { workspace = true }
+reqwest = { workspace = true, features = ["blocking"] }
+tokio = { workspace = true }
 anyhow = { workspace = true }
+tracing = { workspace = true }
 
 [lints]
 workspace = true

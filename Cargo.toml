@@ -19,6 +19,7 @@ tracing-subscriber = "0.3"
 anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1", features = ["v4", "serde"] }
+rustyline = "14"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
