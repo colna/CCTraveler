@@ -1,30 +1,45 @@
-"""Ctrip hotel list fetcher using Scrapling's StealthyFetcher."""
+"""Ctrip hotel list fetcher using httpx with browser-like headers."""
 from __future__ import annotations
 
 import asyncio
 import logging
 import random
 
-from scrapling import StealthyFetcher
+import httpx
 
 logger = logging.getLogger(__name__)
 
 # Known Ctrip city ID mappings
 CITY_IDS: dict[str, str] = {
-    "遵义": "558",
-    "贵阳": "30",
-    "成都": "28",
-    "重庆": "4",
-    "北京": "1",
-    "上海": "2",
-    "广州": "32",
-    "深圳": "26",
-    "杭州": "14",
-    "南京": "9",
-    "西安": "7",
-    "昆明": "31",
-    "大理": "135",
-    "三亚": "43",
+    "zunyi": "558", "遵义": "558",
+    "guiyang": "30", "贵阳": "30",
+    "chengdu": "28", "成都": "28",
+    "chongqing": "4", "重庆": "4",
+    "beijing": "1", "北京": "1",
+    "shanghai": "2", "上海": "2",
+    "guangzhou": "32", "广州": "32",
+    "shenzhen": "26", "深圳": "26",
+    "hangzhou": "14", "杭州": "14",
+    "nanjing": "9", "南京": "9",
+    "xian": "7", "西安": "7",
+    "kunming": "31", "昆明": "31",
+    "dali": "135", "大理": "135",
+    "sanya": "43", "三亚": "43",
+}
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/125.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
 }
 
 
@@ -32,7 +47,7 @@ def resolve_city_id(city: str) -> str:
     """Resolve city name to Ctrip city ID. If already numeric, return as-is."""
     if city.isdigit():
         return city
-    return CITY_IDS.get(city, city)
+    return CITY_IDS.get(city.lower(), CITY_IDS.get(city, city))
 
 
 async def fetch_hotel_list_page(
@@ -55,17 +70,15 @@ async def fetch_hotel_list_page(
     logger.info("Fetching page %d: %s", page, url)
 
     try:
-        fetcher = StealthyFetcher()
-        resp = await asyncio.to_thread(
-            fetcher.fetch,
-            url,
-            headless=True,
-            block_webrtc=True,
-            hide_canvas=True,
-        )
-        if resp and resp.status == 200:
-            return resp.html_content
-        logger.warning("Got status %s for page %d", resp.status if resp else "None", page)
+        async with httpx.AsyncClient(
+            headers=HEADERS,
+            follow_redirects=True,
+            timeout=30.0,
+        ) as client:
+            resp = await client.get(url)
+            if resp.status_code == 200:
+                return resp.text
+            logger.warning("Got status %s for page %d", resp.status_code, page)
     except Exception:
         logger.exception("Failed to fetch page %d", page)
 
