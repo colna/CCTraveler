@@ -210,7 +210,8 @@ fn run_chat(config: &runtime::RuntimeConfig, db_path: &std::path::Path) -> Resul
              Set api_key in config.toml [agent] section, or set ANTHROPIC_API_KEY env var."
         )
     })?;
-    let api_client = AnthropicRuntimeClient::new(api_key);
+    let base_url = config.agent.resolve_base_url();
+    let api_client = AnthropicRuntimeClient::with_base_url(api_key, base_url);
 
     // Initialize tool executor with its own database connection
     let db = Database::open(db_path)?;

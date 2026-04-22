@@ -16,6 +16,8 @@ pub struct AgentConfig {
     pub max_turns: u32,
     #[serde(default)]
     pub api_key: String,
+    #[serde(default)]
+    pub base_url: String,
 }
 
 impl AgentConfig {
@@ -25,6 +27,15 @@ impl AgentConfig {
             return Some(self.api_key.clone());
         }
         std::env::var("ANTHROPIC_API_KEY").ok()
+    }
+
+    /// Resolve base URL: config file > env var ANTHROPIC_BASE_URL > official default.
+    pub fn resolve_base_url(&self) -> String {
+        if !self.base_url.is_empty() {
+            return self.base_url.clone();
+        }
+        std::env::var("ANTHROPIC_BASE_URL")
+            .unwrap_or_else(|_| "https://api.anthropic.com".to_string())
     }
 }
 

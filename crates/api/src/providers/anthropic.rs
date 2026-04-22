@@ -5,27 +5,32 @@ use runtime::types::{
 use serde::Deserialize;
 use tracing::{debug, info};
 
-const ANTHROPIC_API_URL: &str = "https://api.anthropic.com/v1/messages";
+const DEFAULT_BASE_URL: &str = "https://api.anthropic.com";
 const ANTHROPIC_VERSION: &str = "2023-06-01";
 
 /// Anthropic API client implementing the `ApiClient` trait.
 /// Uses SSE streaming internally, collects all events before returning.
 pub struct AnthropicRuntimeClient {
     api_key: String,
+    base_url: String,
     client: reqwest::Client,
 }
 
 impl AnthropicRuntimeClient {
-    #[must_use] 
+    #[must_use]
     pub fn new(api_key: String) -> Self {
-        let client = reqwest::Client::new();
-        Self { api_key, client }
+        Self::with_base_url(api_key, DEFAULT_BASE_URL.to_string())
     }
 
-    pub fn from_env() -> Result<Self, RuntimeError> {
-        let api_key = std::env::var("ANTHROPIC_API_KEY")
-            .map_err(|_| RuntimeError::Api("ANTHROPIC_API_KEY not set".into()))?;
-        Ok(Self::new(api_key))
+    #[must_use]
+    pub fn with_base_url(api_key: String, base_url: String) -> Self {
+        let client = reqwest::Client::new();
+        let base_url = base_url.trim_end_matches('/').to_string();
+        Self { api_key, base_url, client }
+    }
+
+    fn messages_url(&self) -> String {
+        format!("{}/v1/messages", self.base_url)
     }
 
     /// Build the Anthropic API request body.
@@ -110,7 +115,7 @@ impl AnthropicRuntimeClient {
 
         let response = self
             .client
-            .post(ANTHROPIC_API_URL)
+            .post(self.messages_url())
             .header("x-api-key", &self.api_key)
             .header("anthropic-version", ANTHROPIC_VERSION)
             .header("content-type", "application/json")
