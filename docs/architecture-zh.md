@@ -366,7 +366,239 @@ missing_errors_doc = "allow"
 
 ---
 
-## 5. 爬虫服务（Python）
+## 5. Harness 设计（源自 claw-code）
+
+Harness（运行时线束）是 claw-code 的核心编排层，CCTraveler 从中采用关键模式。
+
+### 5.1 Harness 组成
+
+Harness 不是一个单一结构体，而是**分层组合**：
+
+```mermaid
+graph TD
+    BP["BootstrapPlan\n启动阶段编排"] --> CR["ConversationRuntime\nAgent 循环核心"]
+    CR --> PP["PermissionPolicy\n权限策略"]
+    CR --> HR["HookRunner\n工具拦截器"]
+    CR --> SS["Session\n状态持久化"]
+    CR --> AC["ApiClient trait\n模型流式调用"]
+    CR --> TE["ToolExecutor trait\n工具分发"]
+```
+
+### 5.2 ConversationRuntime 核心结构
+
+```rust
+pub struct ConversationRuntime<C, T> {
+    session: Session,                        // 会话状态
+    api_client: C,                           // LLM 客户端 (泛型)
+    tool_executor: T,                        // 工具执行器 (泛型)
+    permission_policy: PermissionPolicy,     // 权限策略
+    system_prompt: Vec<String>,              // 系统提示词片段
+    max_iterations: usize,                   // 最大循环次数
+    usage_tracker: UsageTracker,             // Token 用量追踪
+    hook_runner: HookRunner,                 // Hook 拦截器
+    auto_compaction_input_tokens_threshold: u32, // 自动压缩阈值 (默认 100K)
+}
+```
+
+### 5.3 `run_turn()` 完整流程
+
+```mermaid
+flowchart TD
+    A["用户输入"] --> B["健康探测\n(若已压缩过)"]
+    B --> C["推入 Session"]
+    C --> D["构建 ApiRequest\n{system_prompt, messages}"]
+    D --> E["调用 api_client.stream()"]
+    E --> F["解析 AssistantEvent"]
+    F --> G{"有 ToolUse?"}
+    G -->|"否"| H["跳出循环"]
+    G -->|"是"| I["PreToolUse Hook\n可修改/拦截"]
+    I --> J{"权限检查\nPermissionPolicy"}
+    J -->|"Allow"| K["执行工具\ntool_executor.execute()"]
+    J -->|"Deny"| L["返回拒绝原因"]
+    K --> M["PostToolUse Hook"]
+    M --> N["构建 ToolResult\n推入 Session"]
+    L --> N
+    N --> D
+    H --> O{"累计 input_tokens\n>= 100K?"}
+    O -->|"是"| P["自动压缩 Session"]
+    O -->|"否"| Q["返回 TurnSummary"]
+    P --> Q
+```
+
+### 5.4 Hook 系统
+
+Hook 在三个生命周期点拦截工具执行：
+
+| 事件 | 时机 | 能力 |
+|------|------|------|
+| `PreToolUse` | 工具执行前 | 修改输入、拒绝执行、覆盖权限 |
+| `PostToolUse` | 工具执行成功后 | 注入反馈消息、拒绝结果 |
+| `PostToolUseFailure` | 工具执行失败后 | 注入错误诊断 |
+
+Hook 是 shell 脚本，通过环境变量接收上下文：
+- `HOOK_TOOL_NAME` — 工具名称
+- `HOOK_TOOL_INPUT` — JSON 输入
+- `HOOK_TOOL_OUTPUT` — 执行结果（仅 Post 阶段）
+
+返回值：
+- 退出码 `0` = 允许，`2` = 拒绝
+- JSON 输出可包含 `updatedInput`（修改输入）、`decision: "block"`（拒绝）
+
+### 5.5 权限系统
+
+两层权限模型：
+
+```mermaid
+flowchart TD
+    A["工具调用请求"] --> B{"Deny 规则匹配?"}
+    B -->|"是"| C["立即拒绝"]
+    B -->|"否"| D{"Hook 覆盖?"}
+    D -->|"Deny"| C
+    D -->|"Allow/无"| E{"Ask 规则匹配?"}
+    E -->|"是"| F["交互式确认"]
+    E -->|"否"| G{"Allow 规则\n或 Mode >= Required?"}
+    G -->|"是"| H["允许执行"]
+    G -->|"否"| F
+    F -->|"用户批准"| H
+    F -->|"用户拒绝"| C
+```
+
+CCTraveler 简化版：所有爬取工具预授权（无需交互确认），但保留 Deny 规则用于安全防护。
+
+### 5.6 CCTraveler 对 Harness 的采用
+
+| claw-code Harness 组件 | CCTraveler 采用 | 简化点 |
+|----------------------|----------------|-------|
+| `ConversationRuntime<C,T>` | 完整采用 | 无简化 |
+| `BootstrapPlan` (12 phases) | 简化为 3 步：config → session → runtime | 去掉 MCP/daemon/template |
+| `WorkerRegistry` 状态机 | 不采用 | 无多 worker 需求 |
+| `HookRunner` | 保留预留接口 | 初期不实现 hook |
+| `PermissionPolicy` | 简化为全允许 | 保留 deny 规则 |
+| `Session` JSONL 持久化 | 完整采用 | 无旋转（文件较小） |
+| 自动压缩 (100K tokens) | 完整采用 | 相同阈值 |
+
+---
+
+## 6. 上下文记忆系统（源自 claw-code）
+
+### 6.1 记忆层次
+
+```mermaid
+graph TB
+    subgraph Turn["单轮记忆"]
+        M["Session.messages\n完整对话历史"]
+    end
+
+    subgraph Session["跨轮记忆"]
+        JSONL["JSONL 文件\n增量追加"]
+        Compact["会话压缩\n摘要 + 最近 4 条"]
+    end
+
+    subgraph Persistent["持久记忆"]
+        SP["系统提示词\nCLAUDE.md 链"]
+        Config["配置文件\n三层合并"]
+        DB["SQLite\n业务数据"]
+    end
+
+    M --> JSONL
+    JSONL --> Compact
+    SP --> M
+    Config --> M
+    DB --> M
+```
+
+### 6.2 会话状态 (Session)
+
+```rust
+pub struct Session {
+    pub session_id: String,                     // "session-{timestamp}-{counter}"
+    pub messages: Vec<ConversationMessage>,      // 完整对话历史
+    pub compaction: Option<SessionCompaction>,   // 压缩元数据
+    pub workspace_root: Option<PathBuf>,        // 工作区绑定
+    pub prompt_history: Vec<SessionPromptEntry>, // 用户提示历史
+    pub model: Option<String>,                  // 使用的模型
+}
+```
+
+### 6.3 JSONL 持久化
+
+每条消息增量追加到 JSONL 文件，格式如下：
+
+```jsonl
+{"type":"session_meta","session_id":"session-17...","version":1}
+{"type":"message","message":{"role":"user","blocks":[{"type":"text","text":"搜索遵义酒店"}]}}
+{"type":"message","message":{"role":"assistant","blocks":[{"type":"tool_use","id":"t1","name":"scrape_hotels","input":"{...}"}]}}
+{"type":"message","message":{"role":"tool","blocks":[{"type":"tool_result","tool_use_id":"t1","output":"[{hotel1},{hotel2}]"}]}}
+```
+
+关键机制：
+- **增量追加**：新消息直接 append，不重写整个文件
+- **文件轮转**：超过 256KB 时轮转为 `.rot-{timestamp}.jsonl`，最多保留 3 个
+- **原子写入**：完整快照使用 write-to-temp + rename 保证崩溃安全
+
+### 6.4 会话压缩 (Compaction)
+
+当 input tokens 超过阈值时触发自动压缩：
+
+```mermaid
+flowchart LR
+    A["完整历史\n(100K+ tokens)"] --> B["分割点\n保留最近 4 条"]
+    B --> C["旧消息摘要化"]
+    C --> D["生成 Summary\nSystem 消息"]
+    D --> E["新历史 =\nSummary + 最近 4 条"]
+```
+
+摘要内容包括：
+- 消息统计（用户/助手/工具数量）
+- 使用过的工具列表
+- 最近 3 个用户请求
+- 待处理任务推断（含 "todo"/"next"/"pending" 的消息）
+- 关键文件引用（识别 .rs/.ts/.json/.md 等路径）
+- 当前工作推断
+- 完整时间线（角色 + 截断内容）
+
+二次压缩：`SummaryCompressionBudget` 将摘要限制在 1200 字符 / 24 行内。
+
+### 6.5 系统提示词组装
+
+系统提示词 = 静态指令 + 动态上下文，按以下顺序组装：
+
+```
+1. 基础角色定义（"你是一个 AI Agent..."）
+2. 系统规则（工具使用、权限、安全）
+3. 任务执行指南
+4. ─── 动态边界线 ───
+5. 环境信息（模型、平台、日期、工作目录）
+6. 项目上下文（git 状态、最近提交）
+7. 指令文件链（CLAUDE.md 从 cwd 向上发现）
+8. 运行时配置
+```
+
+指令文件发现：从 cwd 向根目录遍历，每个目录检查：
+- `CLAUDE.md`、`CLAUDE.local.md`
+- `.claw/CLAUDE.md`、`.claw/instructions.md`
+
+单文件限制 4000 字符，总限制 12000 字符，按内容哈希去重。
+
+### 6.6 CCTraveler 的上下文记忆设计
+
+| 层级 | claw-code 实现 | CCTraveler 采用 |
+|------|--------------|----------------|
+| 单轮记忆 | `Session.messages` 全量传给 LLM | 相同 |
+| 跨轮持久化 | JSONL + 轮转 | JSONL（无轮转，任务较短） |
+| 自动压缩 | 100K tokens 触发 | 相同阈值 |
+| 系统提示词 | 通用 Agent 指令 + CLAUDE.md 链 | 酒店爬取领域专用提示词 |
+| 工作区隔离 | FNV-1a 哈希命名空间 | 相同 |
+| 业务记忆 | 无（通用 Agent） | SQLite（酒店/价格历史） |
+
+CCTraveler 的独特记忆：
+- **价格快照历史**：每次爬取写入 `price_snapshots` 表，Agent 可查询历史价格趋势
+- **爬取任务日志**：记录每次爬取的参数、结果数、耗时，用于优化策略
+- **城市 ID 映射缓存**：首次查询后缓存城市名 → 携程 ID 映射
+
+---
+
+## 7. 爬虫服务（Python）
 
 基于 **FastAPI** 的轻量微服务，封装 Scrapling 实现携程专用爬取：
 
@@ -424,7 +656,7 @@ flowchart LR
 
 ---
 
-## 6. 前端面板（Next.js）
+## 8. 前端面板（Next.js）
 
 ### 页面路由
 
@@ -454,7 +686,7 @@ flowchart LR
 
 ---
 
-## 7. 数据模型
+## 9. 数据模型
 
 ### 酒店 (Hotel)
 
@@ -563,7 +795,7 @@ CREATE INDEX idx_hotels_city ON hotels(city);
 
 ---
 
-## 8. Agent 工具定义
+## 10. Agent 工具定义
 
 遵循 claw-code 的 `ToolSpec` 模式 — 每个工具包含名称、描述、JSON Schema 输入和类型化执行函数：
 
@@ -660,7 +892,7 @@ CREATE INDEX idx_hotels_city ON hotels(city);
 
 ---
 
-## 9. 构建 & 开发流程
+## 11. 构建 & 开发流程
 
 ### 环境要求
 
@@ -723,7 +955,7 @@ pytest services/scraper/tests     # Python 测试
 
 ---
 
-## 10. 配置文件
+## 12. 配置文件
 
 ### `config.toml`（Agent 配置）
 
@@ -751,7 +983,7 @@ proxy_pool = []                      # 代理池（可选）
 
 ---
 
-## 11. 技术栈总览
+## 13. 技术栈总览
 
 | 层级 | 技术 | 用途 |
 |------|------|------|
@@ -764,7 +996,7 @@ proxy_pool = []                      # 代理池（可选）
 
 ---
 
-## 12. 路线图
+## 14. 路线图
 
 ### 第一阶段 — MVP
 - [ ] 项目脚手架（monorepo、配置文件、Cargo workspace）
