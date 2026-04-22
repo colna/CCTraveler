@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
+from typing import Optional, Set
 
 from fastapi import FastAPI, HTTPException
 
@@ -50,7 +51,7 @@ async def scrape_hotels(req: ScrapeRequest):
         )
 
     all_hotels = []
-    seen_ids: set[str] = set()
+    seen_ids: Set[str] = set()
 
     for html in pages:
         hotels = parse_hotel_list(html, city=req.city)
@@ -69,7 +70,7 @@ async def scrape_hotels(req: ScrapeRequest):
 
 
 @app.get("/cities")
-async def list_cities(q: str | None = None):
+async def list_cities(q: Optional[str] = None):
     """List supported cities. Optionally filter by query string."""
     lookup = _load_city_lookup()
     # Build deduplicated list from the full cities JSON

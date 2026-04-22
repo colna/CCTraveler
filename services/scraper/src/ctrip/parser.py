@@ -11,14 +11,14 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import Optional
+from typing import Optional, List, Dict, Set
 
 from .types import ScrapedHotel, ScrapedRoom
 
 logger = logging.getLogger(__name__)
 
 
-def parse_hotel_list(html: str, city: str) -> list[ScrapedHotel]:
+def parse_hotel_list(html: str, city: str) -> List[ScrapedHotel]:
     """Parse hotel list page HTML and extract hotel data."""
     unescaped = html.replace('\\"', '"').replace('\\\\', '\\')
 
@@ -27,8 +27,8 @@ def parse_hotel_list(html: str, city: str) -> list[ScrapedHotel]:
         logger.warning("Could not extract hotelList from page")
         return []
 
-    hotels: list[ScrapedHotel] = []
-    seen: set[str] = set()
+    hotels: List[ScrapedHotel] = []
+    seen: Set[str] = set()
 
     for item in hotels_data:
         try:
@@ -43,7 +43,7 @@ def parse_hotel_list(html: str, city: str) -> list[ScrapedHotel]:
     return hotels
 
 
-def _extract_hotel_list(text: str) -> list[dict]:
+def _extract_hotel_list(text: str) -> List[Dict]:
     """Extract hotelList array from the page.
 
     Tries multiple strategies:
@@ -165,7 +165,7 @@ def _convert_hotel_basic(item: dict, city: str) -> Optional[ScrapedHotel]:
     original_price = _to_float(bi.get("originPrice"))
 
     # Room info (may have detailed room data)
-    rooms: list[ScrapedRoom] = []
+    rooms: List[ScrapedRoom] = []
     room_info = item.get("roomInfo", item.get("minRoomInfo", {}))
     if isinstance(room_info, dict):
         room_name = room_info.get("roomName") or room_info.get("physicsName") or "Room"
@@ -268,7 +268,7 @@ def _convert_hotel_nested(item: dict, city: str) -> Optional[ScrapedHotel]:
 
 def _add_room(
     room_item: dict,
-    rooms: list[ScrapedRoom],
+    rooms: List[ScrapedRoom],
     fallback_price: Optional[float] = None,
     fallback_orig: Optional[float] = None,
 ) -> None:

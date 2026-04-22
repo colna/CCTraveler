@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+from typing import Optional, Dict, List
 import random
 from pathlib import Path
 
@@ -16,10 +17,10 @@ import httpx
 logger = logging.getLogger(__name__)
 
 # Load city lookup from JSON (pinyin + Chinese name -> city ID)
-_CITY_LOOKUP: dict[str, int] = {}
+_CITY_LOOKUP: Dict[str, int] = {}
 
 
-def _load_city_lookup() -> dict[str, int]:
+def _load_city_lookup() -> Dict[str, int]:
     global _CITY_LOOKUP
     if _CITY_LOOKUP:
         return _CITY_LOOKUP
@@ -94,7 +95,7 @@ async def fetch_hotel_list_page(
     checkout: str,
     page: int = 1,
     source: str = "trip",
-) -> str | None:
+) -> Optional[str]:
     """Fetch a single page of hotel listings.
 
     Args:
@@ -127,10 +128,10 @@ async def fetch_all_pages(
     checkout: str,
     max_pages: int = 5,
     source: str = "trip",
-) -> list[str]:
+) -> List[str]:
     """Fetch multiple pages of hotel listings with delays."""
     city_id = resolve_city_id(city)
-    pages: list[str] = []
+    pages: List[str] = []
 
     for page_num in range(1, max_pages + 1):
         html = await fetch_hotel_list_page(city_id, checkin, checkout, page_num, source)
