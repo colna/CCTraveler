@@ -365,7 +365,419 @@ missing_errors_doc = "allow"
 
 ---
 
-## 5. Scraper Service (Python)
+## 5. Harness Design (from claw-code)
+
+The Harness (runtime harness) is claw-code's core orchestration layer. CCTraveler adopts its key patterns.
+
+### 5.1 Harness Composition
+
+The harness is not a single struct but a **layered composition**:
+
+```mermaid
+graph TD
+    BP["BootstrapPlan\nStartup Orchestration"] --> CR["ConversationRuntime\nAgent Loop Core"]
+    CR --> PP["PermissionPolicy\nAccess Control"]
+    CR --> HR["HookRunner\nTool Interceptors"]
+    CR --> SS["Session\nState Persistence"]
+    CR --> AC["ApiClient trait\nModel Streaming"]
+    CR --> TE["ToolExecutor trait\nTool Dispatch"]
+```
+
+### 5.2 ConversationRuntime Core Struct
+
+```rust
+pub struct ConversationRuntime<C, T> {
+    session: Session,                        // Session state
+    api_client: C,                           // LLM client (generic)
+    tool_executor: T,                        // Tool executor (generic)
+    permission_policy: PermissionPolicy,     // Permission strategy
+    system_prompt: Vec<String>,              // System prompt fragments
+    max_iterations: usize,                   // Max loop iterations
+    usage_tracker: UsageTracker,             // Token usage tracking
+    hook_runner: HookRunner,                 // Hook interceptor
+    auto_compaction_input_tokens_threshold: u32, // Auto-compaction threshold (default 100K)
+}
+```
+
+### 5.3 `run_turn()` Complete Flow
+
+```mermaid
+flowchart TD
+    A["User Input"] --> B["Health Probe\n(if previously compacted)"]
+    B --> C["Push to Session"]
+    C --> D["Build ApiRequest\n{system_prompt, messages}"]
+    D --> E["Call api_client.stream()"]
+    E --> F["Parse AssistantEvent"]
+    F --> G{"Has ToolUse?"}
+    G -->|"No"| H["Break Loop"]
+    G -->|"Yes"| I["PreToolUse Hook\nCan modify/intercept"]
+    I --> J{"Permission Check\nPermissionPolicy"}
+    J -->|"Allow"| K["Execute Tool\ntool_executor.execute()"]
+    J -->|"Deny"| L["Return Denial Reason"]
+    K --> M["PostToolUse Hook"]
+    M --> N["Build ToolResult\nPush to Session"]
+    L --> N
+    N --> D
+    H --> O{"Cumulative input_tokens\n>= 100K?"}
+    O -->|"Yes"| P["Auto-compact Session"]
+    O -->|"No"| Q["Return TurnSummary"]
+    P --> Q
+```
+
+### 5.4 Hook System
+
+Hooks intercept tool execution at three lifecycle points:
+
+| Event | Timing | Capability |
+|-------|--------|-----------|
+| `PreToolUse` | Before tool execution | Modify input, deny execution, override permissions |
+| `PostToolUse` | After successful execution | Inject feedback messages, deny results |
+| `PostToolUseFailure` | After failed execution | Inject error diagnostics |
+
+Hooks are shell scripts receiving context via environment variables:
+- `HOOK_TOOL_NAME` — Tool name
+- `HOOK_TOOL_INPUT` — JSON input
+- `HOOK_TOOL_OUTPUT` — Execution result (Post hooks only)
+
+Return values:
+- Exit code `0` = allow, `2` = deny
+- JSON output may contain `updatedInput` (modify input), `decision: "block"` (deny)
+
+### 5.5 Permission System
+
+Two-layer permission model:
+
+```mermaid
+flowchart TD
+    A["Tool Call Request"] --> B{"Deny Rule Match?"}
+    B -->|"Yes"| C["Immediate Deny"]
+    B -->|"No"| D{"Hook Override?"}
+    D -->|"Deny"| C
+    D -->|"Allow/None"| E{"Ask Rule Match?"}
+    E -->|"Yes"| F["Interactive Confirmation"]
+    E -->|"No"| G{"Allow Rule\nor Mode >= Required?"}
+    G -->|"Yes"| H["Allow Execution"]
+    G -->|"No"| F
+    F -->|"User Approves"| H
+    F -->|"User Denies"| C
+```
+
+CCTraveler simplification: All scraping tools are pre-authorized (no interactive confirmation), but Deny rules are preserved for safety.
+
+### 5.6 CCTraveler's Harness Adoption
+
+| claw-code Harness Component | CCTraveler Adoption | Simplification |
+|-----------------------------|---------------------|----------------|
+| `ConversationRuntime<C,T>` | Full adoption | None |
+| `BootstrapPlan` (12 phases) | Simplified to 3 steps: config → session → runtime | Removed MCP/daemon/template |
+| `WorkerRegistry` state machine | Not adopted | No multi-worker needs |
+| `HookRunner` | Interface reserved | Not implemented initially |
+| `PermissionPolicy` | Simplified to allow-all | Deny rules preserved |
+| `Session` JSONL persistence | Full adoption | No rotation (smaller files) |
+| Auto-compaction (100K tokens) | Full adoption | Same threshold |
+
+---
+
+## 6. Context Memory System
+
+> Combines claw-code session persistence + [Karpathy's LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) knowledge management methodology.
+
+### 6.1 Design Philosophy: LLM Wiki Methodology
+
+Traditional agent context memory is **consumptive** — each conversation starts from scratch, relying on the context window to temporarily hold information, forgotten when the conversation ends. Karpathy's LLM Wiki proposes a **compound-interest knowledge accumulation** model:
+
+> *"The tedious part of maintaining a knowledge base isn't reading or thinking — it's bookkeeping. LLMs excel at updating cross-references and maintaining consistency across distributed pages."*
+
+Core idea: An LLM maintains a **persistent, interlinked Markdown knowledge base** where knowledge compounds over time, rather than re-deriving answers from raw sources on each query.
+
+### 6.2 Four-Layer Memory Architecture
+
+CCTraveler fuses claw-code's session persistence with LLM Wiki's knowledge sedimentation into a four-layer architecture:
+
+```mermaid
+graph TB
+    subgraph L1["Layer 1: Working Memory"]
+        M["Session.messages\nCurrent context window"]
+    end
+
+    subgraph L2["Layer 2: Session Memory (claw-code)"]
+        JSONL["JSONL Files\nIncremental append"]
+        Compact["Session Compaction\nSummary + last 4 msgs"]
+    end
+
+    subgraph L3["Layer 3: Knowledge Wiki (Karpathy LLM Wiki)"]
+        direction TB
+        Raw["Raw Data Layer\n(immutable)"]
+        Wiki["Wiki Layer\n(LLM-maintained)"]
+        Schema["Schema Layer\n(structural config)"]
+    end
+
+    subgraph L4["Layer 4: Persistent Storage"]
+        SP["System Prompt\nDomain instructions"]
+        Config["Configuration"]
+        DB["SQLite\nStructured data"]
+    end
+
+    M --> JSONL
+    JSONL --> Compact
+    Compact -->|"Sediment"| Wiki
+    Raw -->|"Ingest"| Wiki
+    Wiki -->|"Query"| M
+    SP --> M
+    Config --> M
+    DB --> M
+    Schema --> Wiki
+```
+
+### 6.3 Layer 3 Deep Dive: Knowledge Wiki (LLM Wiki)
+
+Drawing from Karpathy's three-layer knowledge system, CCTraveler implements **automatic knowledge sedimentation with cross-references**:
+
+#### Three-Layer Structure
+
+| Layer | Karpathy's Definition | CCTraveler Mapping | Storage |
+|-------|----------------------|-------------------|---------|
+| **Raw Data** | Immutable original documents | Ctrip HTML snapshots, raw API responses, scrape logs | `data/raw/` |
+| **Wiki** | LLM-maintained Markdown pages | Hotel entity pages, city overviews, price trend pages | `data/wiki/` |
+| **Schema** | Wiki structure & LLM workflow config | Page templates, cross-reference rules, lint rules | `data/wiki/.schema/` |
+
+#### Wiki Directory Structure
+
+```
+data/wiki/
+├── .schema/
+│   ├── templates/              # Page templates
+│   │   ├── hotel.md            # Hotel entity page template
+│   │   ├── city.md             # City overview page template
+│   │   └── trend.md            # Price trend page template
+│   ├── rules.toml              # Lint rules & cross-reference conventions
+│   └── ingest.toml             # Ingest workflow configuration
+├── cities/
+│   ├── zunyi.md                # Zunyi — overview, popular areas, best seasons
+│   ├── chengdu.md
+│   └── ...
+├── hotels/
+│   ├── 12345678.md             # Individual hotel entity page
+│   ├── 87654321.md
+│   └── ...
+├── trends/
+│   ├── zunyi-2026-04.md        # Monthly price trend analysis
+│   └── ...
+├── index.md                    # Global index (auto-maintained)
+└── changelog.md                # Knowledge change log
+```
+
+#### Three Core Operations
+
+```mermaid
+flowchart LR
+    subgraph Ingest["① Ingest"]
+        I1["New scrape data"] --> I2["Extract key info"]
+        I2 --> I3["Update related pages\n(one scrape may\ntouch 10+ pages)"]
+        I3 --> I4["Maintain cross-refs"]
+        I4 --> I5["Log to changelog"]
+    end
+
+    subgraph Query["② Query"]
+        Q1["User question"] --> Q2["Search wiki pages"]
+        Q2 --> Q3["Synthesize answer\n(with citations)"]
+        Q3 --> Q4{"Valuable analysis?"}
+        Q4 -->|"Yes"| Q5["Write back as\nnew page\n(compound interest)"]
+        Q4 -->|"No"| Q6["Return directly"]
+    end
+
+    subgraph Lint["③ Lint"]
+        L1["Periodic trigger"] --> L2["Detect contradictions"]
+        L2 --> L3["Flag stale data"]
+        L3 --> L4["Find orphan pages"]
+        L4 --> L5["Fix cross-refs"]
+    end
+```
+
+#### Ingest Example: How One Scrape Updates the Wiki
+
+When the agent executes `scrape_hotels("Zunyi", "2026-05-01", "2026-05-03")`:
+
+```
+1. Write raw data → data/raw/zunyi-20260422T143000.json (immutable)
+
+2. Update hotel entity pages:
+   - data/wiki/hotels/12345678.md
+     + Update "Latest Prices" section
+     + Append price history row
+     + Update "Data Freshness: 2026-04-22"
+
+3. Update city overview page:
+   - data/wiki/cities/zunyi.md
+     + Update "Average Room Rate" stats
+     + Refresh "Top 10 Hotels" ranking
+     + Add "May Holiday Price Alert" paragraph
+
+4. Update trend page:
+   - data/wiki/trends/zunyi-2026-04.md
+     + Append data point to trend table
+     + Recalculate month-over-month change
+
+5. Update index.md — new page links
+6. Append changelog.md — "[2026-04-22] Ingest: Zunyi 42 hotels, 3 city pages updated"
+```
+
+#### Query Example: Knowledge Compound Interest
+
+```
+User: "Which hotel in Zunyi has the best value during the May holiday?"
+
+Agent behavior:
+1. Search wiki/cities/zunyi.md → get city overview
+2. Search wiki/hotels/*.md → filter hotels with May holiday data
+3. Search wiki/trends/zunyi-2026-04.md → get price trends
+4. Synthesize analysis → generate recommendation
+
+Key: If the analysis reveals an insight like "booking 2 weeks before
+     May holiday is 30% cheaper than booking during the holiday",
+     the agent **writes it back as a new page**:
+     wiki/trends/zunyi-golden-week-pattern.md
+     → Next similar query can reference it directly (compound interest)
+```
+
+#### Lint Rules
+
+```toml
+# data/wiki/.schema/rules.toml
+
+[freshness]
+max_age_days = 7              # Hotel pages older than 7 days marked stale
+warn_age_days = 3             # Warning after 3 days
+
+[consistency]
+price_deviation_threshold = 0.5   # Same hotel price deviation >50% flagged
+require_cross_refs = true         # Hotel pages must link to city pages
+
+[cleanup]
+remove_orphans = false            # Don't auto-delete orphan pages (flag for review)
+max_changelog_entries = 500       # Archive changelog when limit exceeded
+```
+
+### 6.4 Layer 2 Deep Dive: Session Memory (from claw-code)
+
+#### Session State
+
+```rust
+pub struct Session {
+    pub session_id: String,                     // "session-{timestamp}-{counter}"
+    pub messages: Vec<ConversationMessage>,      // Full conversation history
+    pub compaction: Option<SessionCompaction>,   // Compaction metadata
+    pub workspace_root: Option<PathBuf>,        // Workspace binding
+    pub prompt_history: Vec<SessionPromptEntry>, // User prompt history
+    pub model: Option<String>,                  // Model in use
+}
+```
+
+#### JSONL Persistence
+
+Each message is incrementally appended to a JSONL file:
+
+```jsonl
+{"type":"session_meta","session_id":"session-17...","version":1}
+{"type":"message","message":{"role":"user","blocks":[{"type":"text","text":"Search Zunyi hotels"}]}}
+{"type":"message","message":{"role":"assistant","blocks":[{"type":"tool_use","id":"t1","name":"scrape_hotels","input":"{...}"}]}}
+{"type":"message","message":{"role":"tool","blocks":[{"type":"tool_result","tool_use_id":"t1","output":"[{hotel1},{hotel2}]"}]}}
+```
+
+Key mechanisms:
+- **Incremental append**: New messages are appended directly, no file rewrite
+- **File rotation**: Rotates to `.rot-{timestamp}.jsonl` when exceeding 256KB, max 3 rotated files
+- **Atomic writes**: Full snapshots use write-to-temp + rename for crash safety
+
+#### Session Compaction
+
+Auto-compaction triggers when input tokens exceed threshold:
+
+```mermaid
+flowchart LR
+    A["Full History\n(100K+ tokens)"] --> B["Split Point\nKeep last 4 msgs"]
+    B --> C["Summarize old msgs"]
+    C --> D["Generate Summary\nSystem message"]
+    D --> E["New History =\nSummary + last 4"]
+```
+
+Summary contents include:
+- Message statistics (user/assistant/tool counts)
+- Tools used
+- Last 3 user requests
+- Pending task inference (messages containing "todo"/"next"/"pending")
+- Key file references (.rs/.ts/.json/.md paths)
+- Current work inference
+- Full timeline (role + truncated content)
+
+Secondary compression: `SummaryCompressionBudget` limits summaries to 1200 chars / 24 lines.
+
+**Compaction → Wiki Sedimentation Bridge**: During compaction, valuable conversation insights are automatically ingested into the wiki layer:
+
+```mermaid
+flowchart TD
+    A["Session Compaction\nTriggers"] --> B["Extract Summary"]
+    B --> C{"Contains sedimentable\nknowledge?"}
+    C -->|"Price insights"| D["Ingest → trends/"]
+    C -->|"New hotel discovery"| E["Ingest → hotels/"]
+    C -->|"User preferences"| F["Ingest → preferences.md"]
+    C -->|"Pure operational logs"| G["Keep compaction\nsummary only"]
+```
+
+### 6.5 System Prompt Assembly
+
+System prompt = static instructions + dynamic context + wiki summary, assembled in order:
+
+```
+1. Base role definition ("You are a hotel price intelligence AI Agent...")
+2. System rules (tool usage, permissions, safety)
+3. Task execution guidelines
+4. ─── Dynamic boundary ───
+5. Environment info (model, platform, date, working directory)
+6. Project context (git status, recent commits)
+7. Instruction file chain (CLAUDE.md discovered from cwd upward)
+8. Wiki context summary (key stats from Wiki index.md)
+9. Runtime configuration
+```
+
+Instruction file discovery: Traverse from cwd to root, checking each directory for:
+- `CLAUDE.md`, `CLAUDE.local.md`
+- `.claw/CLAUDE.md`, `.claw/instructions.md`
+
+Single file limit: 4000 chars. Total limit: 12000 chars. Deduplicated by content hash.
+
+### 6.6 CCTraveler Memory Design Overview
+
+| Layer | Source | CCTraveler Implementation |
+|-------|--------|--------------------------|
+| Layer 1: Working Memory | claw-code | `Session.messages` — full context sent to LLM |
+| Layer 2: Session Memory | claw-code | JSONL persistence + 100K token auto-compaction |
+| Layer 3: Knowledge Wiki | Karpathy LLM Wiki | `data/wiki/` Markdown knowledge base (Ingest/Query/Lint) |
+| Layer 4: Persistent Storage | CCTraveler-specific | SQLite structured data + config files |
+
+**Knowledge Flow**:
+
+```mermaid
+flowchart LR
+    Scrape["Scrape Data"] -->|"Write"| Raw["Raw Data\n(immutable)"]
+    Raw -->|"Ingest"| Wiki["Wiki Layer\n(LLM-maintained)"]
+    Scrape -->|"Structured"| DB["SQLite\n(query optimized)"]
+    Wiki -->|"Inject to system prompt"| Session["Session Context"]
+    DB -->|"Tool queries"| Session
+    Session -->|"Compaction sediment"| Wiki
+    Wiki -->|"Query compound"| Wiki
+```
+
+CCTraveler domain-specific memory:
+- **Price snapshot history**: Each scrape writes to `price_snapshots` table (SQLite) + updates wiki trend pages
+- **Scrape task logs**: Records parameters, result count, duration for strategy optimization
+- **City ID mapping cache**: Caches city name → Ctrip ID mapping after first query
+- **Knowledge compound interest**: Valuable analyses from user queries auto-written as wiki pages for future reference
+- **Lint audits**: Periodic checks for stale prices, contradictory data, orphan pages to keep knowledge base healthy
+
+---
+
+## 7. Scraper Service (Python)
 
 A lightweight **FastAPI** microservice that wraps Scrapling for Ctrip-specific scraping:
 
@@ -423,7 +835,7 @@ flowchart LR
 
 ---
 
-## 6. Web Frontend (Next.js)
+## 8. Web Frontend (Next.js)
 
 ### Pages
 
@@ -453,7 +865,7 @@ flowchart LR
 
 ---
 
-## 7. Data Model
+## 9. Data Model
 
 ### Hotel
 
@@ -562,7 +974,7 @@ CREATE INDEX idx_hotels_city ON hotels(city);
 
 ---
 
-## 8. Agent Tool Definitions
+## 10. Agent Tool Definitions
 
 Following claw-code's `ToolSpec` pattern — each tool has name, description, JSON Schema, and a typed execute handler:
 
@@ -659,7 +1071,7 @@ Following claw-code's `ToolSpec` pattern — each tool has name, description, JS
 
 ---
 
-## 9. Build & Dev Workflow
+## 11. Build & Dev Workflow
 
 ### Prerequisites
 
@@ -722,7 +1134,7 @@ pytest services/scraper/tests     # Python tests
 
 ---
 
-## 10. Configuration
+## 12. Configuration
 
 ### `config.toml` (Agent)
 
@@ -750,7 +1162,7 @@ proxy_pool = []               # Optional proxy list
 
 ---
 
-## 11. Tech Stack Summary
+## 13. Tech Stack Summary
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
@@ -763,7 +1175,7 @@ proxy_pool = []               # Optional proxy list
 
 ---
 
-## 12. Roadmap
+## 14. Roadmap
 
 ### Phase 1 — MVP
 - [ ] Project scaffolding (monorepo, configs, Cargo workspace)
@@ -790,3 +1202,39 @@ proxy_pool = []               # Optional proxy list
 - [ ] Multi-source comparison (Ctrip + Meituan + Fliggy)
 - [ ] Mobile-responsive dashboard
 - [ ] Export to popular travel planning tools
+
+---
+
+## 15. References
+
+### Architecture & Design Patterns
+
+| # | Reference | Description |
+|---|-----------|-------------|
+| 1 | [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | Rust CLI agent harness — the primary architectural reference for CCTraveler's agent core (`ConversationRuntime<C,T>`, `ToolSpec`, session persistence, hook system) |
+| 2 | [Karpathy's LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) | LLM-maintained personal knowledge management — the methodology behind CCTraveler's Layer 3 knowledge wiki (Ingest/Query/Lint pattern) |
+| 3 | [Vannevar Bush — "As We May Think" (1945)](https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/) | The original Memex concept — curated personal knowledge stores with associative connections, philosophical foundation for the LLM Wiki approach |
+
+### Scraping & Anti-Bot
+
+| # | Reference | Description |
+|---|-----------|-------------|
+| 4 | [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling) | Python stealth scraping library with `StealthyFetcher` — TLS impersonation, canvas noise, Cloudflare bypass, WebRTC blocking |
+| 5 | [Microsoft/Playwright](https://github.com/microsoft/playwright) | Browser automation framework — Scrapling's `StealthyFetcher` wraps Patchright (Playwright fork with stealth patches) |
+| 6 | [Ctrip Hotels](https://hotels.ctrip.com/) | Target scraping site — China's largest OTA platform for hotel bookings |
+
+### Tech Stack
+
+| # | Reference | Description |
+|---|-----------|-------------|
+| 7 | [Rust Programming Language](https://www.rust-lang.org/) | Systems programming language for the agent core |
+| 8 | [Tokio](https://tokio.rs/) | Async runtime for Rust — powers HTTP clients, SSE streaming, concurrent tool execution |
+| 9 | [Anthropic Claude API](https://docs.anthropic.com/en/docs) | LLM provider for agent intelligence — SSE streaming, tool use, system prompts |
+| 10 | [Next.js](https://nextjs.org/) | React framework for the frontend dashboard |
+| 11 | [Turborepo](https://turbo.build/) | Monorepo build orchestration — manages Rust + Python + TypeScript build pipeline |
+| 12 | [FastAPI](https://fastapi.tiangolo.com/) | Python async web framework for the scraper microservice |
+| 13 | [SQLite / rusqlite](https://github.com/rusqlite/rusqlite) | Embedded database for hotel & price data persistence |
+| 14 | [Recharts](https://recharts.org/) | React charting library for price trend visualization |
+| 15 | [Tailwind CSS](https://tailwindcss.com/) | Utility-first CSS framework for the frontend |
+| 16 | [Clap](https://github.com/clap-rs/clap) | Rust CLI argument parser for the agent binary |
+| 17 | [Rustyline](https://github.com/kkawakam/rustyline) | Readline implementation for the REPL interface |

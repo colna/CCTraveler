@@ -1201,3 +1201,39 @@ proxy_pool = []                      # 代理池（可选）
 - [ ] 多源对比（携程 + 美团 + 飞猪）
 - [ ] 移动端自适应看板
 - [ ] 导出到主流旅行规划工具
+
+---
+
+## 15. 参考文献
+
+### 架构 & 设计模式
+
+| # | 参考资料 | 说明 |
+|---|---------|------|
+| 1 | [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | Rust CLI Agent 引擎 — CCTraveler Agent 核心的主要架构参考（`ConversationRuntime<C,T>`、`ToolSpec`、会话持久化、Hook 系统） |
+| 2 | [Karpathy's LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) | LLM 维护的个人知识管理方法论 — CCTraveler 第三层知识维基的理论基础（Ingest/Query/Lint 模式） |
+| 3 | [Vannevar Bush — "As We May Think" (1945)](https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/) | 原始 Memex 概念 — 带有关联连接的个人策展知识库，LLM Wiki 方法论的哲学基础 |
+
+### 爬虫 & 反爬
+
+| # | 参考资料 | 说明 |
+|---|---------|------|
+| 4 | [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling) | Python 隐身爬取库，提供 `StealthyFetcher` — TLS 指纹伪装、Canvas 噪声、Cloudflare 绕过、WebRTC 屏蔽 |
+| 5 | [Microsoft/Playwright](https://github.com/microsoft/playwright) | 浏览器自动化框架 — Scrapling 的 `StealthyFetcher` 封装了 Patchright（Playwright 的隐身补丁分支） |
+| 6 | [携程酒店](https://hotels.ctrip.com/) | 目标爬取站点 — 中国最大的 OTA 酒店预订平台 |
+
+### 技术栈
+
+| # | 参考资料 | 说明 |
+|---|---------|------|
+| 7 | [Rust 编程语言](https://www.rust-lang.org/) | Agent 核心使用的系统编程语言 |
+| 8 | [Tokio](https://tokio.rs/) | Rust 异步运行时 — 驱动 HTTP 客户端、SSE 流式传输、并发工具执行 |
+| 9 | [Anthropic Claude API](https://docs.anthropic.com/en/docs) | LLM 智能提供商 — SSE 流式、工具调用、系统提示词 |
+| 10 | [Next.js](https://nextjs.org/) | 前端看板使用的 React 框架 |
+| 11 | [Turborepo](https://turbo.build/) | Monorepo 构建编排 — 管理 Rust + Python + TypeScript 构建流水线 |
+| 12 | [FastAPI](https://fastapi.tiangolo.com/) | 爬虫微服务使用的 Python 异步 Web 框架 |
+| 13 | [SQLite / rusqlite](https://github.com/rusqlite/rusqlite) | 嵌入式数据库，用于酒店和价格数据持久化 |
+| 14 | [Recharts](https://recharts.org/) | React 图表库，用于价格趋势可视化 |
+| 15 | [Tailwind CSS](https://tailwindcss.com/) | 原子化 CSS 框架，用于前端 UI |
+| 16 | [Clap](https://github.com/clap-rs/clap) | Rust CLI 参数解析器 |
+| 17 | [Rustyline](https://github.com/kkawakam/rustyline) | Readline 实现，用于 REPL 交互界面 |
