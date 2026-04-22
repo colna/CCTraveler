@@ -1,21 +1,54 @@
+# CCTraveler Configuration Template
+# Copy this file to config.toml and fill in your settings
+
 [agent]
+# Claude model to use for AI agent
 model = "claude-sonnet-4-20250514"
+
+# Maximum conversation turns before stopping
 max_turns = 50
-api_key = ""       # Anthropic API key, or set ANTHROPIC_API_KEY env var
-base_url = ""      # Leave empty for official API, or set your proxy URL
+
+# Anthropic API key (required)
+# Get your key from: https://console.anthropic.com/
+# Or set environment variable: ANTHROPIC_API_KEY
+api_key = ""
+
+# API base URL (optional)
+# Leave empty for official Anthropic API
+# Set to your proxy URL if using a proxy service
+base_url = ""
 
 [scraper]
+# Scraper service endpoint
 base_url = "http://localhost:8300"
+
+# Request timeout in seconds
 timeout_secs = 120
+
+# Maximum retry attempts on failure
 max_retries = 3
 
 [storage]
+# SQLite database file path
 db_path = "data/cctraveler.db"
 
 [ctrip]
+# Default city code for searches
+# Example: 558 (you can find city codes in the database)
 default_city = "558"
+
+# Default number of adults
 default_adults = 1
+
+# Default number of children
 default_children = 0
+
+# Delay between requests in milliseconds (anti-scraping measure)
 request_delay_ms = 3000
+
+# Maximum concurrent requests
 max_concurrent = 3
+
+# Proxy pool (optional, list of proxy URLs)
+# Example: ["http://proxy1:8080", "http://proxy2:8080"]
 proxy_pool = []

@@ -28,3 +28,6 @@ config.toml
 
 # OS
 .DS_Store
+
+
+config.toml
