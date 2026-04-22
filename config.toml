@@ -1,0 +1,19 @@
+[agent]
+model = "claude-sonnet-4-20250514"
+max_turns = 50
+
+[scraper]
+base_url = "http://localhost:8300"
+timeout_secs = 120
+max_retries = 3
+
+[storage]
+db_path = "data/cctraveler.db"
+
+[ctrip]
+default_city = "558"
+default_adults = 1
+default_children = 0
+request_delay_ms = 3000
+max_concurrent = 3
+proxy_pool = []
