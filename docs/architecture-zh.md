@@ -479,35 +479,187 @@ CCTraveler 简化版：所有爬取工具预授权（无需交互确认），但
 
 ---
 
-## 6. 上下文记忆系统（源自 claw-code）
+## 6. 上下文记忆系统
 
-### 6.1 记忆层次
+> 融合 claw-code 会话持久化 + [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 知识管理方法论。
+
+### 6.1 设计哲学：LLM Wiki 方法论
+
+传统 Agent 的上下文记忆是**消耗性的**——每次对话从零开始，依赖上下文窗口临时持有信息，对话结束即遗忘。Karpathy 的 LLM Wiki 提出了一种**复利式知识积累**模型：
+
+> *"维护知识库的繁琐部分不是阅读或思考——而是记账。LLM 擅长的正是更新交叉引用、维护分布式页面间的一致性。"*
+
+核心理念：LLM 维护一个**持久化、互相关联的 Markdown 知识库**，知识随时间复利增长，而非每次查询都从原始数据重新推导。
+
+### 6.2 四层记忆架构
+
+CCTraveler 将 claw-code 的会话持久化与 LLM Wiki 的知识沉淀融合为四层架构：
 
 ```mermaid
 graph TB
-    subgraph Turn["单轮记忆"]
-        M["Session.messages\n完整对话历史"]
+    subgraph L1["第一层：工作记忆"]
+        M["Session.messages\n当前对话上下文窗口"]
     end
 
-    subgraph Session["跨轮记忆"]
+    subgraph L2["第二层：会话记忆（claw-code）"]
         JSONL["JSONL 文件\n增量追加"]
         Compact["会话压缩\n摘要 + 最近 4 条"]
     end
 
-    subgraph Persistent["持久记忆"]
-        SP["系统提示词\nCLAUDE.md 链"]
-        Config["配置文件\n三层合并"]
-        DB["SQLite\n业务数据"]
+    subgraph L3["第三层：知识维基（Karpathy LLM Wiki）"]
+        direction TB
+        Raw["原始数据层\n(不可变)"]
+        Wiki["维基层\n(LLM 维护)"]
+        Schema["模式层\n(结构配置)"]
+    end
+
+    subgraph L4["第四层：持久存储"]
+        SP["系统提示词\n领域指令"]
+        Config["配置文件"]
+        DB["SQLite\n结构化业务数据"]
     end
 
     M --> JSONL
     JSONL --> Compact
+    Compact -->|"沉淀"| Wiki
+    Raw -->|"Ingest"| Wiki
+    Wiki -->|"Query"| M
     SP --> M
     Config --> M
     DB --> M
+    Schema --> Wiki
 ```
 
-### 6.2 会话状态 (Session)
+### 6.3 第三层详解：知识维基（LLM Wiki）
+
+借鉴 Karpathy 的三层知识系统，CCTraveler 实现领域知识的**自动沉淀与互相关联**：
+
+#### 三层结构
+
+| 层 | Karpathy 原始定义 | CCTraveler 映射 | 存储位置 |
+|----|-----------------|----------------|---------|
+| **原始数据** (Raw) | 不可变的原始文档 | 携程 HTML 快照、API 原始响应、爬取日志 | `data/raw/` |
+| **维基** (Wiki) | LLM 维护的 Markdown 页面 | 酒店实体页、城市概览页、价格趋势页 | `data/wiki/` |
+| **模式** (Schema) | 维基结构和 LLM 工作流配置 | 页面模板、交叉引用规则、Lint 规则 | `data/wiki/.schema/` |
+
+#### 维基目录结构
+
+```
+data/wiki/
+├── .schema/
+│   ├── templates/              # 页面模板
+│   │   ├── hotel.md            # 酒店实体页模板
+│   │   ├── city.md             # 城市概览页模板
+│   │   └── trend.md            # 价格趋势页模板
+│   ├── rules.toml              # Lint 规则 & 交叉引用约定
+│   └── ingest.toml             # Ingest 工作流配置
+├── cities/
+│   ├── zunyi.md                # 遵义 — 概览、热门区域、最佳时段
+│   ├── chengdu.md
+│   └── ...
+├── hotels/
+│   ├── 12345678.md             # 单个酒店实体页
+│   ├── 87654321.md
+│   └── ...
+├── trends/
+│   ├── zunyi-2026-04.md        # 月度价格趋势分析
+│   └── ...
+├── index.md                    # 全局索引（自动维护）
+└── changelog.md                # 知识变更日志
+```
+
+#### 三大核心操作
+
+```mermaid
+flowchart LR
+    subgraph Ingest["① Ingest 摄入"]
+        I1["新爬取数据"] --> I2["提取关键信息"]
+        I2 --> I3["更新关联页面\n(一次爬取可能\n触及 10+ 页面)"]
+        I3 --> I4["维护交叉引用"]
+        I4 --> I5["记录 changelog"]
+    end
+
+    subgraph Query["② Query 查询"]
+        Q1["用户提问"] --> Q2["搜索 Wiki 页面"]
+        Q2 --> Q3["综合生成回答\n(带引用)"]
+        Q3 --> Q4{"有价值的分析?"}
+        Q4 -->|"是"| Q5["反写为新页面\n(知识复利)"]
+        Q4 -->|"否"| Q6["直接返回"]
+    end
+
+    subgraph Lint["③ Lint 审计"]
+        L1["定期触发"] --> L2["检测矛盾信息"]
+        L2 --> L3["标记过期数据"]
+        L3 --> L4["发现孤立页面"]
+        L4 --> L5["修复交叉引用"]
+    end
+```
+
+#### Ingest 示例：一次爬取如何更新维基
+
+当 Agent 执行 `scrape_hotels("遵义", "2026-05-01", "2026-05-03")` 后：
+
+```
+1. 写入原始数据 → data/raw/zunyi-20260422T143000.json（不可变）
+
+2. 更新酒店实体页：
+   - data/wiki/hotels/12345678.md
+     + 更新"最新价格"区域
+     + 追加价格历史记录行
+     + 更新"数据新鲜度: 2026-04-22"
+
+3. 更新城市概览页：
+   - data/wiki/cities/zunyi.md
+     + 更新"平均房价"统计
+     + 刷新"热门酒店 Top 10"排名
+     + 新增"五一假期价格预警"段落
+
+4. 更新趋势页：
+   - data/wiki/trends/zunyi-2026-04.md
+     + 追加本次数据点到趋势表
+     + 重新计算环比变化
+
+5. 更新 index.md — 新页面链接
+6. 追加 changelog.md — "[2026-04-22] Ingest: 遵义 42 家酒店, 更新 3 个城市页"
+```
+
+#### Query 示例：知识复利
+
+```
+用户: "遵义五一期间哪家酒店性价比最高？"
+
+Agent 行为:
+1. 搜索 wiki/cities/zunyi.md → 获取城市概览
+2. 搜索 wiki/hotels/*.md → 筛选五一有数据的酒店
+3. 搜索 wiki/trends/zunyi-2026-04.md → 获取价格趋势
+4. 综合分析 → 生成推荐回答
+
+关键: 如果分析揭示了"五一前两周预订比当周便宜 30%"这类洞察，
+     Agent 将其**反写为新页面**: wiki/trends/zunyi-golden-week-pattern.md
+     → 下次类似查询可直接引用，无需重新分析（知识复利）
+```
+
+#### Lint 规则
+
+```toml
+# data/wiki/.schema/rules.toml
+
+[freshness]
+max_age_days = 7              # 超过 7 天未更新的酒店页标记为 stale
+warn_age_days = 3             # 超过 3 天提醒
+
+[consistency]
+price_deviation_threshold = 0.5   # 同酒店价格偏差 >50% 标记矛盾
+require_cross_refs = true         # 酒店页必须链接到城市页
+
+[cleanup]
+remove_orphans = false            # 不自动删除孤立页（标记待审）
+max_changelog_entries = 500       # changelog 超限时归档
+```
+
+### 6.4 第二层详解：会话记忆（源自 claw-code）
+
+#### 会话状态 (Session)
 
 ```rust
 pub struct Session {
@@ -520,7 +672,7 @@ pub struct Session {
 }
 ```
 
-### 6.3 JSONL 持久化
+#### JSONL 持久化
 
 每条消息增量追加到 JSONL 文件，格式如下：
 
@@ -536,7 +688,7 @@ pub struct Session {
 - **文件轮转**：超过 256KB 时轮转为 `.rot-{timestamp}.jsonl`，最多保留 3 个
 - **原子写入**：完整快照使用 write-to-temp + rename 保证崩溃安全
 
-### 6.4 会话压缩 (Compaction)
+#### 会话压缩 (Compaction)
 
 当 input tokens 超过阈值时触发自动压缩：
 
@@ -559,19 +711,32 @@ flowchart LR
 
 二次压缩：`SummaryCompressionBudget` 将摘要限制在 1200 字符 / 24 行内。
 
+**压缩 → 维基沉淀桥接**：会话压缩时，有价值的对话洞察自动 Ingest 到维基层：
+
+```mermaid
+flowchart TD
+    A["会话压缩触发"] --> B["提取摘要"]
+    B --> C{"包含可沉淀知识?"}
+    C -->|"价格洞察"| D["Ingest → trends/"]
+    C -->|"酒店新发现"| E["Ingest → hotels/"]
+    C -->|"用户偏好"| F["Ingest → preferences.md"]
+    C -->|"纯操作记录"| G["仅保留压缩摘要"]
+```
+
 ### 6.5 系统提示词组装
 
-系统提示词 = 静态指令 + 动态上下文，按以下顺序组装：
+系统提示词 = 静态指令 + 动态上下文 + 维基摘要，按以下顺序组装：
 
 ```
-1. 基础角色定义（"你是一个 AI Agent..."）
+1. 基础角色定义（"你是一个酒店价格情报 AI Agent..."）
 2. 系统规则（工具使用、权限、安全）
 3. 任务执行指南
 4. ─── 动态边界线 ───
 5. 环境信息（模型、平台、日期、工作目录）
 6. 项目上下文（git 状态、最近提交）
 7. 指令文件链（CLAUDE.md 从 cwd 向上发现）
-8. 运行时配置
+8. 维基上下文摘要（Wiki index.md 的关键统计）
+9. 运行时配置
 ```
 
 指令文件发现：从 cwd 向根目录遍历，每个目录检查：
@@ -580,21 +745,34 @@ flowchart LR
 
 单文件限制 4000 字符，总限制 12000 字符，按内容哈希去重。
 
-### 6.6 CCTraveler 的上下文记忆设计
+### 6.6 CCTraveler 记忆设计总览
 
-| 层级 | claw-code 实现 | CCTraveler 采用 |
-|------|--------------|----------------|
-| 单轮记忆 | `Session.messages` 全量传给 LLM | 相同 |
-| 跨轮持久化 | JSONL + 轮转 | JSONL（无轮转，任务较短） |
-| 自动压缩 | 100K tokens 触发 | 相同阈值 |
-| 系统提示词 | 通用 Agent 指令 + CLAUDE.md 链 | 酒店爬取领域专用提示词 |
-| 工作区隔离 | FNV-1a 哈希命名空间 | 相同 |
-| 业务记忆 | 无（通用 Agent） | SQLite（酒店/价格历史） |
+| 层级 | 来源 | CCTraveler 实现 |
+|------|------|----------------|
+| 第一层：工作记忆 | claw-code | `Session.messages` 全量传给 LLM |
+| 第二层：会话记忆 | claw-code | JSONL 持久化 + 100K tokens 自动压缩 |
+| 第三层：知识维基 | Karpathy LLM Wiki | `data/wiki/` Markdown 知识库（Ingest/Query/Lint） |
+| 第四层：持久存储 | CCTraveler 特有 | SQLite 结构化数据 + 配置文件 |
 
-CCTraveler 的独特记忆：
-- **价格快照历史**：每次爬取写入 `price_snapshots` 表，Agent 可查询历史价格趋势
+**知识流向**：
+
+```mermaid
+flowchart LR
+    Scrape["爬取数据"] -->|"写入"| Raw["原始数据\n(不可变)"]
+    Raw -->|"Ingest"| Wiki["维基层\n(LLM 维护)"]
+    Scrape -->|"结构化"| DB["SQLite\n(查询优化)"]
+    Wiki -->|"注入系统提示词"| Session["会话上下文"]
+    DB -->|"工具查询"| Session
+    Session -->|"压缩沉淀"| Wiki
+    Wiki -->|"Query 复利"| Wiki
+```
+
+CCTraveler 的领域特有记忆：
+- **价格快照历史**：每次爬取写入 `price_snapshots` 表（SQLite）+ 更新维基趋势页
 - **爬取任务日志**：记录每次爬取的参数、结果数、耗时，用于优化策略
 - **城市 ID 映射缓存**：首次查询后缓存城市名 → 携程 ID 映射
+- **知识复利**：用户查询产生的有价值分析自动反写为维基页面，下次可直接引用
+- **Lint 巡检**：定期检查过期价格、矛盾数据、孤立页面，保持知识库健康
 
 ---
 
