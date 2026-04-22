@@ -3,9 +3,22 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev",
+    "dev:all": "./scripts/dev.sh",
+    "dev:scraper": "cd services/scraper && source .venv/bin/activate && uvicorn src.server:app --port 8300 --reload",
+    "dev:web": "pnpm --filter web dev",
     "build": "turbo build",
+    "build:web": "pnpm --filter web build",
+    "build:rust": "cargo build --workspace",
+    "build:rust:release": "cargo build --workspace --release",
     "lint": "turbo lint",
-    "test": "turbo test"
+    "lint:rust": "cargo clippy --workspace",
+    "test": "turbo test",
+    "test:rust": "cargo test --workspace",
+    "setup": "./scripts/setup.sh",
+    "setup:python": "cd services/scraper && python3 -m venv .venv && source .venv/bin/activate && pip install -e '.[dev]'",
+    "scrape": "cargo run -p cli -- scrape",
+    "search": "cargo run -p cli -- search",
+    "export": "cargo run -p cli -- export"
   },
   "devDependencies": {
     "turbo": "^2"
