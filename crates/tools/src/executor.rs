@@ -55,8 +55,8 @@ impl TravelerToolExecutor {
             });
         }
 
-        // 2. 限制 max_pages 不超过 5
-        let max_pages = params.max_pages.unwrap_or(5).min(5);
+        // 2. 限制 max_pages 不超过 50，默认 10
+        let max_pages = params.max_pages.unwrap_or(10).min(50);
 
         // 3. 检查爬取频率（24 小时内不重复爬取同一城市同一日期）
         // TODO: 实现 get_last_scrape_time 检查

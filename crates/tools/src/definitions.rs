@@ -16,7 +16,10 @@ fn scrape_hotels_spec() -> ToolSpec {
         name: "scrape_hotels".to_string(),
         description: "从携程爬取指定城市和日期范围的酒店列表。\
                       调用 Python 爬虫服务处理反爬绕过和浏览器自动化。\
-                      \n\n**限制**: 单次最多爬取 5 页，间隔 3 秒。\
+                      \n\n**使用建议**: 调用前应主动询问用户：\
+                      1. 需要什么排序方式（价格、评分、推荐度）\
+                      2. 需要爬取多少页数据（建议 5-10 页，最多 50 页）\
+                      \n\n**限制**: 单次最多爬取 50 页，间隔 3 秒。\
                       同一城市同一日期范围，24 小时内只能爬取一次。".to_string(),
         input_schema: serde_json::json!({
             "type": "object",
@@ -39,10 +42,10 @@ fn scrape_hotels_spec() -> ToolSpec {
                 },
                 "max_pages": {
                     "type": "integer",
-                    "description": "最大爬取页数（默认 5，最大 5）",
+                    "description": "最大爬取页数（默认 10，建议 5-10 页，最大 50 页）",
                     "minimum": 1,
-                    "maximum": 5,
-                    "default": 5
+                    "maximum": 50,
+                    "default": 10
                 }
             },
             "required": ["city", "checkin", "checkout"]
