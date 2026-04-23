@@ -1,0 +1,74 @@
+[
+  {
+    "id": "110000",
+    "name": "北京",
+    "name_en": "Beijing",
+    "province": "北京市",
+    "tier": 1,
+    "population": 21893095,
+    "area_km2": 16410.54,
+    "latitude": 39.9042,
+    "longitude": 116.4074,
+    "description": "中华人民共和国首都，全国政治、文化、国际交往和科技创新中心"
+  },
+  {
+    "id": "310000",
+    "name": "上海",
+    "name_en": "Shanghai",
+    "province": "上海市",
+    "tier": 1,
+    "population": 24870895,
+    "area_km2": 6340.5,
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "description": "中国最大的经济中心和重要的国际金融中心城市"
+  },
+  {
+    "id": "440300",
+    "name": "深圳",
+    "name_en": "Shenzhen",
+    "province": "广东省",
+    "tier": 1,
+    "population": 17560061,
+    "area_km2": 1997.47,
+    "latitude": 22.5431,
+    "longitude": 114.0579,
+    "description": "中国改革开放的窗口，经济特区，科技创新中心"
+  },
+  {
+    "id": "520300",
+    "name": "遵义",
+    "name_en": "Zunyi",
+    "province": "贵州省",
+    "tier": 3,
+    "population": 6606675,
+    "area_km2": 30762,
+    "latitude": 27.7253,
+    "longitude": 106.9272,
+    "description": "贵州省第二大城市，以遵义会议闻名，是红色旅游胜地"
+  },
+  {
+    "id": "510100",
+    "name": "成都",
+    "name_en": "Chengdu",
+    "province": "四川省",
+    "tier": 1,
+    "population": 20937757,
+    "area_km2": 14335,
+    "latitude": 30.5728,
+    "longitude": 104.0668,
+    "description": "四川省省会，西南地区的科技、商贸、金融中心和交通枢纽"
+  },
+  {
+    "id": "330100",
+    "name": "杭州",
+    "name_en": "Hangzhou",
+    "province": "浙江省",
+    "tier": 1,
+    "population": 12203744,
+    "area_km2": 16850,
+    "latitude": 30.2741,
+    "longitude": 120.1551,
+    "description": "浙江省省会，长江三角洲中心城市，电子商务之都"
+  }
+]

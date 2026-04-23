@@ -1,0 +1,87 @@
+[
+  {
+    "city": "北京",
+    "station_name": "北京站",
+    "station_code": "BJP"
+  },
+  {
+    "city": "北京",
+    "station_name": "北京西站",
+    "station_code": "BXP"
+  },
+  {
+    "city": "北京",
+    "station_name": "北京南站",
+    "station_code": "VNP"
+  },
+  {
+    "city": "北京",
+    "station_name": "北京北站",
+    "station_code": "VAP"
+  },
+  {
+    "city": "上海",
+    "station_name": "上海站",
+    "station_code": "SHH"
+  },
+  {
+    "city": "上海",
+    "station_name": "上海虹桥站",
+    "station_code": "AOH"
+  },
+  {
+    "city": "上海",
+    "station_name": "上海南站",
+    "station_code": "SNH"
+  },
+  {
+    "city": "深圳",
+    "station_name": "深圳站",
+    "station_code": "SZQ"
+  },
+  {
+    "city": "深圳",
+    "station_name": "深圳北站",
+    "station_code": "IOQ"
+  },
+  {
+    "city": "深圳",
+    "station_name": "深圳东站",
+    "station_code": "BJQ"
+  },
+  {
+    "city": "遵义",
+    "station_name": "遵义站",
+    "station_code": "ZIW"
+  },
+  {
+    "city": "遵义",
+    "station_name": "遵义西站",
+    "station_code": "ZYW"
+  },
+  {
+    "city": "成都",
+    "station_name": "成都站",
+    "station_code": "CDW"
+  },
+  {
+    "city": "成都",
+    "station_name": "成都东站",
+    "station_code": "ICW"
+  },
+  {
+    "city": "成都",
+    "station_name": "成都南站",
+    "station_code": "CNW"
+  },
+  {
+    "city": "杭州",
+    "station_name": "杭州站",
+    "station_code": "HZH"
+  },
+  {
+    "city": "杭州",
+    "station_name": "杭州东站",
+    "station_code": "HGH"
+  }
+]

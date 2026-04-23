@@ -1,0 +1,65 @@
+[
+  {
+    "city": "北京",
+    "airport_name": "北京首都国际机场",
+    "airport_code": "PEK",
+    "iata_code": "PEK",
+    "icao_code": "ZBAA"
+  },
+  {
+    "city": "北京",
+    "airport_name": "北京大兴国际机场",
+    "airport_code": "PKX",
+    "iata_code": "PKX",
+    "icao_code": "ZBAD"
+  },
+  {
+    "city": "上海",
+    "airport_name": "上海浦东国际机场",
+    "airport_code": "PVG",
+    "iata_code": "PVG",
+    "icao_code": "ZSPD"
+  },
+  {
+    "city": "上海",
+    "airport_name": "上海虹桥国际机场",
+    "airport_code": "SHA",
+    "iata_code": "SHA",
+    "icao_code": "ZSSS"
+  },
+  {
+    "city": "深圳",
+    "airport_name": "深圳宝安国际机场",
+    "airport_code": "SZX",
+    "iata_code": "SZX",
+    "icao_code": "ZGSZ"
+  },
+  {
+    "city": "遵义",
+    "airport_name": "遵义新舟机场",
+    "airport_code": "ZYI",
+    "iata_code": "ZYI",
+    "icao_code": "ZUZY"
+  },
+  {
+    "city": "成都",
+    "airport_name": "成都双流国际机场",
+    "airport_code": "CTU",
+    "iata_code": "CTU",
+    "icao_code": "ZUUU"
+  },
+  {
+    "city": "成都",
+    "airport_name": "成都天府国际机场",
+    "airport_code": "TFU",
+    "iata_code": "TFU",
+    "icao_code": "ZUTF"
+  },
+  {
+    "city": "杭州",
+    "airport_name": "杭州萧山国际机场",
+    "airport_code": "HGH",
+    "iata_code": "HGH",
+    "icao_code": "ZSHC"
+  }
+]

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "520300001",
+    "city_id": "520300",
+    "name": "遵义会议旧址",
+    "category": "历史",
+    "rating": 4.7,
+    "ticket_price": 0,
+    "visit_duration_hours": 2.0,
+    "latitude": 27.7253,
+    "longitude": 106.9272,
+    "description": "中国革命历史的重要转折点，1935年1月中共中央政治局在此召开扩大会议"
+  },
+  {
+    "id": "520300002",
+    "city_id": "520300",
+    "name": "红军山",
+    "category": "历史",
+    "rating": 4.5,
+    "ticket_price": 0,
+    "visit_duration_hours": 1.5,
+    "latitude": 27.7253,
+    "longitude": 106.9272,
+    "description": "红军烈士陵园，纪念长征途中牺牲的红军战士"
+  },
+  {
+    "id": "520300003",
+    "city_id": "520300",
+    "name": "海龙屯",
+    "category": "历史",
+    "rating": 4.6,
+    "ticket_price": 80,
+    "visit_duration_hours": 3.0,
+    "latitude": 27.8253,
+    "longitude": 106.9872,
+    "description": "世界文化遗产，宋明时期播州杨氏土司的军事防御城堡"
+  },
+  {
+    "id": "110000001",
+    "city_id": "110000",
+    "name": "故宫博物院",
+    "category": "历史",
+    "rating": 4.8,
+    "ticket_price": 60,
+    "visit_duration_hours": 4.0,
+    "latitude": 39.9163,
+    "longitude": 116.3972,
+    "description": "中国明清两代的皇家宫殿，世界文化遗产"
+  },
+  {
+    "id": "110000002",
+    "city_id": "110000",
+    "name": "长城",
+    "category": "历史",
+    "rating": 4.7,
+    "ticket_price": 40,
+    "visit_duration_hours": 3.0,
+    "latitude": 40.4319,
+    "longitude": 116.5704,
+    "description": "世界七大奇迹之一，中国古代军事防御工程"
+  },
+  {
+    "id": "110000003",
+    "city_id": "110000",
+    "name": "颐和园",
+    "category": "自然",
+    "rating": 4.6,
+    "ticket_price": 30,
+    "visit_duration_hours": 3.0,
+    "latitude": 39.9999,
+    "longitude": 116.2753,
+    "description": "中国现存规模最大、保存最完整的皇家园林"
+  },
+  {
+    "id": "310000001",
+    "city_id": "310000",
+    "name": "外滩",
+    "category": "城市",
+    "rating": 4.7,
+    "ticket_price": 0,
+    "visit_duration_hours": 2.0,
+    "latitude": 31.2397,
+    "longitude": 121.4900,
+    "description": "上海的标志性景观，万国建筑博览群"
+  },
+  {
+    "id": "310000002",
+    "city_id": "310000",
+    "name": "东方明珠",
+    "category": "城市",
+    "rating": 4.5,
+    "ticket_price": 180,
+    "visit_duration_hours": 2.0,
+    "latitude": 31.2397,
+    "longitude": 121.4997,
+    "description": "上海地标性建筑，亚洲第一、世界第三高塔"
+  }
+]
