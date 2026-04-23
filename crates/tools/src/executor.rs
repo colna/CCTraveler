@@ -29,11 +29,52 @@ impl TravelerToolExecutor {
                 message: format!("Invalid input: {e}"),
             })?;
 
+        // 1. 验证日期格式和合理性
+        let checkin = chrono::NaiveDate::parse_from_str(&params.checkin, "%Y-%m-%d")
+            .map_err(|_| RuntimeError::Tool {
+                tool_name: "scrape_hotels".into(),
+                message: "入住日期格式错误，应为 YYYY-MM-DD".into(),
+            })?;
+        let checkout = chrono::NaiveDate::parse_from_str(&params.checkout, "%Y-%m-%d")
+            .map_err(|_| RuntimeError::Tool {
+                tool_name: "scrape_hotels".into(),
+                message: "退房日期格式错误，应为 YYYY-MM-DD".into(),
+            })?;
+
+        if checkout <= checkin {
+            return Err(RuntimeError::Tool {
+                tool_name: "scrape_hotels".into(),
+                message: "退房日期必须晚于入住日期".into(),
+            });
+        }
+
+        if (checkout - checkin).num_days() > 30 {
+            return Err(RuntimeError::Tool {
+                tool_name: "scrape_hotels".into(),
+                message: "住宿天数不能超过 30 天".into(),
+            });
+        }
+
+        // 2. 限制 max_pages 不超过 5
+        let max_pages = params.max_pages.unwrap_or(5).min(5);
+
+        // 3. 检查爬取频率（24 小时内不重复爬取同一城市同一日期）
+        // TODO: 实现 get_last_scrape_time 检查
+        // if let Some(last_scrape) = self.get_last_scrape_time(&params.city, &params.checkin)? {
+        //     let elapsed = chrono::Utc::now().signed_duration_since(last_scrape);
+        //     if elapsed.num_hours() < 24 {
+        //         return Ok(format!(
+        //             "该城市和日期的数据在 {} 小时前已爬取，请使用 search_hotels 查询本地数据。",
+        //             elapsed.num_hours()
+        //         ));
+        //     }
+        // }
+
         let req = ScrapeRequest {
             city: params.city.clone(),
             checkin: params.checkin.clone(),
             checkout: params.checkout.clone(),
-            max_pages: params.max_pages.unwrap_or(5),
+            max_pages,
             source: "trip".to_string(),
         };
 
@@ -77,6 +118,54 @@ impl TravelerToolExecutor {
                 message: format!("Invalid input: {e}"),
             })?;
 
+        // 验证参数合理性
+        if let Some(min_price) = params.min_price {
+            if min_price < 0.0 {
+                return Err(RuntimeError::Tool {
+                    tool_name: "search_hotels".into(),
+                    message: "最低价格不能为负数".into(),
+                });
+            }
+        }
+
+        if let Some(max_price) = params.max_price {
+            if max_price < 0.0 {
+                return Err(RuntimeError::Tool {
+                    tool_name: "search_hotels".into(),
+                    message: "最高价格不能为负数".into(),
+                });
+            }
+            if let Some(min_price) = params.min_price {
+                if max_price < min_price {
+                    return Err(RuntimeError::Tool {
+                        tool_name: "search_hotels".into(),
+                        message: "最高价格不能低于最低价格".into(),
+                    });
+                }
+            }
+        }
+
+        if let Some(min_star) = params.min_star {
+            if !(1..=5).contains(&min_star) {
+                return Err(RuntimeError::Tool {
+                    tool_name: "search_hotels".into(),
+                    message: "星级必须在 1-5 之间".into(),
+                });
+            }
+        }
+
+        if let Some(min_rating) = params.min_rating {
+            if !(0.0..=5.0).contains(&min_rating) {
+                return Err(RuntimeError::Tool {
+                    tool_name: "search_hotels".into(),
+                    message: "评分必须在 0-5 之间".into(),
+                });
+            }
+        }
+
+        // 限制返回数量不超过 100
+        let limit = params.limit.unwrap_or(20).min(100);
+
         let filters = SearchFilters {
             city: params.city,
             min_price: params.min_price,
@@ -84,7 +173,7 @@ impl TravelerToolExecutor {
             min_star: params.min_star,
             min_rating: params.min_rating,
             sort_by: params.sort_by.as_deref().map(parse_sort_by),
-            limit: Some(params.limit.unwrap_or(20)),
+            limit: Some(limit),
         };
 
         let results = self.db.search_hotels(&filters).map_err(|e| RuntimeError::Tool {
@@ -125,6 +214,21 @@ impl TravelerToolExecutor {
                 tool_name: "analyze_prices".into(),
                 message: format!("Invalid input: {e}"),
             })?;
+
+        // 验证酒店 ID 数量不超过 10
+        if params.hotel_ids.is_empty() {
+            return Err(RuntimeError::Tool {
+                tool_name: "analyze_prices".into(),
+                message: "至少需要提供一个酒店 ID".into(),
+            });
+        }
+
+        if params.hotel_ids.len() > 10 {
+            return Err(RuntimeError::Tool {
+                tool_name: "analyze_prices".into(),
+                message: "最多只能同时分析 10 个酒店".into(),
+            });
+        }
 
         let mut analysis = Vec::new();
 
@@ -200,6 +304,18 @@ impl TravelerToolExecutor {
             message: e.to_string(),
         })?;
 
+        // 检查文件大小不超过 50MB
+        const MAX_FILE_SIZE: usize = 50 * 1024 * 1024; // 50MB
+        if content.len() > MAX_FILE_SIZE {
+            return Err(RuntimeError::Tool {
+                tool_name: "export_report".into(),
+                message: format!(
+                    "导出文件过大（{:.2} MB），超过 50MB 限制。请使用筛选条件减少数据量。",
+                    content.len() as f64 / 1024.0 / 1024.0
+                ),
+            });
+        }
+
         // Save to file
         let filename = format!(
             "hotels_export_{}.{}",
@@ -214,8 +330,8 @@ impl TravelerToolExecutor {
         })?;
 
         Ok(format!(
-            "已导出到 {path}（{} 字节）",
-            content.len(),
+            "已导出到 {path}（{:.2} MB）",
+            content.len() as f64 / 1024.0 / 1024.0,
             path = path.display()
         ))
     }
