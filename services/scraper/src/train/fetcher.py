@@ -5,7 +5,7 @@ import asyncio
 import logging
 import re
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -13,43 +13,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
+from ..utils.geo_lookup import get_station_code
 from .types import ScrapedTrain, TrainSeatPrice
 
 logger = logging.getLogger(__name__)
-
-# 12306 车站代码映射（部分常用站点，完整版需要从 12306 获取）
-STATION_CODE_MAP = {
-    "北京": "BJP",
-    "北京西": "BXP",
-    "北京南": "VNP",
-    "上海": "SHH",
-    "上海虹桥": "AOH",
-    "广州": "GZQ",
-    "广州南": "IZQ",
-    "深圳": "SZQ",
-    "深圳北": "IOQ",
-    "成都": "CDW",
-    "成都东": "ICW",
-    "重庆": "CQW",
-    "重庆北": "CUW",
-    "西安": "XAY",
-    "西安北": "EAY",
-    "武汉": "WHN",
-    "杭州": "HZH",
-    "杭州东": "HGH",
-    "南京": "NJH",
-    "南京南": "NKH",
-    "天津": "TJP",
-    "郑州": "ZZF",
-    "长沙": "CSQ",
-    "长沙南": "CWQ",
-    "遵义": "ZIW",
-}
-
-
-def get_station_code(city_or_station: str) -> Optional[str]:
-    """获取车站代码"""
-    return STATION_CODE_MAP.get(city_or_station)
 
 
 def parse_train_type(train_id: str) -> str:

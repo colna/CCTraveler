@@ -7,6 +7,6 @@ pub use models::{
     Hotel, PriceSnapshot, Room, HotelWithPrice, SearchFilters, SortBy,
     Train, TrainPrice, TrainSearchResult,
     Flight, FlightPrice, FlightSearchResult,
-    City, District, Attraction,
+    City, CityMapping, District, Attraction, StationCode, AirportCode,
     WikiEntry,
 };

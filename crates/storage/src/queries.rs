@@ -1,7 +1,10 @@
 use crate::db::Database;
-use crate::models::{Hotel, HotelWithPrice, PriceSnapshot, Room, SearchFilters, SortBy};
+use crate::models::{
+    AirportCode, Attraction, City, District, Hotel, HotelWithPrice, PriceSnapshot, Room,
+    SearchFilters, SortBy, StationCode,
+};
 use anyhow::Result;
-use rusqlite::params;
+use rusqlite::{params, OptionalExtension, Row};
 
 impl Database {
     pub fn upsert_hotel(&self, hotel: &Hotel) -> Result<()> {
@@ -234,4 +237,219 @@ impl Database {
         }
         Ok(csv)
     }
+
+    pub fn resolve_city(&self, query: &str) -> Result<Option<City>> {
+        let trimmed = query.trim();
+        if trimmed.is_empty() {
+            return Ok(None);
+        }
+
+        let normalized = normalize_city_name(trimmed);
+        let mut stmt = self.conn.prepare(
+            "SELECT DISTINCT c.id, c.name, c.name_en, c.province, c.latitude, c.longitude,
+                    c.population, c.area_km2, c.tier, c.description, c.created_at
+             FROM cities c
+             LEFT JOIN city_mappings m ON m.city_id = c.id
+             WHERE c.name = ?1
+                OR c.name = ?2
+                OR lower(COALESCE(c.name_en, '')) = lower(?1)
+                OR lower(COALESCE(c.name_en, '')) = lower(?2)
+                OR m.source_name = ?1
+                OR m.source_name = ?2
+                OR lower(COALESCE(m.pinyin, '')) = lower(?1)
+                OR lower(COALESCE(m.pinyin, '')) = lower(?2)
+                OR m.source_id = ?1
+             ORDER BY CASE
+                WHEN c.name = ?1 THEN 0
+                WHEN c.name = ?2 THEN 1
+                WHEN m.source_name = ?1 THEN 2
+                WHEN m.source_name = ?2 THEN 3
+                WHEN lower(COALESCE(m.pinyin, '')) = lower(?1) THEN 4
+                WHEN lower(COALESCE(m.pinyin, '')) = lower(?2) THEN 5
+                WHEN m.source_id = ?1 THEN 6
+                ELSE 7
+             END
+             LIMIT 1",
+        )?;
+
+        stmt.query_row(params![trimmed, normalized], row_to_city)
+            .optional()
+            .map_err(Into::into)
+    }
+
+    pub fn list_city_districts(&self, city_id: &str) -> Result<Vec<District>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, city_id, name, name_en, latitude, longitude, description, tags
+             FROM districts
+             WHERE city_id = ?1
+             ORDER BY name ASC",
+        )?;
+
+        let rows = stmt.query_map(params![city_id], |row| {
+            Ok(District {
+                id: row.get(0)?,
+                city_id: row.get(1)?,
+                name: row.get(2)?,
+                name_en: row.get(3)?,
+                latitude: row.get(4)?,
+                longitude: row.get(5)?,
+                description: row.get(6)?,
+                tags: row.get(7)?,
+            })
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    pub fn list_city_attractions(&self, city_id: &str, category: Option<&str>) -> Result<Vec<Attraction>> {
+        let mut results = Vec::new();
+
+        if let Some(category) = category {
+            let mut stmt = self.conn.prepare(
+                "SELECT id, city_id, district_id, name, name_en, category, rating, latitude, longitude,
+                        address, description, opening_hours, ticket_price, visit_duration_hours
+                 FROM attractions
+                 WHERE city_id = ?1 AND category = ?2
+                 ORDER BY rating DESC, name ASC",
+            )?;
+            let rows = stmt.query_map(params![city_id, category], |row| {
+                Ok(Attraction {
+                    id: row.get(0)?,
+                    city_id: row.get(1)?,
+                    district_id: row.get(2)?,
+                    name: row.get(3)?,
+                    name_en: row.get(4)?,
+                    category: row.get(5)?,
+                    rating: row.get(6)?,
+                    latitude: row.get(7)?,
+                    longitude: row.get(8)?,
+                    address: row.get(9)?,
+                    description: row.get(10)?,
+                    opening_hours: row.get(11)?,
+                    ticket_price: row.get(12)?,
+                    visit_duration_hours: row.get(13)?,
+                })
+            })?;
+
+            for row in rows {
+                results.push(row?);
+            }
+            return Ok(results);
+        }
+
+        let mut stmt = self.conn.prepare(
+            "SELECT id, city_id, district_id, name, name_en, category, rating, latitude, longitude,
+                    address, description, opening_hours, ticket_price, visit_duration_hours
+             FROM attractions
+             WHERE city_id = ?1
+             ORDER BY rating DESC, name ASC",
+        )?;
+        let rows = stmt.query_map(params![city_id], |row| {
+            Ok(Attraction {
+                id: row.get(0)?,
+                city_id: row.get(1)?,
+                district_id: row.get(2)?,
+                name: row.get(3)?,
+                name_en: row.get(4)?,
+                category: row.get(5)?,
+                rating: row.get(6)?,
+                latitude: row.get(7)?,
+                longitude: row.get(8)?,
+                address: row.get(9)?,
+                description: row.get(10)?,
+                opening_hours: row.get(11)?,
+                ticket_price: row.get(12)?,
+                visit_duration_hours: row.get(13)?,
+            })
+        })?;
+
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    pub fn list_city_station_codes(&self, city_name: &str) -> Result<Vec<StationCode>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT city, station_name, station_code, created_at
+             FROM station_codes
+             WHERE city = ?1
+             ORDER BY station_name ASC",
+        )?;
+
+        let rows = stmt.query_map(params![city_name], |row| {
+            Ok(StationCode {
+                city: row.get(0)?,
+                station_name: row.get(1)?,
+                station_code: row.get(2)?,
+                created_at: row.get::<_, String>(3).ok(),
+            })
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    pub fn list_city_airport_codes(&self, city_name: &str) -> Result<Vec<AirportCode>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT city, airport_name, airport_code, iata_code, icao_code, created_at
+             FROM airport_codes
+             WHERE city = ?1
+             ORDER BY airport_name ASC",
+        )?;
+
+        let rows = stmt.query_map(params![city_name], |row| {
+            Ok(AirportCode {
+                city: row.get(0)?,
+                airport_name: row.get(1)?,
+                airport_code: row.get(2)?,
+                iata_code: row.get(3)?,
+                icao_code: row.get(4)?,
+                created_at: row.get::<_, String>(5).ok(),
+            })
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+}
+
+fn row_to_city(row: &Row<'_>) -> rusqlite::Result<City> {
+    let province: String = row.get(3)?;
+    Ok(City {
+        id: row.get(0)?,
+        name: row.get(1)?,
+        name_en: row.get(2)?,
+        province: if province.trim().is_empty() { None } else { Some(province) },
+        latitude: row.get(4)?,
+        longitude: row.get(5)?,
+        population: row.get(6)?,
+        area_km2: row.get(7)?,
+        tier: row.get(8)?,
+        description: row.get(9)?,
+        created_at: row.get(10)?,
+    })
+}
+
+fn normalize_city_name(name: &str) -> String {
+    let mut normalized = name.trim().to_string();
+    for (start, end) in [("(", ")"), ("（", "）")] {
+        if let Some(index) = normalized.rfind(start) {
+            if normalized.ends_with(end) {
+                normalized.truncate(index);
+                normalized = normalized.trim().to_string();
+            }
+        }
+    }
+    normalized
 }

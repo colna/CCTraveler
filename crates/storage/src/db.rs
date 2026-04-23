@@ -78,6 +78,7 @@ impl Database {
 
         // v0.2 tables (transport and geography)
         self.conn.execute_batch(include_str!("../migrations/001_add_transport_and_geo_tables.sql"))?;
+        self.conn.execute_batch(include_str!("../migrations/002_add_geo_lookup_tables.sql"))?;
 
         Ok(())
     }
@@ -146,5 +147,29 @@ mod tests {
             |row| row.get(0)
         ).unwrap();
         assert_eq!(wiki_count, 1, "wiki_entries table should exist");
+
+        // 验证 v0.3 城市映射表存在
+        let city_mappings_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='city_mappings'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(city_mappings_count, 1, "city_mappings table should exist");
+
+        // 验证 v0.3 车站代码表存在
+        let station_codes_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='station_codes'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(station_codes_count, 1, "station_codes table should exist");
+
+        // 验证 v0.3 机场代码表存在
+        let airport_codes_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='airport_codes'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(airport_codes_count, 1, "airport_codes table should exist");
     }
 }

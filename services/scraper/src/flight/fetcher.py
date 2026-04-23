@@ -5,32 +5,10 @@ import asyncio
 import logging
 from typing import List
 
+from ..utils.geo_lookup import get_airport_code
 from .types import ScrapedFlight, FlightCabinPrice
 
 logger = logging.getLogger(__name__)
-
-# 机场代码映射（部分常用机场）
-AIRPORT_CODE_MAP = {
-    "北京": "PEK",
-    "上海": "SHA",
-    "广州": "CAN",
-    "深圳": "SZX",
-    "成都": "CTU",
-    "重庆": "CKG",
-    "西安": "XIY",
-    "武汉": "WUH",
-    "杭州": "HGH",
-    "南京": "NKG",
-    "天津": "TSN",
-    "郑州": "CGO",
-    "长沙": "CSX",
-    "遵义": "ZYI",
-}
-
-
-def get_airport_code(city: str) -> str:
-    """获取机场代码"""
-    return AIRPORT_CODE_MAP.get(city, "UNK")
 
 
 async def fetch_flights_ctrip(

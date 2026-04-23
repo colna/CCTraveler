@@ -175,13 +175,24 @@ pub struct City {
     pub id: String,
     pub name: String,
     pub name_en: Option<String>,
-    pub province: String,
+    pub province: Option<String>,
     pub latitude: Option<f64>,
     pub longitude: Option<f64>,
     pub population: Option<i32>,
     pub area_km2: Option<f64>,
     pub tier: Option<i32>,       // 城市等级 (1/2/3/4/5)
     pub description: Option<String>,
+    pub created_at: String,
+}
+
+/// 外部城市映射
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CityMapping {
+    pub city_id: String,
+    pub source: String,
+    pub source_id: String,
+    pub source_name: String,
+    pub pinyin: Option<String>,
     pub created_at: String,
 }
 
@@ -215,6 +226,26 @@ pub struct Attraction {
     pub opening_hours: Option<String>,
     pub ticket_price: Option<f64>,
     pub visit_duration_hours: Option<f64>,
+}
+
+/// 车站代码映射
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StationCode {
+    pub city: String,
+    pub station_name: String,
+    pub station_code: String,
+    pub created_at: Option<String>,
+}
+
+/// 机场代码映射
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AirportCode {
+    pub city: String,
+    pub airport_name: String,
+    pub airport_code: String,
+    pub iata_code: Option<String>,
+    pub icao_code: Option<String>,
+    pub created_at: Option<String>,
 }
 
 // ============================================================

@@ -6,33 +6,15 @@ We default to Trip.com for complete data. City IDs are shared between them.
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
-from typing import Optional, Dict, List
 import random
-from pathlib import Path
+from typing import List, Optional
 
 import httpx
 
+from ..utils.geo_lookup import resolve_city_id
+
 logger = logging.getLogger(__name__)
-
-# Load city lookup from JSON (pinyin + Chinese name -> city ID)
-_CITY_LOOKUP: Dict[str, int] = {}
-
-
-def _load_city_lookup() -> Dict[str, int]:
-    global _CITY_LOOKUP
-    if _CITY_LOOKUP:
-        return _CITY_LOOKUP
-    lookup_path = Path(__file__).resolve().parents[4] / "data" / "city_lookup.json"
-    if lookup_path.exists():
-        with open(lookup_path, encoding="utf-8") as f:
-            _CITY_LOOKUP = json.load(f)
-        logger.info("Loaded %d city mappings from %s", len(_CITY_LOOKUP), lookup_path)
-    else:
-        logger.warning("City lookup file not found: %s", lookup_path)
-    return _CITY_LOOKUP
-
 
 HEADERS = {
     "User-Agent": (
@@ -48,20 +30,6 @@ HEADERS = {
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "none",
 }
-
-
-def resolve_city_id(city: str) -> str:
-    """Resolve city name/pinyin to Ctrip city ID. If already numeric, return as-is."""
-    if city.isdigit():
-        return city
-    lookup = _load_city_lookup()
-    # Try exact match, then lowercase
-    if city in lookup:
-        return str(lookup[city])
-    if city.lower() in lookup:
-        return str(lookup[city.lower()])
-    logger.warning("City '%s' not found in lookup, using as-is", city)
-    return city
 
 
 def _build_url(
