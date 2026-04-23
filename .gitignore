@@ -13,11 +13,13 @@ dist/
 __pycache__/
 *.pyc
 .venv/
+venv/
 *.egg-info/
 
 # Data
 data/*.db
 data/raw/
+.cctraveler/
 
 # Environment
 .env

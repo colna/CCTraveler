@@ -340,10 +340,16 @@ impl TravelerToolExecutor {
 impl ToolExecutor for TravelerToolExecutor {
     fn execute(&mut self, tool_name: &str, input: &str) -> Result<String, RuntimeError> {
         match tool_name {
+            // v0.1 tools
             "scrape_hotels" => self.handle_scrape(input),
             "search_hotels" => self.handle_search(input),
             "analyze_prices" => self.handle_analyze(input),
             "export_report" => self.handle_export(input),
+            // v0.2 tools
+            "search_trains" => crate::train::handle_search_trains(&self.db, &self.scraper_base_url, input),
+            "search_flights" => crate::flight::handle_search_flights(&self.db, &self.scraper_base_url, input),
+            "compare_routes" => crate::route::handle_compare_routes(&self.db, &self.scraper_base_url, input),
+            "query_city_info" => crate::geo::handle_query_city_info(&self.db, input),
             other => Err(RuntimeError::Tool {
                 tool_name: other.to_string(),
                 message: "Unknown tool".to_string(),

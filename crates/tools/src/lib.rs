@@ -4,6 +4,11 @@ pub mod executor;
 pub mod export;
 pub mod scrape;
 pub mod search;
+// v0.2 modules
+pub mod train;
+pub mod flight;
+pub mod route;
+pub mod geo;
 
 // Re-export key types
 pub use definitions::all_tool_specs;

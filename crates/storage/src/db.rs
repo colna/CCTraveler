@@ -24,6 +24,7 @@ impl Database {
     }
 
     fn init(&self) -> Result<()> {
+        // v0.1 tables (hotels)
         self.conn.execute_batch(
             "
             CREATE TABLE IF NOT EXISTS hotels (
@@ -74,6 +75,76 @@ impl Database {
             CREATE INDEX IF NOT EXISTS idx_hotels_city ON hotels(city);
             ",
         )?;
+
+        // v0.2 tables (transport and geography)
+        self.conn.execute_batch(include_str!("../migrations/001_add_transport_and_geo_tables.sql"))?;
+
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_db_init_with_migrations() {
+        let db = Database::open_in_memory().expect("Failed to create in-memory database");
+
+        // 验证 v0.1 表存在
+        let hotel_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='hotels'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(hotel_count, 1, "hotels table should exist");
+
+        // 验证 v0.2 火车票表存在
+        let train_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='trains'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(train_count, 1, "trains table should exist");
+
+        // 验证 v0.2 机票表存在
+        let flight_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='flights'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(flight_count, 1, "flights table should exist");
+
+        // 验证 v0.2 城市表存在
+        let city_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='cities'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(city_count, 1, "cities table should exist");
+
+        // 验证 v0.2 区域表存在
+        let district_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='districts'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(district_count, 1, "districts table should exist");
+
+        // 验证 v0.2 景点表存在
+        let attraction_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='attractions'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(attraction_count, 1, "attractions table should exist");
+
+        // 验证 v0.2 知识维基表存在
+        let wiki_count: i32 = db.conn.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='wiki_entries'",
+            [],
+            |row| row.get(0)
+        ).unwrap();
+        assert_eq!(wiki_count, 1, "wiki_entries table should exist");
     }
 }
