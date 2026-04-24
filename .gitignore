@@ -18,7 +18,12 @@ venv/
 
 # Data
 data/*.db
+data/*.db-shm
+data/*.db-wal
 data/raw/
+services/scraper/data/*.db
+services/scraper/data/*.db-shm
+services/scraper/data/*.db-wal
 .cctraveler/
 
 # Environment
