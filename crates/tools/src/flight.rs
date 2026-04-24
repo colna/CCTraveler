@@ -226,6 +226,7 @@ fn build_flight_response_from_scraped(
                 "arrive_time": f.arrive_time,
                 "duration": format!("{}小时{}分", f.duration_minutes / 60, f.duration_minutes % 60),
                 "aircraft_type": f.aircraft_type,
+                "data_source": f.source,
                 "lowest_price": lowest_price,
                 "prices": f.prices.iter().map(|p| serde_json::json!({
                     "cabin": p.cabin_class,
@@ -279,7 +280,7 @@ fn persist_scraped_flights(
                 available_seats: price.available_seats,
                 travel_date: travel_date.to_string(),
                 scraped_at: now.clone(),
-                source: "mock".to_string(),
+                source: flight.source.clone(),
             };
             db.insert_flight_price(&flight_price)?;
         }

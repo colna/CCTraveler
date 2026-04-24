@@ -25,6 +25,7 @@ class ScrapedFlight(BaseModel):
     arrive_time: str = Field(..., description="到达时间 HH:MM")
     duration_minutes: int = Field(..., description="飞行时长（分钟）")
     aircraft_type: Optional[str] = Field(None, description="机型，如 A320")
+    source: str = Field("mock", description="数据来源：ctrip/qunar/fliggy/mock 或逗号分隔的多源")
     prices: List[FlightCabinPrice] = Field(default_factory=list, description="舱位价格列表")
 
 

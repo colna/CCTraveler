@@ -172,6 +172,8 @@ pub struct ScrapedFlight {
     pub arrive_time: String,
     pub duration_minutes: i32,
     pub aircraft_type: Option<String>,
+    #[serde(default = "default_source")]
+    pub source: String,
     pub prices: Vec<ScrapedFlightPrice>,
 }
 

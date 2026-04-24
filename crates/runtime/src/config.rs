@@ -10,6 +10,8 @@ pub struct RuntimeConfig {
     pub ctrip: CtripConfig,
     #[serde(default)]
     pub redis: RedisConfig,
+    #[serde(default)]
+    pub notification: NotificationConfig,
 }
 
 #[derive(Debug, Deserialize)]
@@ -87,6 +89,23 @@ impl Default for RedisConfig {
             enabled: false,
             url: default_redis_url(),
             ttl_seconds: default_redis_ttl(),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct NotificationConfig {
+    #[serde(default)]
+    pub enabled: bool,
+    #[serde(default)]
+    pub webhook_urls: Vec<String>,
+}
+
+impl Default for NotificationConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            webhook_urls: Vec::new(),
         }
     }
 }

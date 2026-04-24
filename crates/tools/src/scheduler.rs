@@ -1,24 +1,42 @@
+use crate::notifier::{NotifyChannel, Notifier, PriceAlert};
 use crate::scrape::{scrape_flights, scrape_trains};
 use storage::Database;
 use tracing::{info, warn};
 
 /// Background price check scheduler.
 ///
-/// Periodically checks all active price subscriptions and logs alerts
-/// when current prices fall below the user's threshold.
+/// Periodically checks all active price subscriptions and sends alerts
+/// (via webhook and/or log) when current prices fall below the user's threshold.
 pub struct PriceScheduler {
     db_path: std::path::PathBuf,
     scraper_base_url: String,
     interval_seconds: u64,
+    notifier: Notifier,
 }
 
 impl PriceScheduler {
-    pub fn new(db_path: std::path::PathBuf, scraper_base_url: String, interval_seconds: u64) -> Self {
+    pub fn new(
+        db_path: std::path::PathBuf,
+        scraper_base_url: String,
+        interval_seconds: u64,
+    ) -> Self {
         Self {
             db_path,
             scraper_base_url,
             interval_seconds,
+            notifier: Notifier::log_only(),
         }
+    }
+
+    /// Configure webhook notification delivery.
+    pub fn with_webhooks(mut self, urls: Vec<String>) -> Self {
+        let mut channels: Vec<NotifyChannel> = urls
+            .into_iter()
+            .map(|url| NotifyChannel::Webhook { url })
+            .collect();
+        channels.push(NotifyChannel::LogOnly);
+        self.notifier = Notifier::new(channels);
+        self
     }
 
     /// Spawn the scheduler as a background tokio task.
@@ -83,9 +101,19 @@ impl PriceScheduler {
 
             if let Some(price) = cheapest {
                 if price <= threshold {
-                    info!(
-                        "ALERT: {from} → {to} ({transport}) price ¥{price:.0} <= threshold ¥{threshold:.0} [sub={sub_id}]"
-                    );
+                    let alert = PriceAlert {
+                        subscription_id: sub_id.to_string(),
+                        from_city: from.to_string(),
+                        to_city: to.to_string(),
+                        transport_type: transport.to_string(),
+                        current_price: price,
+                        threshold,
+                        message: format!(
+                            "当前最低价 ¥{:.0} 已低于您设定的 ¥{:.0}，建议尽快购票！",
+                            price, threshold
+                        ),
+                    };
+                    self.notifier.send_alert(&alert).await;
                 }
             }
         }

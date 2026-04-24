@@ -227,13 +227,16 @@ fn run_chat(config: &runtime::RuntimeConfig, db_path: &std::path::Path) -> Resul
     let tool_executor = TravelerToolExecutor::new(db, config.scraper.base_url.clone())
         .with_redis(redis);
 
-    // Start background price scheduler (every hour)
-    let _scheduler_handle = tools::scheduler::PriceScheduler::new(
+    // Start background price scheduler (every hour) with optional webhook notifications
+    let mut scheduler = tools::scheduler::PriceScheduler::new(
         db_path.to_path_buf(),
         config.scraper.base_url.clone(),
         3600,
-    )
-    .spawn();
+    );
+    if config.notification.enabled && !config.notification.webhook_urls.is_empty() {
+        scheduler = scheduler.with_webhooks(config.notification.webhook_urls.clone());
+    }
+    let _scheduler_handle = scheduler.spawn();
 
     // Build system prompt
     let system_prompt = SystemPromptBuilder::build_default();

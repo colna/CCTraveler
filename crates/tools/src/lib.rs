@@ -14,6 +14,7 @@ pub mod cache;
 pub mod distance;
 pub mod metrics;
 pub mod monitor;
+pub mod notifier;
 pub mod planner;
 pub mod scheduler;
 pub mod wiki;
