@@ -36,24 +36,66 @@ CTRIP_FLIGHT_URL = (
     "?depdate={date}"
 )
 
-# ---- Regex patterns for parsing DOM text ----
-_RE_FLIGHT_NO = re.compile(r"\b([A-Z\d]{2}\d{3,4})\b")
-_RE_TIME = re.compile(r"(\d{2}:\d{2})")
+# Regex patterns for parsing price / discount from innerText
 _RE_PRICE = re.compile(r"[¥￥](\d+)")
-_RE_DISCOUNT = re.compile(r"(\d+\.?\d*)折")
-_RE_AIRPORT = re.compile(r"([\u4e00-\u9fa5]+机场[T\d]*)")
 _RE_AIRCRAFT = re.compile(
     r"((?:空客|波音|商飞|ARJ|CRJ|ERJ|A\d{3}|B\d{3}|737|320|321|330|350|380|787|777|747)\S*)"
 )
 
 # JS script to extract structured flight data from the Ctrip page DOM.
-# Each .flight-item is walked for text nodes, yielding a pipe-separated string
-# that is easier to parse than raw innerText.
+# Uses element IDs to get flight numbers (many items don't show them in text),
+# and specific CSS selectors for airline, times, airports.
 _EXTRACT_JS = """() => {
     const items = document.querySelectorAll('.flight-item');
     return Array.from(items).map(item => {
-        return item.innerText;
-    });
+        // Flight number: hidden in child element IDs like "airlineNameKN5955_..."
+        let flightNo = '';
+        const idEls = item.querySelectorAll('[id]');
+        for (const el of idEls) {
+            const m = el.id.match(/airlineName([A-Z0-9]{2,3}\\d{3,4})_/);
+            if (m) { flightNo = m[1]; break; }
+        }
+        if (!flightNo) return null;
+
+        // Transfer: check transfer-text element
+        for (const el of idEls) {
+            if (el.id.startsWith('transfer-text-')) {
+                const t = el.textContent.trim();
+                if (t && t.length > 0) return null;  // skip transfer flights
+                break;
+            }
+        }
+
+        // Airline name
+        const airlineEl = item.querySelector('.airline-name');
+        const airline = airlineEl ? airlineEl.textContent.trim() : '';
+
+        // Departure
+        const dTimeEl = item.querySelector('.depart-box .time');
+        const departTime = dTimeEl ? dTimeEl.childNodes[0].textContent.trim() : '';
+        const dAirportEl = item.querySelector('.depart-box .airport .name');
+        const dTerminalEl = item.querySelector('.depart-box .terminal');
+        const departAirport = (dAirportEl ? dAirportEl.textContent.trim() : '')
+            + (dTerminalEl ? dTerminalEl.textContent.trim() : '');
+
+        // Arrival
+        const aTimeEl = item.querySelector('.arrive-box .time');
+        const arriveTime = aTimeEl ? aTimeEl.childNodes[0].textContent.trim() : '';
+        const aAirportEl = item.querySelector('.arrive-box .airport .name');
+        const aTerminalEl = item.querySelector('.arrive-box .terminal');
+        const arriveAirport = (aAirportEl ? aAirportEl.textContent.trim() : '')
+            + (aTerminalEl ? aTerminalEl.textContent.trim() : '');
+
+        // Full text for price/discount/aircraft extraction
+        const fullText = item.innerText;
+
+        return {
+            flightNo, airline,
+            departTime, departAirport,
+            arriveTime, arriveAirport,
+            fullText
+        };
+    }).filter(x => x !== null);
 }"""
 
 
@@ -81,53 +123,31 @@ def _calc_duration(depart: str, arrive: str) -> int:
         return 0
 
 
-def _parse_flight_text(
-    text: str,
+def _build_flight(
+    item: dict,
     from_city: str,
     to_city: str,
 ) -> Optional[ScrapedFlight]:
-    """Parse a single .flight-item's innerText into a ScrapedFlight."""
-    # Skip transfer/stopover flights
-    if "中转" in text or "转机" in text:
+    """Build a ScrapedFlight from a DOM-extracted dict."""
+    flight_id = item.get("flightNo", "")
+    if not flight_id:
         return None
 
-    # Flight number (required)
-    flight_match = _RE_FLIGHT_NO.search(text)
-    if not flight_match:
-        return None
-    flight_id = flight_match.group(1)
+    text = item.get("fullText", "")
 
-    # Departure / arrival times
-    times = _RE_TIME.findall(text)
-    depart_time = times[0] if len(times) >= 1 else ""
-    arrive_time = times[1] if len(times) >= 2 else ""
-
-    # Airports
-    airports = _RE_AIRPORT.findall(text)
-    from_airport = airports[0] if len(airports) >= 1 else ""
-    to_airport = airports[1] if len(airports) >= 2 else ""
-
-    # Price — match "¥XXX起" to avoid grabbing promo numbers
+    # Price — match "¥XXX起" first, then plain "¥XXX"
     price_match = re.search(r"[¥￥](\d+)起", text)
     if not price_match:
         price_match = _RE_PRICE.search(text)
     price = float(price_match.group(1)) if price_match else 0.0
 
-    # Discount — match "经济舱X.X折" pattern to avoid promo text like "85折优惠券"
+    # Discount — match "经济舱X.X折" to avoid promo text
     discount_val: Optional[float] = None
     cabin_discount = re.search(
         r"(?:经济舱|商务舱|头等舱|超级经济舱)(\d+\.?\d*)折", text,
     )
     if cabin_discount:
         discount_val = float(cabin_discount.group(1)) / 10
-
-    # Airline — the first non-empty line (usually airline name)
-    airline = ""
-    for line in text.split("\n"):
-        line = line.strip()
-        if line and re.search(r"[\u4e00-\u9fa5]", line):
-            airline = line
-            break
 
     # Aircraft type
     aircraft_match = _RE_AIRCRAFT.search(text)
@@ -142,8 +162,8 @@ def _parse_flight_text(
     elif "超级经济舱" in text:
         cabin_class = "超级经济舱"
 
-    # Duration
-    duration = _calc_duration(depart_time, arrive_time)
+    depart_time = item.get("departTime", "")
+    arrive_time = item.get("arriveTime", "")
 
     prices: List[FlightCabinPrice] = []
     if price > 0:
@@ -156,14 +176,14 @@ def _parse_flight_text(
 
     return ScrapedFlight(
         flight_id=flight_id,
-        airline=airline,
-        from_airport=from_airport,
-        to_airport=to_airport,
+        airline=item.get("airline", ""),
+        from_airport=item.get("departAirport", ""),
+        to_airport=item.get("arriveAirport", ""),
         from_city=from_city,
         to_city=to_city,
         depart_time=depart_time,
         arrive_time=arrive_time,
-        duration_minutes=duration,
+        duration_minutes=_calc_duration(depart_time, arrive_time),
         aircraft_type=aircraft_type,
         source="ctrip",
         prices=prices,
@@ -177,8 +197,8 @@ async def fetch_flights_ctrip(
 ) -> List[ScrapedFlight]:
     """Fetch flights by rendering Ctrip's flight page with Playwright.
 
-    Launches headless Chromium, loads the flight list page, waits for
-    .flight-item DOM elements, and extracts data from their text content.
+    Launches headless Chromium, loads the flight list page, scrolls to
+    trigger lazy loading, and extracts data from DOM structure.
     """
     from_code = _resolve_ctrip_city_code(from_city)
     to_code = _resolve_ctrip_city_code(to_city)
@@ -219,27 +239,36 @@ async def fetch_flights_ctrip(
             try:
                 await page.wait_for_selector(".flight-item", timeout=20000)
             except Exception:
-                # Check for anti-bot / empty page
                 title = await page.title()
                 logger.warning(
                     "No .flight-item elements found (page title: %s)", title,
                 )
                 return []
 
-            # Give the page a moment to finish rendering all items
+            # Give the page a moment to finish rendering initial items
             await asyncio.sleep(3)
 
-            # Scroll down to trigger lazy-loaded items
-            await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-            await asyncio.sleep(2)
+            # Scroll repeatedly to trigger lazy loading until all flights appear
+            prev_count = 0
+            for _ in range(15):
+                await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                await asyncio.sleep(1.5)
+                cur_count = await page.evaluate(
+                    "document.querySelectorAll('.flight-item').length",
+                )
+                if cur_count == prev_count:
+                    break
+                prev_count = cur_count
 
-            # Extract text from each flight item
-            raw_texts: List[str] = await page.evaluate(_EXTRACT_JS)
-            logger.info("Found %d .flight-item elements in DOM", len(raw_texts))
+            # Extract structured data from DOM
+            raw_items: List[dict] = await page.evaluate(_EXTRACT_JS)
+            logger.info(
+                "Found %d valid .flight-item elements in DOM", len(raw_items),
+            )
 
             seen_ids: Set[str] = set()
-            for text in raw_texts:
-                flight = _parse_flight_text(text, from_city, to_city)
+            for item in raw_items:
+                flight = _build_flight(item, from_city, to_city)
                 if flight and flight.flight_id not in seen_ids:
                     seen_ids.add(flight.flight_id)
                     flights.append(flight)
