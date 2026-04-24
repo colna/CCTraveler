@@ -11,9 +11,9 @@ from .ctrip.fetcher import fetch_all_pages
 from .ctrip.parser import parse_hotel_list
 from .ctrip.types import ScrapeRequest, ScrapeResponse
 from .train.types import TrainScrapeRequest, TrainScrapeResponse
-from .train.fetcher import fetch_trains, current_train_fetch_mode
+from .train.fetcher import fetch_trains
 from .flight.types import FlightScrapeRequest, FlightScrapeResponse
-from .flight.fetcher import fetch_flights, current_flight_fetch_mode
+from .flight.fetcher import fetch_flights
 from .utils.geo_lookup import list_supported_cities
 
 logging.basicConfig(level=logging.INFO)
@@ -83,10 +83,10 @@ async def list_cities(q: Optional[str] = None):
 
 @app.post("/scrape/trains", response_model=TrainScrapeResponse)
 async def scrape_trains(req: TrainScrapeRequest):
-    """Scrape train tickets from 12306."""
+    """Scrape train tickets from 12306 JSON API."""
     logger.info(
-        "Scraping trains: %s -> %s on %s (mode=%s)",
-        req.from_city, req.to_city, req.travel_date, current_train_fetch_mode(),
+        "Scraping trains: %s -> %s on %s",
+        req.from_city, req.to_city, req.travel_date,
     )
 
     try:
@@ -110,10 +110,10 @@ async def scrape_trains(req: TrainScrapeRequest):
 
 @app.post("/scrape/flights", response_model=FlightScrapeResponse)
 async def scrape_flights_endpoint(req: FlightScrapeRequest):
-    """Scrape flight tickets. Uses auto mode by default (real -> mock fallback)."""
+    """Scrape flight tickets from Ctrip."""
     logger.info(
-        "Scraping flights: %s -> %s on %s (mode=%s)",
-        req.from_city, req.to_city, req.travel_date, current_flight_fetch_mode(),
+        "Scraping flights: %s -> %s on %s",
+        req.from_city, req.to_city, req.travel_date,
     )
 
     try:

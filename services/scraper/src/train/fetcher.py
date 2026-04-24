@@ -1,31 +1,60 @@
-"""12306 train ticket fetcher with undetected-chromedriver."""
+"""12306 train ticket fetcher using JSON API (no browser needed)."""
 from __future__ import annotations
 
-import asyncio
 import logging
-import os
-import random
-import re
-import time
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import (
-    TimeoutException,
-    NoSuchElementException,
-    WebDriverException,
-)
+import httpx
 
 from ..utils.geo_lookup import get_station_code
+from ..utils.station_loader import ensure_stations_loaded
 from .types import ScrapedTrain, TrainSeatPrice
 
 logger = logging.getLogger(__name__)
 
-TRAIN_FETCH_MODE_ENV = "CCTRAVELER_TRAIN_FETCH_MODE"
-MAX_RETRIES = 2
+INIT_URL = "https://kyfw.12306.cn/otn/leftTicket/init?linktypeid=dc"
+QUERY_URL = "https://kyfw.12306.cn/otn/leftTicket/queryZ"
+
+BROWSER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/125.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+}
+
+API_HEADERS = {
+    "Accept": "application/json, text/javascript, */*; q=0.01",
+    "Referer": "https://kyfw.12306.cn/otn/leftTicket/init",
+    "X-Requested-With": "XMLHttpRequest",
+}
+
+# 12306 pipe-delimited field indices (0-based)
+# Format: secretStr|...|train_no|train_id|from_code|to_code|start_code|end_code|
+#         depart_time|arrive_time|duration|...|seats...
+_IDX_TRAIN_NO = 3        # 车次号 e.g. G1234
+_IDX_FROM_CODE = 6       # 出发站电报码
+_IDX_TO_CODE = 7         # 到达站电报码
+_IDX_DEPART = 8          # 出发时间
+_IDX_ARRIVE = 9          # 到达时间
+_IDX_DURATION = 10       # 历时 e.g. "04:30"
+
+# Seat availability field indices
+_SEAT_FIELDS = {
+    "商务座": 32,  # or 特等座
+    "一等座": 31,
+    "二等座": 30,
+    "高级软卧": 21,
+    "软卧": 23,
+    "动卧": 33,
+    "硬卧": 28,
+    "软座": 24,
+    "硬座": 29,
+    "无座": 26,
+}
 
 
 def parse_train_type(train_id: str) -> str:
@@ -34,240 +63,88 @@ def parse_train_type(train_id: str) -> str:
 
 
 def parse_duration(duration_str: str) -> int:
-    """Parse duration string to minutes.
-
-    Examples: "08:30" -> 510, "1小时30分" -> 90
-    """
+    """Parse "HH:MM" duration to minutes."""
     if ":" in duration_str:
         parts = duration_str.split(":")
         try:
             return int(parts[0]) * 60 + int(parts[1])
         except ValueError:
             return 0
-
-    hours = 0
-    minutes = 0
-    hour_match = re.search(r"(\d+)小时", duration_str)
-    min_match = re.search(r"(\d+)分", duration_str)
-    if hour_match:
-        hours = int(hour_match.group(1))
-    if min_match:
-        minutes = int(min_match.group(1))
-    return hours * 60 + minutes
+    return 0
 
 
-def current_train_fetch_mode() -> str:
-    return os.getenv(TRAIN_FETCH_MODE_ENV, "auto").strip().lower() or "auto"
+def _parse_available_seats(value: str) -> Optional[int]:
+    """Parse seat availability string from 12306.
 
-
-def extract_time_parts(raw_text: str) -> tuple[Optional[str], Optional[str]]:
-    matches = re.findall(r"\b\d{2}:\d{2}\b", raw_text)
-    if len(matches) >= 2:
-        return matches[0], matches[1]
-    if len(matches) == 1:
-        return matches[0], None
-    return None, None
-
-
-def extract_station_parts(raw_text: str) -> tuple[Optional[str], Optional[str]]:
-    parts = [line.strip() for line in raw_text.splitlines() if line.strip()]
-    if len(parts) >= 2:
-        return parts[0], parts[1]
-    return None, None
-
-
-def parse_seat_cells(row) -> List[TrainSeatPrice]:
-    seats: List[TrainSeatPrice] = []
-    seat_types = [
-        "商务座", "特等座", "一等座", "二等座",
-        "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座",
-    ]
-
-    for seat_type in seat_types:
-        try:
-            cell = row.find_element(
-                By.XPATH,
-                f".//*[contains(@title, '{seat_type}') or contains(text(), '{seat_type}')]",
-            )
-        except NoSuchElementException:
-            continue
-
-        text = cell.text.strip()
-        match = re.search(r"(\d+(?:\.\d+)?)", text)
-        if not match:
-            continue
-
-        seats.append(
-            TrainSeatPrice(
-                seat_type=seat_type,
-                price=float(match.group(1)),
-                available_seats=None,
-            )
-        )
-
-    return seats
-
-
-def _create_driver():
-    """Create a browser driver, preferring undetected-chromedriver."""
+    Returns:
+        int: number of available seats
+        -1: available but count unknown ("有")
+        None: not available or no data ("无", "", "--")
+    """
+    value = value.strip()
+    if not value or value in ("", "--", "*"):
+        return None
+    if value == "无":
+        return None
+    if value == "有":
+        return -1
     try:
-        import undetected_chromedriver as uc
-
-        options = uc.ChromeOptions()
-        options.add_argument("--headless=new")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1440,900")
-        driver = uc.Chrome(options=options)
-        logger.info("Using undetected-chromedriver")
-        return driver
-    except Exception as e:
-        logger.warning("undetected-chromedriver unavailable (%s), falling back to selenium", e)
-        from selenium import webdriver
-
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless=new")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1440,900")
-        options.add_argument(
-            "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-        )
-        driver = webdriver.Chrome(options=options)
-        return driver
+        return int(value)
+    except ValueError:
+        return None
 
 
-async def fetch_trains_12306(
+def _parse_train_result(
+    raw: str,
+    station_map: Dict[str, str],
     from_city: str,
     to_city: str,
-    travel_date: str,
-) -> List[ScrapedTrain]:
-    """Fetch train tickets from 12306 with retry and anti-detection.
+) -> Optional[ScrapedTrain]:
+    """Parse a single pipe-delimited train result string."""
+    fields = raw.split("|")
+    if len(fields) < 34:
+        return None
 
-    Uses undetected-chromedriver when available to bypass anti-bot measures.
-    Retries up to MAX_RETRIES times on failure before returning empty.
-    """
-    from_code = get_station_code(from_city)
-    to_code = get_station_code(to_city)
+    train_id = fields[_IDX_TRAIN_NO]
+    if not train_id:
+        return None
 
-    if not from_code or not to_code:
-        logger.error("Cannot resolve station codes: %s -> %s", from_city, to_city)
-        return []
+    from_code = fields[_IDX_FROM_CODE]
+    to_code = fields[_IDX_TO_CODE]
+    depart_time = fields[_IDX_DEPART]
+    arrive_time = fields[_IDX_ARRIVE]
+    duration_str = fields[_IDX_DURATION]
 
-    date_obj = datetime.strptime(travel_date, "%Y-%m-%d")
-    formatted_date = date_obj.strftime("%Y-%m-%d")
-    url = (
-        "https://kyfw.12306.cn/otn/leftTicket/init"
-        f"?linktypeid=dc&fs={from_code}&ts={to_code}&date={formatted_date}&flag=N,N,Y"
+    # Resolve station names from the map
+    from_station = station_map.get(from_code, from_code)
+    to_station = station_map.get(to_code, to_code)
+
+    # Parse seat availability
+    seats: List[TrainSeatPrice] = []
+    for seat_type, idx in _SEAT_FIELDS.items():
+        if idx >= len(fields):
+            continue
+        available = _parse_available_seats(fields[idx])
+        if available is not None:
+            seats.append(TrainSeatPrice(
+                seat_type=seat_type,
+                price=0.0,  # 12306 queryZ doesn't include prices
+                available_seats=available,
+            ))
+
+    return ScrapedTrain(
+        train_id=train_id,
+        train_type=parse_train_type(train_id),
+        from_station=from_station,
+        to_station=to_station,
+        from_city=from_city,
+        to_city=to_city,
+        depart_time=depart_time,
+        arrive_time=arrive_time,
+        duration_minutes=parse_duration(duration_str),
+        distance_km=None,
+        seats=seats,
     )
-
-    last_error = None
-    for attempt in range(1, MAX_RETRIES + 1):
-        driver = None
-        trains: List[ScrapedTrain] = []
-
-        try:
-            logger.info(
-                "Fetching trains from 12306 (attempt %d/%d): %s",
-                attempt, MAX_RETRIES, url,
-            )
-            driver = _create_driver()
-
-            # Random delay to mimic human behavior
-            await asyncio.sleep(random.uniform(0.5, 2.0))
-
-            driver.get(url)
-
-            wait = WebDriverWait(driver, 20)
-            wait.until(EC.presence_of_element_located((By.ID, "queryLeftTable")))
-
-            # Wait for dynamic content
-            await asyncio.sleep(random.uniform(1.0, 2.0))
-
-            train_rows = driver.find_elements(By.CSS_SELECTOR, "#queryLeftTable tbody tr")
-            for row in train_rows:
-                row_text = row.text.strip()
-                if not row_text:
-                    continue
-
-                try:
-                    train_id_match = re.search(r"\b([GDCKTZ]\d+)\b", row_text)
-                    if not train_id_match:
-                        continue
-                    train_id = train_id_match.group(1)
-
-                    depart_time, arrive_time = extract_time_parts(row_text)
-                    if not depart_time or not arrive_time:
-                        continue
-
-                    from_station, to_station = extract_station_parts(row_text)
-                    duration_text = row_text.split(arrive_time, 1)[-1] if arrive_time else ""
-                    duration_match = re.search(
-                        r"(\d{2}:\d{2}|\d+小时\d+分|\d+小时|\d+分)", duration_text
-                    )
-                    duration_minutes = (
-                        parse_duration(duration_match.group(1)) if duration_match else 0
-                    )
-                    seats = parse_seat_cells(row)
-
-                    trains.append(
-                        ScrapedTrain(
-                            train_id=train_id,
-                            train_type=parse_train_type(train_id),
-                            from_station=from_station or from_city,
-                            to_station=to_station or to_city,
-                            from_city=from_city,
-                            to_city=to_city,
-                            depart_time=depart_time,
-                            arrive_time=arrive_time,
-                            duration_minutes=duration_minutes,
-                            distance_km=None,
-                            seats=seats,
-                        )
-                    )
-                except (NoSuchElementException, ValueError) as e:
-                    logger.warning("Failed to parse train row: %s", e)
-                    continue
-
-            logger.info("Fetched %d trains from 12306 (attempt %d)", len(trains), attempt)
-
-            if trains:
-                return trains
-
-            # Detect anti-bot page
-            page_source = driver.page_source or ""
-            if "网络繁忙" in page_source or "验证" in page_source:
-                logger.warning("12306 anti-bot page detected on attempt %d", attempt)
-                last_error = "anti-bot"
-            else:
-                logger.warning("No trains found in page on attempt %d", attempt)
-                last_error = "empty"
-
-        except TimeoutException:
-            logger.warning("Timeout waiting for 12306 page (attempt %d)", attempt)
-            last_error = "timeout"
-        except WebDriverException as e:
-            logger.error("Browser error (attempt %d): %s", attempt, e)
-            last_error = str(e)
-            break  # Don't retry on browser unavailable
-        except Exception as e:
-            logger.exception("Unexpected error fetching trains (attempt %d): %s", attempt, e)
-            last_error = str(e)
-        finally:
-            if driver:
-                try:
-                    driver.quit()
-                except Exception:
-                    pass
-
-        if attempt < MAX_RETRIES:
-            delay = random.uniform(2.0, 5.0)
-            logger.info("Retrying in %.1f seconds...", delay)
-            await asyncio.sleep(delay)
-
-    logger.error("All %d attempts failed for 12306 (%s)", MAX_RETRIES, last_error)
-    return []
 
 
 async def fetch_trains(
@@ -275,66 +152,79 @@ async def fetch_trains(
     to_city: str,
     travel_date: str,
 ) -> List[ScrapedTrain]:
-    mode = current_train_fetch_mode()
+    """Fetch train tickets from 12306 JSON API.
 
-    if mode == "mock":
-        return await fetch_trains_mock(from_city, to_city, travel_date)
+    Uses httpx to call 12306's queryZ endpoint directly — no browser needed.
+    Raises on failure (no mock fallback).
+    """
+    # Ensure station codes are loaded
+    await ensure_stations_loaded()
 
-    trains = await fetch_trains_12306(from_city, to_city, travel_date)
-    if trains:
-        return trains
+    from_code = get_station_code(from_city)
+    to_code = get_station_code(to_city)
 
-    if mode == "real":
+    if not from_code:
+        raise ValueError(f"无法识别出发城市/车站: {from_city}")
+    if not to_code:
+        raise ValueError(f"无法识别到达城市/车站: {to_city}")
+
+    date_obj = datetime.strptime(travel_date, "%Y-%m-%d")
+    formatted_date = date_obj.strftime("%Y-%m-%d")
+
+    params = {
+        "leftTicketDTO.train_date": formatted_date,
+        "leftTicketDTO.from_station": from_code,
+        "leftTicketDTO.to_station": to_code,
+        "purpose_codes": "ADULT",
+    }
+
+    logger.info(
+        "Querying 12306 API: %s(%s) -> %s(%s) on %s",
+        from_city, from_code, to_city, to_code, formatted_date,
+    )
+
+    async with httpx.AsyncClient(
+        headers=BROWSER_HEADERS,
+        follow_redirects=True,
+        timeout=30.0,
+    ) as client:
+        # Visit init page first to obtain session cookies
+        await client.get(INIT_URL)
+
+        # Query the API with session cookies
+        resp = await client.get(QUERY_URL, params=params, headers=API_HEADERS)
+
+        if resp.status_code != 200:
+            raise RuntimeError(
+                f"12306 API 返回状态码 {resp.status_code}: {resp.text[:200]}"
+            )
+
+        try:
+            data = resp.json()
+        except Exception:
+            raise RuntimeError(
+                f"12306 返回非 JSON 响应 (可能被反爬拦截): {resp.text[:200]}"
+            )
+
+    # Check for API-level errors
+    if not data.get("status"):
+        messages = data.get("messages", [])
+        msg = "; ".join(messages) if messages else "未知错误"
+        raise RuntimeError(f"12306 API 查询失败: {msg}")
+
+    result_data = data.get("data", {})
+    result_list = result_data.get("result", [])
+    station_map = result_data.get("map", {})
+
+    if not result_list:
+        logger.info("12306 returned 0 trains for %s -> %s on %s", from_city, to_city, formatted_date)
         return []
 
-    logger.warning(
-        "Falling back to mock train data: %s -> %s on %s",
-        from_city, to_city, travel_date,
-    )
-    return await fetch_trains_mock(from_city, to_city, travel_date)
+    trains: List[ScrapedTrain] = []
+    for raw in result_list:
+        train = _parse_train_result(raw, station_map, from_city, to_city)
+        if train:
+            trains.append(train)
 
-
-async def fetch_trains_mock(
-    from_city: str,
-    to_city: str,
-    travel_date: str,
-) -> List[ScrapedTrain]:
-    """Mock data for development and testing."""
-    logger.info("Using mock data for %s -> %s on %s", from_city, to_city, travel_date)
-    await asyncio.sleep(0.5)
-
-    return [
-        ScrapedTrain(
-            train_id="G1234",
-            train_type="G",
-            from_station=f"{from_city}站",
-            to_station=f"{to_city}站",
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="08:00",
-            arrive_time="16:30",
-            duration_minutes=510,
-            distance_km=1800,
-            seats=[
-                TrainSeatPrice(seat_type="二等座", price=650.5, available_seats=99),
-                TrainSeatPrice(seat_type="一等座", price=1040.0, available_seats=15),
-                TrainSeatPrice(seat_type="商务座", price=1950.0, available_seats=5),
-            ],
-        ),
-        ScrapedTrain(
-            train_id="D5678",
-            train_type="D",
-            from_station=f"{from_city}站",
-            to_station=f"{to_city}站",
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="10:30",
-            arrive_time="20:15",
-            duration_minutes=585,
-            distance_km=1800,
-            seats=[
-                TrainSeatPrice(seat_type="二等座", price=550.0, available_seats=120),
-                TrainSeatPrice(seat_type="一等座", price=880.0, available_seats=30),
-            ],
-        ),
-    ]
+    logger.info("Fetched %d trains from 12306 API", len(trains))
+    return trains

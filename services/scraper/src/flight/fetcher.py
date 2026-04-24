@@ -1,189 +1,211 @@
-"""Flight ticket fetcher with multi-source aggregation support."""
+"""Flight ticket fetcher using Ctrip H5 API."""
 from __future__ import annotations
 
 import asyncio
 import logging
-import os
-import random
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
+
+import httpx
 
 from ..utils.geo_lookup import get_airport_code
 from .types import ScrapedFlight, FlightCabinPrice
 
 logger = logging.getLogger(__name__)
 
-FLIGHT_FETCH_MODE_ENV = "CCTRAVELER_FLIGHT_FETCH_MODE"
+# Ctrip H5 (mobile) flight search API
+CTRIP_H5_API = "https://m.ctrip.com/restapi/soa2/14022/flightListSearch"
+
+CTRIP_H5_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
+        "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+        "Version/16.0 Mobile/15E148 Safari/604.1"
+    ),
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Origin": "https://m.ctrip.com",
+    "Referer": "https://m.ctrip.com/html5/flight/swift/domestic/list",
+}
+
+# City name -> Ctrip airport city code mapping for common cities
+# Ctrip uses 3-letter codes: BJS=北京, SHA=上海, CAN=广州, SZX=深圳, etc.
+_CITY_CODES = {
+    "北京": "BJS", "上海": "SHA", "广州": "CAN", "深圳": "SZX",
+    "成都": "CTU", "杭州": "HGH", "重庆": "CKG", "武汉": "WUH",
+    "西安": "SIA", "南京": "NKG", "长沙": "CSX", "昆明": "KMG",
+    "厦门": "XMN", "天津": "TSN", "郑州": "CGO", "青岛": "TAO",
+    "大连": "DLC", "哈尔滨": "HRB", "沈阳": "SHE", "三亚": "SYX",
+    "海口": "HAK", "福州": "FOC", "贵阳": "KWE", "南宁": "NNG",
+    "兰州": "LHW", "太原": "TYN", "合肥": "HFE", "长春": "CGQ",
+    "济南": "TNA", "南昌": "KHN", "乌鲁木齐": "URC", "呼和浩特": "HET",
+    "石家庄": "SJW", "银川": "INC", "拉萨": "LXA", "西宁": "XNN",
+    "珠海": "ZUH", "温州": "WNZ", "宁波": "NGB", "无锡": "WUX",
+    "烟台": "YNT", "桂林": "KWL", "丽江": "LJG", "遵义": "ZYI",
+}
 
 
-def current_flight_fetch_mode() -> str:
-    return os.getenv(FLIGHT_FETCH_MODE_ENV, "auto").strip().lower() or "auto"
+def _resolve_ctrip_city_code(city: str) -> str:
+    """Resolve city name to Ctrip city code.
+
+    Falls back to IATA airport code from the DB if city is not in the mapping.
+    """
+    code = _CITY_CODES.get(city)
+    if code:
+        return code
+    # Try the airport code from DB
+    airport = get_airport_code(city)
+    if airport and airport != "UNK":
+        return airport
+    raise ValueError(f"无法识别城市: {city}")
 
 
-# ============================================================
-# Source: Ctrip (携程)
-# ============================================================
+def _parse_ctrip_flight(item: dict, from_city: str, to_city: str) -> Optional[ScrapedFlight]:
+    """Parse a single flight item from the Ctrip H5 API response."""
+    try:
+        # Flight segments
+        mutli_flts = item.get("mutilstn", [])
+        if not mutli_flts:
+            return None
+
+        seg = mutli_flts[0]
+        flight_id = seg.get("fltno", "")
+        airline = seg.get("aln", "")
+        from_airport = seg.get("dpbn", "") or seg.get("dport", "")
+        to_airport = seg.get("apbn", "") or seg.get("aport", "")
+        depart_time = seg.get("dtm", "")[:5] if seg.get("dtm") else ""
+        arrive_time = seg.get("atm", "")[:5] if seg.get("atm") else ""
+        aircraft_type = seg.get("craft", None)
+
+        # Duration
+        duration_minutes = seg.get("duration", 0)
+
+        # Prices
+        prices: List[FlightCabinPrice] = []
+        cabin_info = item.get("pricelist", [])
+        if not cabin_info:
+            # Try alternate price fields
+            economy_price = item.get("prc", 0) or item.get("eco", {}).get("p", 0)
+            if economy_price:
+                prices.append(FlightCabinPrice(
+                    cabin_class="经济舱",
+                    price=float(economy_price),
+                    discount=item.get("rat", None),
+                    available_seats=None,
+                ))
+        else:
+            cabin_map = {"Y": "经济舱", "C": "商务舱", "F": "头等舱", "S": "超级经济舱"}
+            for p_item in cabin_info:
+                cabin_code = p_item.get("cabin", "Y")
+                cabin_name = cabin_map.get(cabin_code, cabin_code)
+                price_val = p_item.get("price", 0) or p_item.get("prc", 0)
+                if not price_val:
+                    continue
+                prices.append(FlightCabinPrice(
+                    cabin_class=cabin_name,
+                    price=float(price_val),
+                    discount=p_item.get("rat", None),
+                    available_seats=p_item.get("seatcnt", None),
+                ))
+
+        if not flight_id:
+            return None
+
+        return ScrapedFlight(
+            flight_id=flight_id,
+            airline=airline,
+            from_airport=from_airport,
+            to_airport=to_airport,
+            from_city=from_city,
+            to_city=to_city,
+            depart_time=depart_time,
+            arrive_time=arrive_time,
+            duration_minutes=duration_minutes,
+            aircraft_type=aircraft_type,
+            source="ctrip",
+            prices=prices,
+        )
+    except Exception as e:
+        logger.warning("Failed to parse Ctrip flight item: %s", e)
+        return None
+
 
 async def fetch_flights_ctrip(
     from_city: str,
     to_city: str,
     travel_date: str,
 ) -> List[ScrapedFlight]:
-    """Fetch flights from Ctrip.
+    """Fetch flights from Ctrip H5 API.
 
-    Currently a minimal implementation that returns empty results.
-    Real implementation requires:
-    1. Ctrip flight API or web scraping
-    2. Anti-bot handling
-    3. Complex price structure parsing (tax, fees, cabins)
-    4. Transit flight handling
+    Uses Ctrip's mobile SOA API which returns structured JSON.
+    Polls up to 3 times since the API uses an async search pattern.
     """
-    logger.info("Fetching flights from Ctrip: %s -> %s on %s", from_city, to_city, travel_date)
-    # TODO: Implement real Ctrip flight scraping
-    return []
+    from_code = _resolve_ctrip_city_code(from_city)
+    to_code = _resolve_ctrip_city_code(to_city)
 
+    logger.info(
+        "Querying Ctrip H5 API: %s(%s) -> %s(%s) on %s",
+        from_city, from_code, to_city, to_code, travel_date,
+    )
 
-# ============================================================
-# Source: Qunar (去哪儿)
-# ============================================================
+    payload = {
+        "contentType": "json",
+        "flag": 8,
+        "flightWay": "S",
+        "hasChild": False,
+        "hasBaby": False,
+        "searchIndex": 1,
+        "airportParams": [{
+            "dcity": from_code,
+            "acity": to_code,
+            "date": travel_date,
+        }],
+    }
 
-async def fetch_flights_qunar(
-    from_city: str,
-    to_city: str,
-    travel_date: str,
-) -> List[ScrapedFlight]:
-    """Fetch flights from Qunar.
+    all_flights: List[ScrapedFlight] = []
 
-    Currently returns simulated Qunar-sourced data for multi-source aggregation.
-    Real implementation requires Qunar API/scraping integration.
-    """
-    logger.info("Fetching flights from Qunar: %s -> %s on %s", from_city, to_city, travel_date)
-    await asyncio.sleep(0.3)
+    async with httpx.AsyncClient(
+        headers=CTRIP_H5_HEADERS,
+        follow_redirects=True,
+        timeout=30.0,
+    ) as client:
+        token = ""
+        for attempt in range(1, 4):
+            if token:
+                payload["token"] = token
+            payload["searchIndex"] = attempt
 
-    from_airport = get_airport_code(from_city)
-    to_airport = get_airport_code(to_city)
+            resp = await client.post(CTRIP_H5_API, json=payload)
+            if resp.status_code != 200:
+                logger.warning("Ctrip API returned %d on attempt %d", resp.status_code, attempt)
+                break
 
-    return [
-        ScrapedFlight(
-            flight_id="CA1234",
-            airline="中国国航",
-            from_airport=from_airport,
-            to_airport=to_airport,
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="09:00",
-            arrive_time="12:30",
-            duration_minutes=210,
-            aircraft_type="A320",
-            source="qunar",
-            prices=[
-                FlightCabinPrice(
-                    cabin_class="经济舱",
-                    price=820.0,
-                    discount=0.78,
-                    available_seats=45,
-                ),
-                FlightCabinPrice(
-                    cabin_class="商务舱",
-                    price=2450.0,
-                    discount=None,
-                    available_seats=12,
-                ),
-            ],
-        ),
-        ScrapedFlight(
-            flight_id="HU7890",
-            airline="海南航空",
-            from_airport=from_airport,
-            to_airport=to_airport,
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="11:00",
-            arrive_time="14:20",
-            duration_minutes=200,
-            aircraft_type="B787",
-            source="qunar",
-            prices=[
-                FlightCabinPrice(
-                    cabin_class="经济舱",
-                    price=760.0,
-                    discount=0.72,
-                    available_seats=90,
-                ),
-            ],
-        ),
-    ]
+            try:
+                data = resp.json()
+            except Exception:
+                logger.warning("Ctrip returned non-JSON on attempt %d", attempt)
+                break
 
+            fltitem = data.get("fltitem", [])
+            token = data.get("token", "") or token
+            is_complete = data.get("iscomplete", False)
 
-# ============================================================
-# Source: Fliggy (飞猪)
-# ============================================================
+            for item in fltitem:
+                flight = _parse_ctrip_flight(item, from_city, to_city)
+                if flight:
+                    all_flights.append(flight)
 
-async def fetch_flights_fliggy(
-    from_city: str,
-    to_city: str,
-    travel_date: str,
-) -> List[ScrapedFlight]:
-    """Fetch flights from Fliggy (Alibaba).
+            logger.info(
+                "Ctrip poll %d: %d flights, complete=%s",
+                attempt, len(fltitem), is_complete,
+            )
 
-    Currently returns simulated Fliggy-sourced data for multi-source aggregation.
-    Real implementation requires Fliggy API/scraping integration.
-    """
-    logger.info("Fetching flights from Fliggy: %s -> %s on %s", from_city, to_city, travel_date)
-    await asyncio.sleep(0.3)
+            if is_complete or fltitem:
+                break
 
-    from_airport = get_airport_code(from_city)
-    to_airport = get_airport_code(to_city)
+            await asyncio.sleep(1.0)
 
-    return [
-        ScrapedFlight(
-            flight_id="MU5678",
-            airline="东方航空",
-            from_airport=from_airport,
-            to_airport=to_airport,
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="14:30",
-            arrive_time="18:00",
-            duration_minutes=210,
-            aircraft_type="B737",
-            source="fliggy",
-            prices=[
-                FlightCabinPrice(
-                    cabin_class="经济舱",
-                    price=750.0,
-                    discount=0.71,
-                    available_seats=70,
-                ),
-                FlightCabinPrice(
-                    cabin_class="商务舱",
-                    price=2380.0,
-                    discount=0.9,
-                    available_seats=5,
-                ),
-            ],
-        ),
-        ScrapedFlight(
-            flight_id="CZ9012",
-            airline="南方航空",
-            from_airport=from_airport,
-            to_airport=to_airport,
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="19:00",
-            arrive_time="22:30",
-            duration_minutes=210,
-            aircraft_type="A321",
-            source="fliggy",
-            prices=[
-                FlightCabinPrice(
-                    cabin_class="经济舱",
-                    price=890.0,
-                    discount=0.82,
-                    available_seats=55,
-                ),
-            ],
-        ),
-    ]
+    logger.info("Ctrip returned %d flights total", len(all_flights))
+    return all_flights
 
 
 # ============================================================
@@ -191,13 +213,7 @@ async def fetch_flights_fliggy(
 # ============================================================
 
 def _merge_flights(all_results: List[Tuple[str, List[ScrapedFlight]]]) -> List[ScrapedFlight]:
-    """Merge flights from multiple sources.
-
-    Deduplication strategy:
-    - Group by flight_id (airline flight number).
-    - For the same flight_id, keep the best (lowest) price per cabin class.
-    - Track all sources that provided the flight.
-    """
+    """Merge flights from multiple sources, deduplicating by flight_id."""
     flight_map: Dict[str, ScrapedFlight] = {}
     flight_sources: Dict[str, Set[str]] = {}
     cabin_prices: Dict[str, Dict[str, FlightCabinPrice]] = {}
@@ -242,41 +258,6 @@ def _merge_flights(all_results: List[Tuple[str, List[ScrapedFlight]]]) -> List[S
     return merged
 
 
-async def fetch_flights_multi_source(
-    from_city: str,
-    to_city: str,
-    travel_date: str,
-) -> List[ScrapedFlight]:
-    """Fetch flights from all available sources concurrently, then merge and deduplicate."""
-    sources = [
-        ("ctrip", fetch_flights_ctrip),
-        ("qunar", fetch_flights_qunar),
-        ("fliggy", fetch_flights_fliggy),
-    ]
-
-    tasks = [fn(from_city, to_city, travel_date) for _, fn in sources]
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-
-    all_results: List[Tuple[str, List[ScrapedFlight]]] = []
-    for (source_name, _), result in zip(sources, results):
-        if isinstance(result, Exception):
-            logger.warning("Source %s failed: %s", source_name, result)
-            continue
-        if result:
-            logger.info("Source %s returned %d flights", source_name, len(result))
-            all_results.append((source_name, result))
-
-    if not all_results:
-        return []
-
-    merged = _merge_flights(all_results)
-    logger.info(
-        "Multi-source aggregation: %d sources, %d unique flights",
-        len(all_results), len(merged),
-    )
-    return merged
-
-
 # ============================================================
 # Main entry point
 # ============================================================
@@ -286,118 +267,16 @@ async def fetch_flights(
     to_city: str,
     travel_date: str,
 ) -> List[ScrapedFlight]:
-    """Fetch flights with mode selection and multi-source aggregation.
-
-    Modes (env CCTRAVELER_FLIGHT_FETCH_MODE):
-    - "mock": always return mock data (single source)
-    - "real": only try real scraping from all sources, return empty on total failure
-    - "auto" (default): try multi-source aggregation, fall back to mock if all sources fail
-    """
-    mode = current_flight_fetch_mode()
-
-    if mode == "mock":
-        return await fetch_flights_mock(from_city, to_city, travel_date)
-
-    flights = await fetch_flights_multi_source(from_city, to_city, travel_date)
+    """Fetch flights from Ctrip. No mock fallback — raises on total failure."""
+    # Currently only Ctrip source is implemented.
+    # When more real sources are added (Qunar, Fliggy), they can be
+    # wired into multi-source aggregation here.
+    flights = await fetch_flights_ctrip(from_city, to_city, travel_date)
     if flights:
         return flights
 
-    if mode == "real":
-        return []
-
     logger.warning(
-        "All sources failed, falling back to mock flight data: %s -> %s on %s",
+        "未获取到航班数据: %s -> %s on %s",
         from_city, to_city, travel_date,
     )
-    return await fetch_flights_mock(from_city, to_city, travel_date)
-
-
-async def fetch_flights_mock(
-    from_city: str,
-    to_city: str,
-    travel_date: str,
-) -> List[ScrapedFlight]:
-    """Mock data for development and testing."""
-    logger.info("Using mock data for flights: %s -> %s on %s", from_city, to_city, travel_date)
-    await asyncio.sleep(0.5)
-
-    from_airport = get_airport_code(from_city)
-    to_airport = get_airport_code(to_city)
-
-    return [
-        ScrapedFlight(
-            flight_id="CA1234",
-            airline="中国国航",
-            from_airport=from_airport,
-            to_airport=to_airport,
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="09:00",
-            arrive_time="12:30",
-            duration_minutes=210,
-            aircraft_type="A320",
-            source="mock",
-            prices=[
-                FlightCabinPrice(
-                    cabin_class="经济舱",
-                    price=850.0,
-                    discount=0.8,
-                    available_seats=50,
-                ),
-                FlightCabinPrice(
-                    cabin_class="商务舱",
-                    price=2500.0,
-                    discount=None,
-                    available_seats=10,
-                ),
-            ],
-        ),
-        ScrapedFlight(
-            flight_id="MU5678",
-            airline="东方航空",
-            from_airport=from_airport,
-            to_airport=to_airport,
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="14:30",
-            arrive_time="18:00",
-            duration_minutes=210,
-            aircraft_type="B737",
-            source="mock",
-            prices=[
-                FlightCabinPrice(
-                    cabin_class="经济舱",
-                    price=780.0,
-                    discount=0.75,
-                    available_seats=80,
-                ),
-            ],
-        ),
-        ScrapedFlight(
-            flight_id="CZ9012",
-            airline="南方航空",
-            from_airport=from_airport,
-            to_airport=to_airport,
-            from_city=from_city,
-            to_city=to_city,
-            depart_time="19:00",
-            arrive_time="22:30",
-            duration_minutes=210,
-            aircraft_type="A321",
-            source="mock",
-            prices=[
-                FlightCabinPrice(
-                    cabin_class="经济舱",
-                    price=920.0,
-                    discount=0.85,
-                    available_seats=60,
-                ),
-                FlightCabinPrice(
-                    cabin_class="商务舱",
-                    price=2800.0,
-                    discount=None,
-                    available_seats=8,
-                ),
-            ],
-        ),
-    ]
+    return []
