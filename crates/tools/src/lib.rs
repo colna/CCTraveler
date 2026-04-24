@@ -10,9 +10,13 @@ pub mod flight;
 pub mod route;
 pub mod geo;
 // v0.3 modules
+pub mod cache;
 pub mod distance;
+pub mod metrics;
 pub mod monitor;
 pub mod planner;
+pub mod scheduler;
+pub mod wiki;
 
 // Re-export key types
 pub use definitions::all_tool_specs;

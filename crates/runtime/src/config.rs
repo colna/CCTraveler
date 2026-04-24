@@ -8,6 +8,8 @@ pub struct RuntimeConfig {
     pub scraper: ScraperConfig,
     pub storage: StorageConfig,
     pub ctrip: CtripConfig,
+    #[serde(default)]
+    pub redis: RedisConfig,
 }
 
 #[derive(Debug, Deserialize)]
@@ -59,6 +61,34 @@ pub struct CtripConfig {
     pub request_delay_ms: u64,
     pub max_concurrent: u8,
     pub proxy_pool: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct RedisConfig {
+    #[serde(default)]
+    pub enabled: bool,
+    #[serde(default = "default_redis_url")]
+    pub url: String,
+    #[serde(default = "default_redis_ttl")]
+    pub ttl_seconds: u64,
+}
+
+fn default_redis_url() -> String {
+    "redis://127.0.0.1:6379".to_string()
+}
+
+fn default_redis_ttl() -> u64 {
+    3600
+}
+
+impl Default for RedisConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            url: default_redis_url(),
+            ttl_seconds: default_redis_ttl(),
+        }
+    }
 }
 
 impl RuntimeConfig {

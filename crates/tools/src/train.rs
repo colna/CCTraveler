@@ -1,3 +1,4 @@
+use crate::cache::RedisCache;
 use crate::scrape::{scrape_trains, ScrapedTrain};
 use runtime::types::RuntimeError;
 use serde::Deserialize;
@@ -17,6 +18,7 @@ pub struct SearchTrainsParams {
 pub fn handle_search_trains(
     db: &Database,
     scraper_base_url: &str,
+    redis: &RedisCache,
     input: &str,
 ) -> Result<String, RuntimeError> {
     let params: SearchTrainsParams =
@@ -38,6 +40,13 @@ pub fn handle_search_trains(
         params.from_city, params.to_city, params.travel_date
     );
 
+    // 1. Check Redis cache first
+    if let Some(cached_json) = redis.get_transport("train", &params.from_city, &params.to_city, &params.travel_date) {
+        info!("Train query served from Redis cache");
+        return Ok(cached_json);
+    }
+
+    // 2. Check SQLite cache
     let cached_results = db
         .search_trains(&params.from_city, &params.to_city, &params.travel_date, 60)
         .map_err(|e| RuntimeError::Tool {
@@ -46,9 +55,12 @@ pub fn handle_search_trains(
         })?;
 
     if !cached_results.is_empty() {
-        return build_train_response_from_cache(cached_results, &params, limit);
+        let response = build_train_response_from_cache(cached_results, &params, limit)?;
+        redis.set_transport("train", &params.from_city, &params.to_city, &params.travel_date, &response);
+        return Ok(response);
     }
 
+    // 3. Scrape from Python service
     let trains = tokio::task::block_in_place(|| {
         tokio::runtime::Handle::current().block_on(async {
             scrape_trains(
@@ -74,7 +86,9 @@ pub fn handle_search_trains(
         message: format!("保存火车票数据失败: {e}"),
     })?;
 
-    build_train_response_from_scraped(trains, &params, limit)
+    let response = build_train_response_from_scraped(trains, &params, limit)?;
+    redis.set_transport("train", &params.from_city, &params.to_city, &params.travel_date, &response);
+    Ok(response)
 }
 
 fn build_train_response_from_cache(

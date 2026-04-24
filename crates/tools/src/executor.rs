@@ -1,3 +1,4 @@
+use crate::cache::RedisCache;
 use crate::definitions::all_tool_specs;
 use crate::scrape::{ScrapeRequest, ScrapedHotel};
 use runtime::types::{RuntimeError, ToolExecutor, ToolSpec};
@@ -8,10 +9,11 @@ use tracing::{info, warn};
 
 /// `TravelerToolExecutor` — dispatches tool calls to scrape/search/analyze/export handlers.
 ///
-/// Holds ownership of the Database and scraper URL.
+/// Holds ownership of the Database, scraper URL, and optional Redis cache.
 pub struct TravelerToolExecutor {
     db: Database,
     scraper_base_url: String,
+    redis: RedisCache,
 }
 
 impl TravelerToolExecutor {
@@ -19,7 +21,13 @@ impl TravelerToolExecutor {
         Self {
             db,
             scraper_base_url,
+            redis: RedisCache::new(false, "", 3600),
         }
+    }
+
+    pub fn with_redis(mut self, redis: RedisCache) -> Self {
+        self.redis = redis;
+        self
     }
 
     fn handle_scrape(&mut self, input: &str) -> Result<String, RuntimeError> {
@@ -339,26 +347,33 @@ impl TravelerToolExecutor {
 
 impl ToolExecutor for TravelerToolExecutor {
     fn execute(&mut self, tool_name: &str, input: &str) -> Result<String, RuntimeError> {
-        match tool_name {
+        let start = std::time::Instant::now();
+        let result = match tool_name {
             // v0.1 tools
             "scrape_hotels" => self.handle_scrape(input),
             "search_hotels" => self.handle_search(input),
             "analyze_prices" => self.handle_analyze(input),
             "export_report" => self.handle_export(input),
             // v0.2 tools
-            "search_trains" => crate::train::handle_search_trains(&self.db, &self.scraper_base_url, input),
-            "search_flights" => crate::flight::handle_search_flights(&self.db, &self.scraper_base_url, input),
+            "search_trains" => crate::train::handle_search_trains(&self.db, &self.scraper_base_url, &self.redis, input),
+            "search_flights" => crate::flight::handle_search_flights(&self.db, &self.scraper_base_url, &self.redis, input),
             "compare_routes" => crate::route::handle_compare_routes(&self.db, &self.scraper_base_url, input),
             "query_city_info" => crate::geo::handle_query_city_info(&self.db, input),
             // v0.3 tools
             "city_distance" => crate::distance::handle_city_distance(&self.db, input),
             "price_monitor" => crate::monitor::handle_price_monitor(&self.db, &self.scraper_base_url, input),
             "plan_trip" => crate::planner::handle_plan_trip(&self.db, &self.scraper_base_url, input),
+            "wiki" => crate::wiki::handle_wiki(&self.db, input),
             other => Err(RuntimeError::Tool {
                 tool_name: other.to_string(),
                 message: "Unknown tool".to_string(),
             }),
-        }
+        };
+
+        let duration = start.elapsed().as_secs_f64();
+        crate::metrics::record_tool_call(tool_name, result.is_ok(), duration);
+
+        result
     }
 
     fn tool_specs(&self) -> Vec<ToolSpec> {

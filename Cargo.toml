@@ -20,6 +20,9 @@ anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1", features = ["v4", "serde"] }
 rustyline = "14"
+redis = { version = "0.27", features = ["tokio-comp"] }
+prometheus = "0.13"
+lazy_static = "1"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

@@ -204,6 +204,9 @@ fn run_chat(config: &runtime::RuntimeConfig, db_path: &std::path::Path) -> Resul
     println!("╚════════════════════════════════════════╝");
     println!();
 
+    // Initialize Prometheus metrics
+    tools::metrics::init_metrics();
+
     // Initialize API client: config.toml > env var
     let api_key = config.agent.resolve_api_key().ok_or_else(|| {
         anyhow::anyhow!(
@@ -214,9 +217,23 @@ fn run_chat(config: &runtime::RuntimeConfig, db_path: &std::path::Path) -> Resul
     let base_url = config.agent.resolve_base_url();
     let api_client = AnthropicRuntimeClient::with_base_url(api_key, base_url);
 
-    // Initialize tool executor with its own database connection
+    // Initialize tool executor with its own database connection and optional Redis cache
     let db = Database::open(db_path)?;
-    let tool_executor = TravelerToolExecutor::new(db, config.scraper.base_url.clone());
+    let redis = tools::cache::RedisCache::new(
+        config.redis.enabled,
+        &config.redis.url,
+        config.redis.ttl_seconds,
+    );
+    let tool_executor = TravelerToolExecutor::new(db, config.scraper.base_url.clone())
+        .with_redis(redis);
+
+    // Start background price scheduler (every hour)
+    let _scheduler_handle = tools::scheduler::PriceScheduler::new(
+        db_path.to_path_buf(),
+        config.scraper.base_url.clone(),
+        3600,
+    )
+    .spawn();
 
     // Build system prompt
     let system_prompt = SystemPromptBuilder::build_default();

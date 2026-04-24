@@ -18,6 +18,7 @@ pub fn all_tool_specs() -> Vec<ToolSpec> {
         city_distance_spec(),
         price_monitor_spec(),
         plan_trip_spec(),
+        wiki_spec(),
     ]
 }
 
@@ -509,6 +510,47 @@ fn plan_trip_spec() -> ToolSpec {
                 }
             },
             "required": ["from_city", "to_city", "start_date", "end_date", "budget"]
+        }),
+    }
+}
+
+fn wiki_spec() -> ToolSpec {
+    ToolSpec {
+        name: "wiki".to_string(),
+        description: "知识维基：记住用户偏好、旅行历史和常用信息。\
+                      \n\n操作：\
+                      - remember: 记住信息（需要 topic, key, value）\
+                      - recall: 回忆信息（需要 topic, key）\
+                      - list: 列出所有记录（可选 topic 筛选）\
+                      - forget: 删除记录（需要 topic, key）\
+                      \n\n常用 topic：user_history（用户偏好）、city_guide（城市指南）、route_tips（路线建议）"
+            .to_string(),
+        input_schema: serde_json::json!({
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": ["remember", "recall", "list", "forget"],
+                    "description": "操作类型"
+                },
+                "topic": {
+                    "type": "string",
+                    "description": "主题分类（如 user_history, city_guide, route_tips）"
+                },
+                "key": {
+                    "type": "string",
+                    "description": "键名（如 budget_range, preferred_star）"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "值（remember 时必填）"
+                },
+                "metadata": {
+                    "type": "string",
+                    "description": "元数据（JSON，可选）"
+                }
+            },
+            "required": ["action"]
         }),
     }
 }

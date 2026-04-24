@@ -3,6 +3,7 @@ use crate::models::{
     AirportCode, Attraction, City, District, Flight, FlightPrice, FlightSearchResult,
     Hotel, HotelWithPrice, PriceSnapshot, Room,
     SearchFilters, SortBy, StationCode, Train, TrainPrice, TrainSearchResult,
+    WikiEntry,
 };
 use anyhow::Result;
 use rusqlite::{params, OptionalExtension, Row};
@@ -752,6 +753,101 @@ impl Database {
         }
         Ok(results)
     }
+
+    // ============================================================
+    // Wiki queries
+    // ============================================================
+
+    /// Insert or update a wiki entry (upsert by topic+key).
+    pub fn upsert_wiki_entry(
+        &self,
+        id: &str,
+        topic: &str,
+        key: &str,
+        value: &str,
+        metadata: Option<&str>,
+        now: &str,
+    ) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO wiki_entries (id, topic, key, value, metadata, created_at, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6)
+             ON CONFLICT(topic, key) DO UPDATE SET
+                value = excluded.value,
+                metadata = excluded.metadata,
+                updated_at = excluded.updated_at",
+            params![id, topic, key, value, metadata, now],
+        )?;
+        Ok(())
+    }
+
+    /// Get a single wiki entry by topic and key.
+    pub fn get_wiki_entry(&self, topic: &str, key: &str) -> Result<Option<WikiEntry>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, topic, key, value, metadata, created_at, updated_at
+             FROM wiki_entries WHERE topic = ?1 AND key = ?2",
+        )?;
+        stmt.query_row(params![topic, key], |row| {
+            Ok(WikiEntry {
+                id: row.get(0)?,
+                topic: row.get(1)?,
+                key: row.get(2)?,
+                value: row.get(3)?,
+                metadata: row.get(4)?,
+                created_at: row.get(5)?,
+                updated_at: row.get(6)?,
+            })
+        })
+        .optional()
+        .map_err(Into::into)
+    }
+
+    /// List wiki entries, optionally filtered by topic.
+    pub fn list_wiki_entries(&self, topic: Option<&str>) -> Result<Vec<WikiEntry>> {
+        let mut results = Vec::new();
+
+        if let Some(topic) = topic {
+            let mut stmt = self.conn.prepare(
+                "SELECT id, topic, key, value, metadata, created_at, updated_at
+                 FROM wiki_entries WHERE topic = ?1 ORDER BY key ASC",
+            )?;
+            let rows = stmt.query_map(params![topic], row_to_wiki)?;
+            for row in rows {
+                results.push(row?);
+            }
+        } else {
+            let mut stmt = self.conn.prepare(
+                "SELECT id, topic, key, value, metadata, created_at, updated_at
+                 FROM wiki_entries ORDER BY topic ASC, key ASC",
+            )?;
+            let rows = stmt.query_map([], row_to_wiki)?;
+            for row in rows {
+                results.push(row?);
+            }
+        }
+
+        Ok(results)
+    }
+
+    /// Delete a wiki entry by topic and key.
+    pub fn delete_wiki_entry(&self, topic: &str, key: &str) -> Result<()> {
+        self.conn.execute(
+            "DELETE FROM wiki_entries WHERE topic = ?1 AND key = ?2",
+            params![topic, key],
+        )?;
+        Ok(())
+    }
+}
+
+fn row_to_wiki(row: &Row<'_>) -> rusqlite::Result<WikiEntry> {
+    Ok(WikiEntry {
+        id: row.get(0)?,
+        topic: row.get(1)?,
+        key: row.get(2)?,
+        value: row.get(3)?,
+        metadata: row.get(4)?,
+        created_at: row.get(5)?,
+        updated_at: row.get(6)?,
+    })
 }
 
 fn row_to_city(row: &Row<'_>) -> rusqlite::Result<City> {

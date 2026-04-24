@@ -1,3 +1,4 @@
+use crate::cache::RedisCache;
 use crate::scrape::{scrape_flights, ScrapedFlight};
 use runtime::types::RuntimeError;
 use serde::Deserialize;
@@ -18,6 +19,7 @@ pub struct SearchFlightsParams {
 pub fn handle_search_flights(
     db: &Database,
     scraper_base_url: &str,
+    redis: &RedisCache,
     input: &str,
 ) -> Result<String, RuntimeError> {
     let params: SearchFlightsParams =
@@ -39,7 +41,13 @@ pub fn handle_search_flights(
         params.from_city, params.to_city, params.travel_date
     );
 
-    // 1. Check cache first (60-minute window)
+    // 1. Check Redis cache first
+    if let Some(cached_json) = redis.get_transport("flight", &params.from_city, &params.to_city, &params.travel_date) {
+        info!("Flight query served from Redis cache");
+        return Ok(cached_json);
+    }
+
+    // 2. Check SQLite cache (60-minute window)
     let cached_results = db
         .search_flights(&params.from_city, &params.to_city, &params.travel_date, 60)
         .map_err(|e| RuntimeError::Tool {
@@ -48,10 +56,12 @@ pub fn handle_search_flights(
         })?;
 
     if !cached_results.is_empty() {
-        return build_flight_response_from_cache(cached_results, &params, limit);
+        let response = build_flight_response_from_cache(cached_results, &params, limit)?;
+        redis.set_transport("flight", &params.from_city, &params.to_city, &params.travel_date, &response);
+        return Ok(response);
     }
 
-    // 2. Scrape from Python service
+    // 3. Scrape from Python service
     let flights = tokio::task::block_in_place(|| {
         tokio::runtime::Handle::current().block_on(async {
             scrape_flights(
@@ -72,14 +82,16 @@ pub fn handle_search_flights(
         return Ok("未找到符合条件的航班。".to_string());
     }
 
-    // 3. Persist scraped data
+    // 4. Persist scraped data
     persist_scraped_flights(db, &flights, &params.travel_date).map_err(|e| RuntimeError::Tool {
         tool_name: "search_flights".into(),
         message: format!("保存机票数据失败: {e}"),
     })?;
 
-    // 4. Build response
-    build_flight_response_from_scraped(flights, &params, limit)
+    // 5. Build response and cache in Redis
+    let response = build_flight_response_from_scraped(flights, &params, limit)?;
+    redis.set_transport("flight", &params.from_city, &params.to_city, &params.travel_date, &response);
+    Ok(response)
 }
 
 fn build_flight_response_from_cache(
