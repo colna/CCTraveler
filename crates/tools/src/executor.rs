@@ -350,6 +350,10 @@ impl ToolExecutor for TravelerToolExecutor {
             "search_flights" => crate::flight::handle_search_flights(&self.db, &self.scraper_base_url, input),
             "compare_routes" => crate::route::handle_compare_routes(&self.db, &self.scraper_base_url, input),
             "query_city_info" => crate::geo::handle_query_city_info(&self.db, input),
+            // v0.3 tools
+            "city_distance" => crate::distance::handle_city_distance(&self.db, input),
+            "price_monitor" => crate::monitor::handle_price_monitor(&self.db, &self.scraper_base_url, input),
+            "plan_trip" => crate::planner::handle_plan_trip(&self.db, &self.scraper_base_url, input),
             other => Err(RuntimeError::Tool {
                 tool_name: other.to_string(),
                 message: "Unknown tool".to_string(),

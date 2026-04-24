@@ -80,6 +80,9 @@ impl Database {
         self.conn.execute_batch(include_str!("../migrations/001_add_transport_and_geo_tables.sql"))?;
         self.conn.execute_batch(include_str!("../migrations/002_add_geo_lookup_tables.sql"))?;
 
+        // v0.3 tables (price monitoring)
+        self.conn.execute_batch(include_str!("../migrations/003_add_price_subscriptions.sql"))?;
+
         Ok(())
     }
 }

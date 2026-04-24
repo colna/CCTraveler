@@ -638,6 +638,95 @@ impl Database {
         Ok(results)
     }
 
+    /// List all cities that have lat/lng coordinates.
+    pub fn list_cities_with_coords(&self) -> Result<Vec<City>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, name, name_en, province, latitude, longitude, population, area_km2, tier, description, created_at
+             FROM cities
+             WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+             ORDER BY name ASC",
+        )?;
+
+        let rows = stmt.query_map([], row_to_city)?;
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Insert or update a price subscription.
+    pub fn upsert_price_subscription(
+        &self,
+        id: &str,
+        user_id: &str,
+        from_city: &str,
+        to_city: &str,
+        transport_type: &str,
+        threshold: f64,
+        created_at: &str,
+        expires_at: &str,
+    ) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO price_subscriptions (id, user_id, from_city, to_city, transport_type, threshold, is_active, created_at, expires_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, 1, ?7, ?8)
+             ON CONFLICT(id) DO UPDATE SET
+                threshold = excluded.threshold,
+                is_active = 1,
+                expires_at = excluded.expires_at",
+            params![id, user_id, from_city, to_city, transport_type, threshold, created_at, expires_at],
+        )?;
+        Ok(())
+    }
+
+    /// List active price subscriptions.
+    pub fn list_active_subscriptions(&self, user_id: Option<&str>) -> Result<Vec<serde_json::Value>> {
+        let (sql, param_values): (String, Vec<Box<dyn rusqlite::types::ToSql>>) = if let Some(uid) = user_id {
+            (
+                "SELECT id, user_id, from_city, to_city, transport_type, threshold, created_at, expires_at
+                 FROM price_subscriptions WHERE is_active = 1 AND user_id = ?1 ORDER BY created_at DESC".to_string(),
+                vec![Box::new(uid.to_string())],
+            )
+        } else {
+            (
+                "SELECT id, user_id, from_city, to_city, transport_type, threshold, created_at, expires_at
+                 FROM price_subscriptions WHERE is_active = 1 ORDER BY created_at DESC".to_string(),
+                vec![],
+            )
+        };
+
+        let params_refs: Vec<&dyn rusqlite::types::ToSql> =
+            param_values.iter().map(std::convert::AsRef::as_ref).collect();
+        let mut stmt = self.conn.prepare(&sql)?;
+        let rows = stmt.query_map(params_refs.as_slice(), |row| {
+            Ok(serde_json::json!({
+                "id": row.get::<_, String>(0)?,
+                "user_id": row.get::<_, String>(1)?,
+                "from_city": row.get::<_, String>(2)?,
+                "to_city": row.get::<_, String>(3)?,
+                "transport_type": row.get::<_, String>(4)?,
+                "threshold": row.get::<_, f64>(5)?,
+                "created_at": row.get::<_, String>(6)?,
+                "expires_at": row.get::<_, String>(7)?,
+            }))
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Deactivate a price subscription.
+    pub fn deactivate_subscription(&self, id: &str) -> Result<()> {
+        self.conn.execute(
+            "UPDATE price_subscriptions SET is_active = 0 WHERE id = ?1",
+            params![id],
+        )?;
+        Ok(())
+    }
+
     pub fn list_city_airport_codes(&self, city_name: &str) -> Result<Vec<AirportCode>> {
         let mut stmt = self.conn.prepare(
             "SELECT city, airport_name, airport_code, iata_code, icao_code, created_at
