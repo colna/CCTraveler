@@ -1,7 +1,7 @@
 use crate::db::Database;
 use crate::models::{
     AirportCode, Attraction, City, District, Hotel, HotelWithPrice, PriceSnapshot, Room,
-    SearchFilters, SortBy, StationCode,
+    SearchFilters, SortBy, StationCode, Train, TrainPrice, TrainSearchResult,
 };
 use anyhow::Result;
 use rusqlite::{params, OptionalExtension, Row};
@@ -73,6 +73,123 @@ impl Database {
             ],
         )?;
         Ok(())
+    }
+
+    pub fn upsert_train(&self, train: &Train) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO trains (id, train_type, from_station, to_station, from_city, to_city, depart_time, arrive_time, duration_minutes, distance_km, created_at, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)
+             ON CONFLICT(id) DO UPDATE SET
+                train_type = excluded.train_type,
+                from_station = excluded.from_station,
+                to_station = excluded.to_station,
+                from_city = excluded.from_city,
+                to_city = excluded.to_city,
+                depart_time = excluded.depart_time,
+                arrive_time = excluded.arrive_time,
+                duration_minutes = excluded.duration_minutes,
+                distance_km = excluded.distance_km,
+                updated_at = excluded.updated_at",
+            params![
+                train.id,
+                train.train_type,
+                train.from_station,
+                train.to_station,
+                train.from_city,
+                train.to_city,
+                train.depart_time,
+                train.arrive_time,
+                train.duration_minutes,
+                train.distance_km,
+                train.created_at,
+                train.updated_at,
+            ],
+        )?;
+        Ok(())
+    }
+
+    pub fn insert_train_price(&self, price: &TrainPrice) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO train_prices (id, train_id, seat_type, price, available_seats, travel_date, scraped_at, source)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+            params![
+                price.id,
+                price.train_id,
+                price.seat_type,
+                price.price,
+                price.available_seats,
+                price.travel_date,
+                price.scraped_at,
+                price.source,
+            ],
+        )?;
+        Ok(())
+    }
+
+    pub fn search_trains(
+        &self,
+        from_city: &str,
+        to_city: &str,
+        travel_date: &str,
+        max_age_minutes: i64,
+    ) -> Result<Vec<TrainSearchResult>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT t.id, t.train_type, t.from_station, t.to_station, t.from_city, t.to_city,
+                    t.depart_time, t.arrive_time, t.duration_minutes, t.distance_km, t.created_at,
+                    t.updated_at, tp.price, tp.seat_type, tp.available_seats
+             FROM trains t
+             JOIN (
+                 SELECT tp1.train_id, tp1.price, tp1.seat_type, tp1.available_seats
+                 FROM train_prices tp1
+                 JOIN (
+                     SELECT train_id, MAX(scraped_at) AS latest_scraped_at
+                     FROM train_prices
+                     WHERE travel_date = ?3
+                       AND scraped_at >= datetime('now', '-' || ?4 || ' minutes')
+                     GROUP BY train_id
+                 ) latest
+                   ON latest.train_id = tp1.train_id AND latest.latest_scraped_at = tp1.scraped_at
+                 WHERE tp1.travel_date = ?3
+                   AND tp1.price = (
+                       SELECT MIN(tp2.price)
+                       FROM train_prices tp2
+                       WHERE tp2.train_id = tp1.train_id
+                         AND tp2.travel_date = tp1.travel_date
+                         AND tp2.scraped_at = tp1.scraped_at
+                   )
+                 LIMIT -1
+             ) tp ON tp.train_id = t.id
+             WHERE t.from_city = ?1 AND t.to_city = ?2
+             ORDER BY t.depart_time ASC",
+        )?;
+
+        let rows = stmt.query_map(params![from_city, to_city, travel_date, max_age_minutes], |row| {
+            Ok(TrainSearchResult {
+                train: Train {
+                    id: row.get(0)?,
+                    train_type: row.get(1)?,
+                    from_station: row.get(2)?,
+                    to_station: row.get(3)?,
+                    from_city: row.get(4)?,
+                    to_city: row.get(5)?,
+                    depart_time: row.get(6)?,
+                    arrive_time: row.get(7)?,
+                    duration_minutes: row.get(8)?,
+                    distance_km: row.get(9)?,
+                    created_at: row.get(10)?,
+                    updated_at: row.get(11)?,
+                },
+                lowest_price: row.get(12)?,
+                seat_type: row.get(13)?,
+                available_seats: row.get(14)?,
+            })
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
     }
 
     pub fn search_hotels(&self, filters: &SearchFilters) -> Result<Vec<HotelWithPrice>> {

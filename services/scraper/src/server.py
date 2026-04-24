@@ -11,7 +11,7 @@ from .ctrip.fetcher import fetch_all_pages
 from .ctrip.parser import parse_hotel_list
 from .ctrip.types import ScrapeRequest, ScrapeResponse
 from .train.types import TrainScrapeRequest, TrainScrapeResponse
-from .train.fetcher import fetch_trains_mock
+from .train.fetcher import fetch_trains, current_train_fetch_mode
 from .flight.types import FlightScrapeRequest, FlightScrapeResponse
 from .flight.fetcher import fetch_flights_mock
 from .utils.geo_lookup import list_supported_cities
@@ -83,15 +83,14 @@ async def list_cities(q: Optional[str] = None):
 
 @app.post("/scrape/trains", response_model=TrainScrapeResponse)
 async def scrape_trains(req: TrainScrapeRequest):
-    """Scrape train tickets from 12306 (currently using mock data)."""
+    """Scrape train tickets from 12306."""
     logger.info(
-        "Scraping trains: %s -> %s on %s",
-        req.from_city, req.to_city, req.travel_date,
+        "Scraping trains: %s -> %s on %s (mode=%s)",
+        req.from_city, req.to_city, req.travel_date, current_train_fetch_mode(),
     )
 
     try:
-        # TODO: 切换到 fetch_trains_12306 当反爬机制完善后
-        trains = await fetch_trains_mock(
+        trains = await fetch_trains(
             from_city=req.from_city,
             to_city=req.to_city,
             travel_date=req.travel_date,
