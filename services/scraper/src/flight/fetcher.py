@@ -1,8 +1,9 @@
-"""Flight ticket fetcher."""
+"""Flight ticket fetcher with auto/mock/real mode support."""
 from __future__ import annotations
 
 import asyncio
 import logging
+import os
 from typing import List
 
 from ..utils.geo_lookup import get_airport_code
@@ -10,27 +11,62 @@ from .types import ScrapedFlight, FlightCabinPrice
 
 logger = logging.getLogger(__name__)
 
+FLIGHT_FETCH_MODE_ENV = "CCTRAVELER_FLIGHT_FETCH_MODE"
+
+
+def current_flight_fetch_mode() -> str:
+    return os.getenv(FLIGHT_FETCH_MODE_ENV, "auto").strip().lower() or "auto"
+
 
 async def fetch_flights_ctrip(
     from_city: str,
     to_city: str,
     travel_date: str,
 ) -> List[ScrapedFlight]:
+    """Fetch flights from Ctrip.
+
+    Currently a minimal implementation that returns empty results.
+    Real implementation requires:
+    1. Ctrip flight API or web scraping
+    2. Anti-bot handling
+    3. Complex price structure parsing (tax, fees, cabins)
+    4. Transit flight handling
     """
-    从携程爬取机票信息
+    logger.info("Fetching flights from Ctrip: %s -> %s on %s", from_city, to_city, travel_date)
 
-    注意：这是一个简化的实现框架。实际使用需要：
-    1. 使用携程机票 API 或网页爬取
-    2. 处理反爬机制
-    3. 解析复杂的价格结构（含税、不含税、各种费用）
-    4. 处理中转航班
-    """
-    logger.info(f"Fetching flights from Ctrip: {from_city} -> {to_city} on {travel_date}")
-
-    # TODO: 实际实现携程机票爬取
-    # 可以参考现有的 ctrip/fetcher.py 实现
-
+    # TODO: Implement real Ctrip flight scraping
     return []
+
+
+async def fetch_flights(
+    from_city: str,
+    to_city: str,
+    travel_date: str,
+) -> List[ScrapedFlight]:
+    """Fetch flights with mode selection (mirrors train's fetch_trains pattern).
+
+    Modes (env CCTRAVELER_FLIGHT_FETCH_MODE):
+    - "mock": always return mock data
+    - "real": only try real scraping, return empty on failure
+    - "auto" (default): try real first, fall back to mock
+    """
+    mode = current_flight_fetch_mode()
+
+    if mode == "mock":
+        return await fetch_flights_mock(from_city, to_city, travel_date)
+
+    flights = await fetch_flights_ctrip(from_city, to_city, travel_date)
+    if flights:
+        return flights
+
+    if mode == "real":
+        return []
+
+    logger.warning(
+        "Falling back to mock flight data: %s -> %s on %s",
+        from_city, to_city, travel_date,
+    )
+    return await fetch_flights_mock(from_city, to_city, travel_date)
 
 
 async def fetch_flights_mock(
@@ -38,14 +74,9 @@ async def fetch_flights_mock(
     to_city: str,
     travel_date: str,
 ) -> List[ScrapedFlight]:
-    """
-    Mock 数据用于开发测试
-    实际部署时应该使用 fetch_flights_ctrip
-    """
-    logger.info(f"Using mock data for flights: {from_city} -> {to_city} on {travel_date}")
-
-    # 模拟延迟
-    await asyncio.sleep(1)
+    """Mock data for development and testing."""
+    logger.info("Using mock data for flights: %s -> %s on %s", from_city, to_city, travel_date)
+    await asyncio.sleep(0.5)
 
     from_airport = get_airport_code(from_city)
     to_airport = get_airport_code(to_city)

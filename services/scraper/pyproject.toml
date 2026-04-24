@@ -9,6 +9,7 @@ dependencies = [
     "pydantic>=2.0",
     "httpx>=0.28",
     "selenium>=4.0",
+    "undetected-chromedriver>=3.5",
 ]
 
 [project.optional-dependencies]

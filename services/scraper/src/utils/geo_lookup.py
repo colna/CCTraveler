@@ -133,6 +133,13 @@ def list_supported_cities(query: Optional[str] = None) -> List[Dict[str, str]]:
 
 
 def get_station_code(city_or_station: str) -> Optional[str]:
+    """Resolve a city or station name to a 12306 station code.
+
+    Priority order:
+    1. Exact station name match (e.g. "北京西站" → BXP)
+    2. Main station for the city (city + "站", e.g. "北京" → "北京站" BJP)
+    3. Alphabetically first station in the city
+    """
     resolved = resolve_city(city_or_station)
     candidate_names = [city_or_station.strip()]
     if resolved:
@@ -145,10 +152,13 @@ def get_station_code(city_or_station: str) -> Optional[str]:
                 SELECT station_code
                 FROM station_codes
                 WHERE city = ? OR station_name = ?
-                ORDER BY CASE WHEN station_name = ? THEN 0 ELSE 1 END, station_name ASC
+                ORDER BY
+                    CASE WHEN station_name = ? THEN 0 ELSE 1 END,
+                    CASE WHEN station_name = (? || '站') THEN 0 ELSE 1 END,
+                    station_name ASC
                 LIMIT 1
                 """,
-                (candidate, candidate, candidate),
+                (candidate, candidate, candidate, candidate),
             ).fetchone()
             if row is not None:
                 return row["station_code"]
@@ -157,7 +167,33 @@ def get_station_code(city_or_station: str) -> Optional[str]:
         conn.close()
 
 
+def get_all_station_codes(city: str) -> List[Dict[str, str]]:
+    """Return all stations for a city, ordered by priority (main station first)."""
+    resolved = resolve_city(city)
+    city_name = resolved["name"] if resolved else city.strip()
+    conn = _connect()
+    try:
+        rows = conn.execute(
+            """
+            SELECT station_name, station_code
+            FROM station_codes
+            WHERE city = ?
+            ORDER BY
+                CASE WHEN station_name = (? || '站') THEN 0 ELSE 1 END,
+                station_name ASC
+            """,
+            (city_name, city_name),
+        ).fetchall()
+        return [{"station_name": r["station_name"], "station_code": r["station_code"]} for r in rows]
+    finally:
+        conn.close()
+
+
 def get_airport_code(city: str) -> str:
+    """Resolve a city name to an IATA airport code.
+
+    Prioritizes the main international airport for cities with multiple airports.
+    """
     resolved = resolve_city(city)
     candidate_names = [city.strip()]
     if resolved:
@@ -167,16 +203,19 @@ def get_airport_code(city: str) -> str:
         for candidate in dict.fromkeys(name for name in candidate_names if name):
             row = conn.execute(
                 """
-                SELECT airport_code
+                SELECT iata_code, airport_code
                 FROM airport_codes
                 WHERE city = ?
-                ORDER BY airport_name ASC
+                ORDER BY
+                    CASE WHEN airport_name LIKE '%国际%' THEN 0 ELSE 1 END,
+                    CASE WHEN airport_name = (? || '机场') THEN 0 ELSE 1 END,
+                    airport_name ASC
                 LIMIT 1
                 """,
-                (candidate,),
+                (candidate, candidate),
             ).fetchone()
             if row is not None:
-                return row["airport_code"]
+                return row["iata_code"] or row["airport_code"]
         return "UNK"
     finally:
         conn.close()

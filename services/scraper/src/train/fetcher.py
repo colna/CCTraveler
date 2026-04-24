@@ -1,18 +1,23 @@
-"""12306 train ticket fetcher using Selenium."""
+"""12306 train ticket fetcher with undetected-chromedriver."""
 from __future__ import annotations
 
 import asyncio
 import logging
 import os
+import random
 import re
+import time
 from datetime import datetime
 from typing import List, Optional
 
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
+from selenium.common.exceptions import (
+    TimeoutException,
+    NoSuchElementException,
+    WebDriverException,
+)
 
 from ..utils.geo_lookup import get_station_code
 from .types import ScrapedTrain, TrainSeatPrice
@@ -20,49 +25,34 @@ from .types import ScrapedTrain, TrainSeatPrice
 logger = logging.getLogger(__name__)
 
 TRAIN_FETCH_MODE_ENV = "CCTRAVELER_TRAIN_FETCH_MODE"
+MAX_RETRIES = 2
 
 
 def parse_train_type(train_id: str) -> str:
-    """从车次号解析车型"""
-    if train_id.startswith("G"):
-        return "G"
-    elif train_id.startswith("D"):
-        return "D"
-    elif train_id.startswith("C"):
-        return "C"
-    elif train_id.startswith("K"):
-        return "K"
-    elif train_id.startswith("T"):
-        return "T"
-    elif train_id.startswith("Z"):
-        return "Z"
-    else:
-        return "其他"
+    prefix = train_id[0] if train_id else ""
+    return prefix if prefix in ("G", "D", "C", "K", "T", "Z") else "其他"
 
 
 def parse_duration(duration_str: str) -> int:
-    """解析时长字符串为分钟数
+    """Parse duration string to minutes.
 
-    Examples:
-        "08:30" -> 510
-        "1小时30分" -> 90
+    Examples: "08:30" -> 510, "1小时30分" -> 90
     """
-    # 格式1: HH:MM
     if ":" in duration_str:
         parts = duration_str.split(":")
-        return int(parts[0]) * 60 + int(parts[1])
+        try:
+            return int(parts[0]) * 60 + int(parts[1])
+        except ValueError:
+            return 0
 
-    # 格式2: X小时Y分
     hours = 0
     minutes = 0
     hour_match = re.search(r"(\d+)小时", duration_str)
     min_match = re.search(r"(\d+)分", duration_str)
-
     if hour_match:
         hours = int(hour_match.group(1))
     if min_match:
         minutes = int(min_match.group(1))
-
     return hours * 60 + minutes
 
 
@@ -89,21 +79,16 @@ def extract_station_parts(raw_text: str) -> tuple[Optional[str], Optional[str]]:
 def parse_seat_cells(row) -> List[TrainSeatPrice]:
     seats: List[TrainSeatPrice] = []
     seat_types = [
-        "商务座",
-        "特等座",
-        "一等座",
-        "二等座",
-        "高级软卧",
-        "软卧",
-        "硬卧",
-        "软座",
-        "硬座",
-        "无座",
+        "商务座", "特等座", "一等座", "二等座",
+        "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座",
     ]
 
     for seat_type in seat_types:
         try:
-            cell = row.find_element(By.XPATH, f".//*[contains(@title, '{seat_type}') or contains(text(), '{seat_type}')]")
+            cell = row.find_element(
+                By.XPATH,
+                f".//*[contains(@title, '{seat_type}') or contains(text(), '{seat_type}')]",
+            )
         except NoSuchElementException:
             continue
 
@@ -123,24 +108,51 @@ def parse_seat_cells(row) -> List[TrainSeatPrice]:
     return seats
 
 
+def _create_driver():
+    """Create a browser driver, preferring undetected-chromedriver."""
+    try:
+        import undetected_chromedriver as uc
+
+        options = uc.ChromeOptions()
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1440,900")
+        driver = uc.Chrome(options=options)
+        logger.info("Using undetected-chromedriver")
+        return driver
+    except Exception as e:
+        logger.warning("undetected-chromedriver unavailable (%s), falling back to selenium", e)
+        from selenium import webdriver
+
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1440,900")
+        options.add_argument(
+            "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+        )
+        driver = webdriver.Chrome(options=options)
+        return driver
+
+
 async def fetch_trains_12306(
     from_city: str,
     to_city: str,
     travel_date: str,
 ) -> List[ScrapedTrain]:
-    """从 12306 页面抓取火车票信息。
+    """Fetch train tickets from 12306 with retry and anti-detection.
 
-    当前实现是最小可用版本：
-    - 优先复用数据库中的站码映射
-    - 通过 Selenium 加载查询页
-    - 尽量从表格中提取车次、站点、时间、时长、席别价格
-    - 若页面风控、结构变化或浏览器不可用，则返回空结果，由上层决定是否 fallback
+    Uses undetected-chromedriver when available to bypass anti-bot measures.
+    Retries up to MAX_RETRIES times on failure before returning empty.
     """
     from_code = get_station_code(from_city)
     to_code = get_station_code(to_city)
 
     if not from_code or not to_code:
-        logger.error("无法找到车站代码: %s -> %s", from_city, to_city)
+        logger.error("Cannot resolve station codes: %s -> %s", from_city, to_city)
         return []
 
     date_obj = datetime.strptime(travel_date, "%Y-%m-%d")
@@ -150,79 +162,112 @@ async def fetch_trains_12306(
         f"?linktypeid=dc&fs={from_code}&ts={to_code}&date={formatted_date}&flag=N,N,Y"
     )
 
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1440,900")
-    options.add_argument(
-        "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-    )
+    last_error = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        driver = None
+        trains: List[ScrapedTrain] = []
 
-    driver = None
-    trains: List[ScrapedTrain] = []
+        try:
+            logger.info(
+                "Fetching trains from 12306 (attempt %d/%d): %s",
+                attempt, MAX_RETRIES, url,
+            )
+            driver = _create_driver()
 
-    try:
-        logger.info("Fetching trains from 12306 with Selenium: %s", url)
-        driver = webdriver.Chrome(options=options)
-        driver.get(url)
+            # Random delay to mimic human behavior
+            await asyncio.sleep(random.uniform(0.5, 2.0))
 
-        wait = WebDriverWait(driver, 15)
-        wait.until(EC.presence_of_element_located((By.ID, "queryLeftTable")))
+            driver.get(url)
 
-        train_rows = driver.find_elements(By.CSS_SELECTOR, "#queryLeftTable tbody tr")
-        for row in train_rows:
-            row_text = row.text.strip()
-            if not row_text:
-                continue
+            wait = WebDriverWait(driver, 20)
+            wait.until(EC.presence_of_element_located((By.ID, "queryLeftTable")))
 
-            try:
-                train_id_match = re.search(r"\b([GDCKTZ]\d+)\b", row_text)
-                if not train_id_match:
-                    continue
-                train_id = train_id_match.group(1)
+            # Wait for dynamic content
+            await asyncio.sleep(random.uniform(1.0, 2.0))
 
-                depart_time, arrive_time = extract_time_parts(row_text)
-                if not depart_time or not arrive_time:
+            train_rows = driver.find_elements(By.CSS_SELECTOR, "#queryLeftTable tbody tr")
+            for row in train_rows:
+                row_text = row.text.strip()
+                if not row_text:
                     continue
 
-                from_station, to_station = extract_station_parts(row_text)
-                duration_match = re.search(r"(\d{2}:\d{2}|\d+小时\d+分|\d+小时|\d+分)", row_text.split(arrive_time, 1)[-1])
-                duration_minutes = parse_duration(duration_match.group(1)) if duration_match else 0
-                seats = parse_seat_cells(row)
+                try:
+                    train_id_match = re.search(r"\b([GDCKTZ]\d+)\b", row_text)
+                    if not train_id_match:
+                        continue
+                    train_id = train_id_match.group(1)
 
-                trains.append(
-                    ScrapedTrain(
-                        train_id=train_id,
-                        train_type=parse_train_type(train_id),
-                        from_station=from_station or from_city,
-                        to_station=to_station or to_city,
-                        from_city=from_city,
-                        to_city=to_city,
-                        depart_time=depart_time,
-                        arrive_time=arrive_time,
-                        duration_minutes=duration_minutes,
-                        distance_km=None,
-                        seats=seats,
+                    depart_time, arrive_time = extract_time_parts(row_text)
+                    if not depart_time or not arrive_time:
+                        continue
+
+                    from_station, to_station = extract_station_parts(row_text)
+                    duration_text = row_text.split(arrive_time, 1)[-1] if arrive_time else ""
+                    duration_match = re.search(
+                        r"(\d{2}:\d{2}|\d+小时\d+分|\d+小时|\d+分)", duration_text
                     )
-                )
-            except (NoSuchElementException, ValueError) as e:
-                logger.warning("Failed to parse train row: %s", e)
-                continue
+                    duration_minutes = (
+                        parse_duration(duration_match.group(1)) if duration_match else 0
+                    )
+                    seats = parse_seat_cells(row)
 
-        logger.info("Fetched %d trains from 12306", len(trains))
-    except TimeoutException:
-        logger.error("Timeout waiting for 12306 page to load")
-    except WebDriverException as e:
-        logger.error("Selenium browser unavailable: %s", e)
-    except Exception as e:
-        logger.exception("Error fetching trains from 12306: %s", e)
-    finally:
-        if driver:
-            driver.quit()
+                    trains.append(
+                        ScrapedTrain(
+                            train_id=train_id,
+                            train_type=parse_train_type(train_id),
+                            from_station=from_station or from_city,
+                            to_station=to_station or to_city,
+                            from_city=from_city,
+                            to_city=to_city,
+                            depart_time=depart_time,
+                            arrive_time=arrive_time,
+                            duration_minutes=duration_minutes,
+                            distance_km=None,
+                            seats=seats,
+                        )
+                    )
+                except (NoSuchElementException, ValueError) as e:
+                    logger.warning("Failed to parse train row: %s", e)
+                    continue
 
-    return trains
+            logger.info("Fetched %d trains from 12306 (attempt %d)", len(trains), attempt)
+
+            if trains:
+                return trains
+
+            # Detect anti-bot page
+            page_source = driver.page_source or ""
+            if "网络繁忙" in page_source or "验证" in page_source:
+                logger.warning("12306 anti-bot page detected on attempt %d", attempt)
+                last_error = "anti-bot"
+            else:
+                logger.warning("No trains found in page on attempt %d", attempt)
+                last_error = "empty"
+
+        except TimeoutException:
+            logger.warning("Timeout waiting for 12306 page (attempt %d)", attempt)
+            last_error = "timeout"
+        except WebDriverException as e:
+            logger.error("Browser error (attempt %d): %s", attempt, e)
+            last_error = str(e)
+            break  # Don't retry on browser unavailable
+        except Exception as e:
+            logger.exception("Unexpected error fetching trains (attempt %d): %s", attempt, e)
+            last_error = str(e)
+        finally:
+            if driver:
+                try:
+                    driver.quit()
+                except Exception:
+                    pass
+
+        if attempt < MAX_RETRIES:
+            delay = random.uniform(2.0, 5.0)
+            logger.info("Retrying in %.1f seconds...", delay)
+            await asyncio.sleep(delay)
+
+    logger.error("All %d attempts failed for 12306 (%s)", MAX_RETRIES, last_error)
+    return []
 
 
 async def fetch_trains(
@@ -243,10 +288,8 @@ async def fetch_trains(
         return []
 
     logger.warning(
-        "Falling back to mock train data after real fetch returned empty results: %s -> %s on %s",
-        from_city,
-        to_city,
-        travel_date,
+        "Falling back to mock train data: %s -> %s on %s",
+        from_city, to_city, travel_date,
     )
     return await fetch_trains_mock(from_city, to_city, travel_date)
 
@@ -256,21 +299,16 @@ async def fetch_trains_mock(
     to_city: str,
     travel_date: str,
 ) -> List[ScrapedTrain]:
-    """
-    Mock 数据用于开发测试
-    实际部署时应该使用 fetch_trains_12306
-    """
-    logger.info(f"Using mock data for {from_city} -> {to_city} on {travel_date}")
-
-    # 模拟延迟
-    await asyncio.sleep(1)
+    """Mock data for development and testing."""
+    logger.info("Using mock data for %s -> %s on %s", from_city, to_city, travel_date)
+    await asyncio.sleep(0.5)
 
     return [
         ScrapedTrain(
             train_id="G1234",
             train_type="G",
-            from_station=f"{from_city}西",
-            to_station=to_city,
+            from_station=f"{from_city}站",
+            to_station=f"{to_city}站",
             from_city=from_city,
             to_city=to_city,
             depart_time="08:00",
@@ -286,8 +324,8 @@ async def fetch_trains_mock(
         ScrapedTrain(
             train_id="D5678",
             train_type="D",
-            from_station=from_city,
-            to_station=to_city,
+            from_station=f"{from_city}站",
+            to_station=f"{to_city}站",
             from_city=from_city,
             to_city=to_city,
             depart_time="10:30",

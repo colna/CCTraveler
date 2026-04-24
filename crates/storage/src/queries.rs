@@ -1,6 +1,7 @@
 use crate::db::Database;
 use crate::models::{
-    AirportCode, Attraction, City, District, Hotel, HotelWithPrice, PriceSnapshot, Room,
+    AirportCode, Attraction, City, District, Flight, FlightPrice, FlightSearchResult,
+    Hotel, HotelWithPrice, PriceSnapshot, Room,
     SearchFilters, SortBy, StationCode, Train, TrainPrice, TrainSearchResult,
 };
 use anyhow::Result;
@@ -184,6 +185,129 @@ impl Database {
                 available_seats: row.get(14)?,
             })
         })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    pub fn upsert_flight(&self, flight: &Flight) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO flights (id, airline, from_airport, to_airport, from_city, to_city, depart_time, arrive_time, duration_minutes, aircraft_type, created_at, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)
+             ON CONFLICT(id) DO UPDATE SET
+                airline = excluded.airline,
+                from_airport = excluded.from_airport,
+                to_airport = excluded.to_airport,
+                from_city = excluded.from_city,
+                to_city = excluded.to_city,
+                depart_time = excluded.depart_time,
+                arrive_time = excluded.arrive_time,
+                duration_minutes = excluded.duration_minutes,
+                aircraft_type = excluded.aircraft_type,
+                updated_at = excluded.updated_at",
+            params![
+                flight.id,
+                flight.airline,
+                flight.from_airport,
+                flight.to_airport,
+                flight.from_city,
+                flight.to_city,
+                flight.depart_time,
+                flight.arrive_time,
+                flight.duration_minutes,
+                flight.aircraft_type,
+                flight.created_at,
+                flight.updated_at,
+            ],
+        )?;
+        Ok(())
+    }
+
+    pub fn insert_flight_price(&self, price: &FlightPrice) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO flight_prices (id, flight_id, cabin_class, price, discount, available_seats, travel_date, scraped_at, source)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+            params![
+                price.id,
+                price.flight_id,
+                price.cabin_class,
+                price.price,
+                price.discount,
+                price.available_seats,
+                price.travel_date,
+                price.scraped_at,
+                price.source,
+            ],
+        )?;
+        Ok(())
+    }
+
+    pub fn search_flights(
+        &self,
+        from_city: &str,
+        to_city: &str,
+        travel_date: &str,
+        max_age_minutes: i64,
+    ) -> Result<Vec<FlightSearchResult>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT f.id, f.airline, f.from_airport, f.to_airport, f.from_city, f.to_city,
+                    f.depart_time, f.arrive_time, f.duration_minutes, f.aircraft_type,
+                    f.created_at, f.updated_at,
+                    fp.price, fp.cabin_class, fp.discount, fp.available_seats
+             FROM flights f
+             JOIN (
+                 SELECT fp1.flight_id, fp1.price, fp1.cabin_class, fp1.discount, fp1.available_seats
+                 FROM flight_prices fp1
+                 JOIN (
+                     SELECT flight_id, MAX(scraped_at) AS latest_scraped_at
+                     FROM flight_prices
+                     WHERE travel_date = ?3
+                       AND scraped_at >= datetime('now', '-' || ?4 || ' minutes')
+                     GROUP BY flight_id
+                 ) latest
+                   ON latest.flight_id = fp1.flight_id AND latest.latest_scraped_at = fp1.scraped_at
+                 WHERE fp1.travel_date = ?3
+                   AND fp1.price = (
+                       SELECT MIN(fp2.price)
+                       FROM flight_prices fp2
+                       WHERE fp2.flight_id = fp1.flight_id
+                         AND fp2.travel_date = fp1.travel_date
+                         AND fp2.scraped_at = fp1.scraped_at
+                   )
+                 LIMIT -1
+             ) fp ON fp.flight_id = f.id
+             WHERE f.from_city = ?1 AND f.to_city = ?2
+             ORDER BY f.depart_time ASC",
+        )?;
+
+        let rows = stmt.query_map(
+            params![from_city, to_city, travel_date, max_age_minutes],
+            |row| {
+                Ok(FlightSearchResult {
+                    flight: Flight {
+                        id: row.get(0)?,
+                        airline: row.get(1)?,
+                        from_airport: row.get(2)?,
+                        to_airport: row.get(3)?,
+                        from_city: row.get(4)?,
+                        to_city: row.get(5)?,
+                        depart_time: row.get(6)?,
+                        arrive_time: row.get(7)?,
+                        duration_minutes: row.get(8)?,
+                        aircraft_type: row.get(9)?,
+                        created_at: row.get(10)?,
+                        updated_at: row.get(11)?,
+                    },
+                    lowest_price: row.get(12)?,
+                    cabin_class: row.get(13)?,
+                    discount: row.get(14)?,
+                    available_seats: row.get(15)?,
+                })
+            },
+        )?;
 
         let mut results = Vec::new();
         for row in rows {

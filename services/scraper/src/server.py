@@ -13,7 +13,7 @@ from .ctrip.types import ScrapeRequest, ScrapeResponse
 from .train.types import TrainScrapeRequest, TrainScrapeResponse
 from .train.fetcher import fetch_trains, current_train_fetch_mode
 from .flight.types import FlightScrapeRequest, FlightScrapeResponse
-from .flight.fetcher import fetch_flights_mock
+from .flight.fetcher import fetch_flights, current_flight_fetch_mode
 from .utils.geo_lookup import list_supported_cities
 
 logging.basicConfig(level=logging.INFO)
@@ -109,16 +109,15 @@ async def scrape_trains(req: TrainScrapeRequest):
 
 
 @app.post("/scrape/flights", response_model=FlightScrapeResponse)
-async def scrape_flights(req: FlightScrapeRequest):
-    """Scrape flight tickets (currently using mock data)."""
+async def scrape_flights_endpoint(req: FlightScrapeRequest):
+    """Scrape flight tickets. Uses auto mode by default (real -> mock fallback)."""
     logger.info(
-        "Scraping flights: %s -> %s on %s",
-        req.from_city, req.to_city, req.travel_date,
+        "Scraping flights: %s -> %s on %s (mode=%s)",
+        req.from_city, req.to_city, req.travel_date, current_flight_fetch_mode(),
     )
 
     try:
-        # TODO: 切换到 fetch_flights_ctrip 当实现完成后
-        flights = await fetch_flights_mock(
+        flights = await fetch_flights(
             from_city=req.from_city,
             to_city=req.to_city,
             travel_date=req.travel_date,
