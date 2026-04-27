@@ -1,6 +1,6 @@
 use anyhow::Result;
 use serde::Deserialize;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Deserialize)]
 pub struct RuntimeConfig {
@@ -111,6 +111,7 @@ impl Default for NotificationConfig {
 }
 
 impl RuntimeConfig {
+    /// Load config from a single explicit path (legacy behavior).
     pub fn load(path: &Path) -> Result<Self> {
         let content = std::fs::read_to_string(path)?;
         let config: Self = toml::from_str(&content)?;
@@ -126,5 +127,95 @@ impl RuntimeConfig {
             }
         }
         anyhow::bail!("No config file found (tried: config.toml, cctraveler.toml)")
+    }
+
+    /// Layered config loader. Search order (later wins, missing files OK):
+    ///   1. ~/.cctraveler/config.toml          (user)
+    ///   2. ./.cctraveler/config.toml          (project)
+    ///   3. ./config.toml or ./cctraveler.toml (legacy / repo dev)
+    ///   4. explicit_path (if provided)
+    ///
+    /// At least one source must yield a config; otherwise returns error
+    /// with a helpful message pointing at `cctraveler init`.
+    pub fn load_layered(explicit_path: Option<&Path>) -> Result<Self> {
+        let mut sources: Vec<PathBuf> = Vec::new();
+
+        if let Some(home) = user_config_path() {
+            if home.exists() {
+                sources.push(home);
+            }
+        }
+        let project = PathBuf::from(".cctraveler/config.toml");
+        if project.exists() {
+            sources.push(project);
+        }
+        for legacy in ["config.toml", "cctraveler.toml"] {
+            let p = PathBuf::from(legacy);
+            if p.exists() {
+                sources.push(p);
+                break;
+            }
+        }
+        if let Some(explicit) = explicit_path {
+            if explicit.exists() {
+                sources.push(explicit.to_path_buf());
+            }
+        }
+
+        if sources.is_empty() {
+            anyhow::bail!(
+                "未找到配置文件。\n\
+                 请运行 `cctraveler init` 初始化配置，或在以下任一位置创建 config.toml：\n  \
+                 - {}\n  \
+                 - ./.cctraveler/config.toml\n  \
+                 - ./config.toml",
+                user_config_path()
+                    .map(|p| p.display().to_string())
+                    .unwrap_or_else(|| "~/.cctraveler/config.toml".to_string())
+            );
+        }
+
+        // Merge: later sources override earlier ones at the TOML-table level.
+        let mut merged = toml::Value::Table(toml::map::Map::new());
+        for src in &sources {
+            let content = std::fs::read_to_string(src)?;
+            let value: toml::Value = toml::from_str(&content)
+                .map_err(|e| anyhow::anyhow!("解析 {} 失败: {e}", src.display()))?;
+            merge_toml(&mut merged, value);
+        }
+
+        let config: Self = merged.try_into()?;
+        Ok(config)
+    }
+}
+
+/// `~/.cctraveler/config.toml` — None if HOME is unset.
+pub fn user_config_path() -> Option<PathBuf> {
+    std::env::var("HOME")
+        .ok()
+        .map(|h| PathBuf::from(h).join(".cctraveler").join("config.toml"))
+}
+
+/// Project-level config: `./.cctraveler/config.toml`.
+pub fn project_config_path() -> PathBuf {
+    PathBuf::from(".cctraveler/config.toml")
+}
+
+/// Recursive TOML merge: `b` takes precedence over `a`.
+fn merge_toml(a: &mut toml::Value, b: toml::Value) {
+    match (a, b) {
+        (toml::Value::Table(at), toml::Value::Table(bt)) => {
+            for (k, v) in bt {
+                match at.get_mut(&k) {
+                    Some(av) => merge_toml(av, v),
+                    None => {
+                        at.insert(k, v);
+                    }
+                }
+            }
+        }
+        (a_slot, b_val) => {
+            *a_slot = b_val;
+        }
     }
 }
