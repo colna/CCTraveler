@@ -1,7 +1,7 @@
 use crate::types::{
     ApiClient, ApiRequest, AssistantEvent, ContentBlock, ConversationMessage, HookResult,
-    HookRunner, MessageRole, PermissionPolicy, RuntimeError, Session, TokenUsage, ToolExecutor,
-    TurnSummary, UsageTracker,
+    HookRunner, MessageRole, PermissionPolicy, RuntimeError, Session, TextDeltaListener,
+    TokenUsage, ToolEvent, ToolExecutor, ToolListener, TurnSummary, UsageTracker,
 };
 use tracing::{info, warn};
 
@@ -23,6 +23,8 @@ pub struct ConversationRuntime<C, T> {
     hook_runner: HookRunner,
     auto_compaction_threshold: u32,
     model: String,
+    tool_listener: Option<ToolListener>,
+    text_listener: Option<TextDeltaListener>,
 }
 
 impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
@@ -44,6 +46,24 @@ impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
             hook_runner: HookRunner::new(),
             auto_compaction_threshold: 100_000,
             model,
+            tool_listener: None,
+            text_listener: None,
+        }
+    }
+
+    /// Register a listener invoked on every tool start/finish.
+    pub fn set_tool_listener(&mut self, listener: ToolListener) {
+        self.tool_listener = Some(listener);
+    }
+
+    /// Register a listener invoked on every text delta during streaming.
+    pub fn set_text_listener(&mut self, listener: TextDeltaListener) {
+        self.text_listener = Some(listener);
+    }
+
+    fn emit_tool(&self, ev: ToolEvent) {
+        if let Some(l) = &self.tool_listener {
+            l(&ev);
         }
     }
 
@@ -79,8 +99,14 @@ impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
                 max_tokens: 4096,
             };
 
-            // Call LLM
-            let events = self.api_client.stream(request)?;
+            // Call LLM (streaming text delta if listener registered)
+            let events = if let Some(listener) = self.text_listener.clone() {
+                let cb = move |s: &str| listener(s);
+                self.api_client
+                    .stream_with_text_delta(request, &cb)?
+            } else {
+                self.api_client.stream(request)?
+            };
 
             // Process events
             let mut content_blocks = Vec::new();
@@ -143,6 +169,12 @@ impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
                 total_tool_calls += 1;
                 info!("Tool call: {tool_name}({tool_input})");
 
+                self.emit_tool(ToolEvent::Start {
+                    name: tool_name.clone(),
+                    input: tool_input.clone(),
+                });
+                let started = std::time::Instant::now();
+
                 // Pre-tool hook
                 let input_str = tool_input.to_string();
                 if let HookResult::Deny(reason) =
@@ -154,6 +186,12 @@ impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
                         output: format!("Tool denied by hook: {reason}"),
                         is_error: true,
                     });
+                    self.emit_tool(ToolEvent::Finish {
+                        name: tool_name.clone(),
+                        ok: false,
+                        output_chars: 0,
+                        elapsed_ms: started.elapsed().as_millis() as u64,
+                    });
                     continue;
                 }
 
@@ -164,6 +202,12 @@ impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
                         tool_use_id: tool_id.clone(),
                         output: format!("Permission denied for tool: {tool_name}"),
                         is_error: true,
+                    });
+                    self.emit_tool(ToolEvent::Finish {
+                        name: tool_name.clone(),
+                        ok: false,
+                        output_chars: 0,
+                        elapsed_ms: started.elapsed().as_millis() as u64,
                     });
                     continue;
                 }
@@ -181,8 +225,20 @@ impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
                                 output: format!("Tool result rejected by hook: {reason}"),
                                 is_error: true,
                             });
+                            self.emit_tool(ToolEvent::Finish {
+                                name: tool_name.clone(),
+                                ok: false,
+                                output_chars: output.len(),
+                                elapsed_ms: started.elapsed().as_millis() as u64,
+                            });
                         } else {
                             info!("Tool {tool_name} succeeded ({} chars)", output.len());
+                            self.emit_tool(ToolEvent::Finish {
+                                name: tool_name.clone(),
+                                ok: true,
+                                output_chars: output.len(),
+                                elapsed_ms: started.elapsed().as_millis() as u64,
+                            });
                             tool_results.push(ContentBlock::ToolResult {
                                 tool_use_id: tool_id.clone(),
                                 output,
@@ -192,6 +248,12 @@ impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
                     }
                     Err(e) => {
                         warn!("Tool {tool_name} failed: {e}");
+                        self.emit_tool(ToolEvent::Finish {
+                            name: tool_name.clone(),
+                            ok: false,
+                            output_chars: 0,
+                            elapsed_ms: started.elapsed().as_millis() as u64,
+                        });
                         tool_results.push(ContentBlock::ToolResult {
                             tool_use_id: tool_id.clone(),
                             output: format!("Error: {e}"),
@@ -290,5 +352,37 @@ impl<C: ApiClient, T: ToolExecutor> ConversationRuntime<C, T> {
                 .map_err(|e| RuntimeError::Session(e.to_string()))?;
         }
         Ok(())
+    }
+
+    /// Cumulative token usage across the lifetime of this runtime.
+    #[must_use]
+    pub fn usage(&self) -> &UsageTracker {
+        &self.usage_tracker
+    }
+
+    /// Currently configured model name.
+    #[must_use]
+    pub fn model(&self) -> &str {
+        &self.model
+    }
+
+    /// Override the model used for subsequent turns.
+    pub fn set_model(&mut self, model: String) {
+        self.model = model.clone();
+        self.session.model = Some(model);
+    }
+
+    /// Tool specs registered with the executor.
+    #[must_use]
+    pub fn tools(&self) -> Vec<crate::types::ToolSpec> {
+        self.tool_executor.tool_specs()
+    }
+
+    /// Clear messages and start a new session id (keeps workspace_root).
+    pub fn reset_session(&mut self) {
+        let workspace = self.session.workspace_root.clone();
+        self.session = Session::new(Some(self.model.clone()));
+        self.session.workspace_root = workspace;
+        self.usage_tracker = UsageTracker::new();
     }
 }

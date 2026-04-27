@@ -9,6 +9,6 @@ pub use conversation::ConversationRuntime;
 pub use prompt::SystemPromptBuilder;
 pub use types::{
     ApiClient, ApiRequest, AssistantEvent, ContentBlock, ConversationMessage, GlobalToolRegistry,
-    HookResult, HookRunner, MessageRole, PermissionPolicy, RuntimeError, Session, TokenUsage,
-    ToolExecutor, ToolSpec, TurnSummary, UsageTracker,
+    HookResult, HookRunner, MessageRole, PermissionPolicy, RuntimeError, Session, TextDeltaListener,
+    TokenUsage, ToolEvent, ToolExecutor, ToolListener, ToolSpec, TurnSummary, UsageTracker,
 };

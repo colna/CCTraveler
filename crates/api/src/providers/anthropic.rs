@@ -1,4 +1,5 @@
 use crate::sse;
+use futures_util::StreamExt;
 use runtime::types::{
     ApiClient, ApiRequest, AssistantEvent, ContentBlock, RuntimeError, TokenUsage,
 };
@@ -110,6 +111,25 @@ impl AnthropicRuntimeClient {
         &self,
         request: ApiRequest,
     ) -> Result<Vec<AssistantEvent>, RuntimeError> {
+        self.stream_async_inner(request, None::<&dyn Fn(&str)>).await
+    }
+
+    /// Streaming variant: parses SSE incrementally and invokes `on_text_delta`
+    /// for every `text_delta` chunk as it arrives. Final `Vec<AssistantEvent>`
+    /// is identical to `stream_async`.
+    async fn stream_async_with_text(
+        &self,
+        request: ApiRequest,
+        on_text_delta: &dyn Fn(&str),
+    ) -> Result<Vec<AssistantEvent>, RuntimeError> {
+        self.stream_async_inner(request, Some(on_text_delta)).await
+    }
+
+    async fn stream_async_inner(
+        &self,
+        request: ApiRequest,
+        on_text_delta: Option<&dyn Fn(&str)>,
+    ) -> Result<Vec<AssistantEvent>, RuntimeError> {
         let body = self.build_request_body(&request);
         debug!("Sending request to Anthropic API");
 
@@ -135,12 +155,72 @@ impl AnthropicRuntimeClient {
             )));
         }
 
-        let sse_body = response
-            .text()
-            .await
-            .map_err(|e| RuntimeError::Api(format!("Failed to read response body: {e}")))?;
+        // Incremental SSE parsing: read bytes_stream, split by "\n\n",
+        // parse each event, optionally fire `on_text_delta` for text_delta.
+        let mut stream = response.bytes_stream();
+        let mut buffer = String::new();
+        let mut sse_events: Vec<sse::SseEvent> = Vec::new();
 
-        self.parse_sse_events(&sse_body)
+        while let Some(chunk) = stream.next().await {
+            let chunk = chunk
+                .map_err(|e| RuntimeError::Api(format!("Stream read failed: {e}")))?;
+            let text = String::from_utf8_lossy(&chunk);
+            buffer.push_str(&text);
+
+            // Drain complete events (separator: blank line "\n\n")
+            while let Some(idx) = buffer.find("\n\n") {
+                let raw = buffer[..idx].to_string();
+                buffer.drain(..idx + 2);
+                if raw.trim().is_empty() {
+                    continue;
+                }
+                let mut event_type = String::new();
+                let mut data = String::new();
+                for line in raw.lines() {
+                    if let Some(t) = line.strip_prefix("event: ") {
+                        event_type = t.trim().to_string();
+                    } else if let Some(d) = line.strip_prefix("data: ") {
+                        data = d.to_string();
+                    }
+                }
+                if data.is_empty() {
+                    continue;
+                }
+
+                // Side-effect: fire text_delta callback ASAP.
+                if event_type == "content_block_delta" {
+                    if let (Some(cb), Ok(delta)) = (
+                        on_text_delta.as_ref(),
+                        serde_json::from_str::<ContentBlockDeltaEvent>(&data),
+                    ) {
+                        if delta.delta.r#type == "text_delta" {
+                            if let Some(t) = &delta.delta.text {
+                                cb(t);
+                            }
+                        }
+                    }
+                }
+
+                sse_events.push(sse::SseEvent {
+                    event_type,
+                    data,
+                });
+            }
+        }
+
+        // Re-use existing aggregator on collected events (re-encode into a body).
+        let mut as_body = String::new();
+        for ev in &sse_events {
+            if !ev.event_type.is_empty() {
+                as_body.push_str("event: ");
+                as_body.push_str(&ev.event_type);
+                as_body.push('\n');
+            }
+            as_body.push_str("data: ");
+            as_body.push_str(&ev.data);
+            as_body.push_str("\n\n");
+        }
+        self.parse_sse_events(&as_body)
     }
 
     /// Parse collected SSE events into `AssistantEvents`.
@@ -280,6 +360,17 @@ impl ApiClient for AnthropicRuntimeClient {
         tokio::task::block_in_place(|| {
             tokio::runtime::Handle::current()
                 .block_on(self.stream_async(request))
+        })
+    }
+
+    fn stream_with_text_delta(
+        &mut self,
+        request: ApiRequest,
+        on_text_delta: &dyn Fn(&str),
+    ) -> Result<Vec<AssistantEvent>, RuntimeError> {
+        tokio::task::block_in_place(|| {
+            tokio::runtime::Handle::current()
+                .block_on(self.stream_async_with_text(request, on_text_delta))
         })
     }
 }

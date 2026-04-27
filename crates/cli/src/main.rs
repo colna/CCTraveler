@@ -4,9 +4,11 @@ use std::path::PathBuf;
 
 mod commands;
 mod doctor;
+mod expand;
 mod init;
 mod oneshot;
 mod repl;
+mod slash;
 
 #[derive(Parser)]
 #[command(
@@ -22,6 +24,14 @@ struct Cli {
     /// 一次性模式：直接发送 prompt，拿到回答后退出
     #[arg(short = 'p', long, value_name = "PROMPT")]
     prompt: Option<String>,
+
+    /// 恢复指定 session（id 来自 /sessions 列表）
+    #[arg(long, value_name = "ID")]
+    resume: Option<String>,
+
+    /// 恢复最近一次 session（按 mtime）
+    #[arg(short = 'c', long)]
+    continue_last: bool,
 
     /// 覆盖模型
     #[arg(long)]
@@ -101,9 +111,16 @@ async fn main() -> Result<()> {
         std::fs::create_dir_all(parent)?;
     }
 
+    // 解析 resume 参数
+    let resume_id = if cli.continue_last {
+        repl::find_latest_session()
+    } else {
+        cli.resume.clone()
+    };
+
     // 调度
     match (cli.command, cli.prompt) {
-        (Some(Commands::Chat), _) | (None, None) => repl::run(&config, &db_path)?,
+        (Some(Commands::Chat), _) | (None, None) => repl::run(&config, &db_path, resume_id)?,
         (None, Some(p)) => oneshot::run(&config, &db_path, Some(p))?,
         (Some(Commands::Scrape {
             city,

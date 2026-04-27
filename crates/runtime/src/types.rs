@@ -237,12 +237,51 @@ impl HookRunner {
     }
 }
 
+// ─── Tool Observation Listener ───
+
+/// 工具调用事件 —— 只读观察，与 hook 的 allow/deny 决策正交。
+#[derive(Debug, Clone)]
+pub enum ToolEvent {
+    Start {
+        name: String,
+        input: serde_json::Value,
+    },
+    Finish {
+        name: String,
+        ok: bool,
+        output_chars: usize,
+        elapsed_ms: u64,
+    },
+}
+
+pub type ToolListener = std::sync::Arc<dyn Fn(&ToolEvent) + Send + Sync>;
+
+/// 文本增量回调：流式 LLM 输出每收到一段 text_delta 就调用。
+pub type TextDeltaListener = std::sync::Arc<dyn Fn(&str) + Send + Sync>;
+
 // ─── Traits ───
 
 /// API client trait — abstracts LLM providers (Anthropic, `OpenAI`, etc.)
 /// Synchronous interface; async handled internally.
 pub trait ApiClient {
     fn stream(&mut self, request: ApiRequest) -> Result<Vec<AssistantEvent>, RuntimeError>;
+
+    /// 流式版本：每段 text_delta 调用 `on_text_delta`，最终仍返回完整事件序列。
+    /// 默认实现 = 调用 `stream`，把最终 text 作为单段 delta 一次性 emit。
+    /// 真正的流式实现应 override 该方法。
+    fn stream_with_text_delta(
+        &mut self,
+        request: ApiRequest,
+        on_text_delta: &dyn Fn(&str),
+    ) -> Result<Vec<AssistantEvent>, RuntimeError> {
+        let events = self.stream(request)?;
+        for ev in &events {
+            if let AssistantEvent::ContentBlock(ContentBlock::Text { text }) = ev {
+                on_text_delta(text);
+            }
+        }
+        Ok(events)
+    }
 }
 
 /// Tool executor trait — dispatches tool calls to handlers.
