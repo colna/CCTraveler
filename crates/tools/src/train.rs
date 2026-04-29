@@ -78,7 +78,13 @@ pub fn handle_search_trains(
     })?;
 
     if trains.is_empty() {
-        return Ok("未找到符合条件的火车票。".to_string());
+        return Ok(
+            "12306 实时查询返回 0 趟车次（非 mock 数据）。\n\
+             可能原因：该线路无直达车、日期超出预售期、或车站代码未收录。\n\
+             建议：尝试中转方案、或查询航班。"
+                .to_string(),
+        );
+        // NOTE: 空结果不写 Redis，避免永久卡死该路线
     }
 
     persist_scraped_trains(db, &trains, &params.travel_date).map_err(|e| RuntimeError::Tool {
@@ -201,6 +207,84 @@ fn build_train_response_from_scraped(
         "trains": results
     }))
     .unwrap_or_default())
+}
+
+#[derive(Deserialize)]
+pub struct ScrapeTrainsParams {
+    pub from_city: String,
+    pub to_city: String,
+    pub travel_date: String,
+}
+
+pub fn handle_scrape_trains(
+    db: &Database,
+    scraper_base_url: &str,
+    redis: &RedisCache,
+    input: &str,
+) -> Result<String, RuntimeError> {
+    let params: ScrapeTrainsParams =
+        serde_json::from_str(input).map_err(|e| RuntimeError::Tool {
+            tool_name: "scrape_trains".into(),
+            message: format!("Invalid input: {e}"),
+        })?;
+
+    chrono::NaiveDate::parse_from_str(&params.travel_date, "%Y-%m-%d").map_err(|_| {
+        RuntimeError::Tool {
+            tool_name: "scrape_trains".into(),
+            message: "出行日期格式错误，应为 YYYY-MM-DD".into(),
+        }
+    })?;
+
+    info!(
+        "Scraping trains (force refresh): {} -> {} on {}",
+        params.from_city, params.to_city, params.travel_date
+    );
+
+    let trains = tokio::task::block_in_place(|| {
+        tokio::runtime::Handle::current().block_on(async {
+            scrape_trains(
+                scraper_base_url,
+                &params.from_city,
+                &params.to_city,
+                &params.travel_date,
+            )
+            .await
+        })
+    })
+    .map_err(|e| RuntimeError::Tool {
+        tool_name: "scrape_trains".into(),
+        message: e.to_string(),
+    })?;
+
+    if trains.is_empty() {
+        return Ok(format!(
+            "{}→{} {} 当日抓取未返回任何车次（可能无直达班次或抓取被限流）。",
+            params.from_city, params.to_city, params.travel_date
+        ));
+    }
+
+    persist_scraped_trains(db, &trains, &params.travel_date).map_err(|e| RuntimeError::Tool {
+        tool_name: "scrape_trains".into(),
+        message: format!("保存火车票数据失败: {e}"),
+    })?;
+
+    let search_params = SearchTrainsParams {
+        from_city: params.from_city.clone(),
+        to_city: params.to_city.clone(),
+        travel_date: params.travel_date.clone(),
+        train_types: None,
+        sort_by: Some("time".to_string()),
+        limit: Some(50),
+    };
+    let response = build_train_response_from_scraped(trains, &search_params, 50)?;
+    redis.set_transport(
+        "train",
+        &params.from_city,
+        &params.to_city,
+        &params.travel_date,
+        &response,
+    );
+    Ok(response)
 }
 
 fn persist_scraped_trains(

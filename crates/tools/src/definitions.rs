@@ -10,6 +10,8 @@ pub fn all_tool_specs() -> Vec<ToolSpec> {
         analyze_prices_spec(),
         export_report_spec(),
         // v0.2 tools
+        scrape_trains_spec(),
+        scrape_flights_spec(),
         search_trains_spec(),
         search_flights_spec(),
         compare_routes_spec(),
@@ -188,12 +190,78 @@ fn export_report_spec() -> ToolSpec {
 // v0.2 Tool Specs
 // ============================================================
 
+fn scrape_trains_spec() -> ToolSpec {
+    ToolSpec {
+        name: "scrape_trains".to_string(),
+        description: "强制从 12306 实时抓取火车票数据并写入本地数据库，跳过缓存。\
+                      \n\n用于：用户明确要求重新抓取、缓存数据过期、或 search_trains 返回空但怀疑是缓存问题。\
+                      \n抓取失败时返回提示信息（无直达班次或被限流）。"
+            .to_string(),
+        input_schema: serde_json::json!({
+            "type": "object",
+            "properties": {
+                "from_city": {
+                    "type": "string",
+                    "description": "出发城市",
+                    "minLength": 1,
+                    "maxLength": 50
+                },
+                "to_city": {
+                    "type": "string",
+                    "description": "到达城市",
+                    "minLength": 1,
+                    "maxLength": 50
+                },
+                "travel_date": {
+                    "type": "string",
+                    "description": "出行日期 (YYYY-MM-DD)",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                }
+            },
+            "required": ["from_city", "to_city", "travel_date"]
+        }),
+    }
+}
+
+fn scrape_flights_spec() -> ToolSpec {
+    ToolSpec {
+        name: "scrape_flights".to_string(),
+        description: "强制从携程等多源实时抓取机票数据并写入本地数据库，跳过缓存。\
+                      \n\n用于：用户明确要求重新抓取、缓存数据过期、或 search_flights 返回空但怀疑是缓存问题。\
+                      \n抓取失败时返回提示信息（无直飞或抓取被限流）。"
+            .to_string(),
+        input_schema: serde_json::json!({
+            "type": "object",
+            "properties": {
+                "from_city": {
+                    "type": "string",
+                    "description": "出发城市",
+                    "minLength": 1,
+                    "maxLength": 50
+                },
+                "to_city": {
+                    "type": "string",
+                    "description": "到达城市",
+                    "minLength": 1,
+                    "maxLength": 50
+                },
+                "travel_date": {
+                    "type": "string",
+                    "description": "出行日期 (YYYY-MM-DD)",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                }
+            },
+            "required": ["from_city", "to_city", "travel_date"]
+        }),
+    }
+}
+
 fn search_trains_spec() -> ToolSpec {
     ToolSpec {
         name: "search_trains".to_string(),
         description: "查询指定路线和日期的火车票信息。\
                       支持按车型、时间、价格筛选。\
-                      数据来源：12306 官网（当前使用 mock 数据）。".to_string(),
+                      数据来源：12306 官网实时抓取，抓取失败时返回空列表。".to_string(),
         input_schema: serde_json::json!({
             "type": "object",
             "properties": {
@@ -246,7 +314,7 @@ fn search_flights_spec() -> ToolSpec {
         name: "search_flights".to_string(),
         description: "查询指定路线和日期的机票信息。\
                       支持按航司、舱位、价格筛选。\
-                      数据来源：携程等多源聚合（当前使用 mock 数据）。".to_string(),
+                      数据来源：携程等多源实时抓取，抓取失败时返回空列表。".to_string(),
         input_schema: serde_json::json!({
             "type": "object",
             "properties": {

@@ -1,5 +1,66 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use std::time::Duration;
+use tracing::warn;
+
+/// Decide whether an HTTP status warrants a retry.
+/// 429 (rate-limited) and 5xx → retry. Other 4xx → fail fast.
+fn is_retryable_status(status: reqwest::StatusCode) -> bool {
+    status.as_u16() == 429 || status.is_server_error()
+}
+
+/// POST `req` to `url` retrying indefinitely on transient failures.
+/// - Connection refused / DNS failure → fail fast (port not open).
+/// - 429 / 5xx / timeout → retry forever, exponential backoff capped at 30s.
+async fn post_with_retry<T: Serialize + ?Sized>(
+    client: &reqwest::Client,
+    url: &str,
+    req: &T,
+    timeout: Duration,
+    label: &str,
+) -> Result<reqwest::Response> {
+    let mut attempt: u64 = 0;
+
+    loop {
+        attempt += 1;
+        let result = client
+            .post(url)
+            .json(req)
+            .timeout(timeout)
+            .send()
+            .await;
+
+        match result {
+            Ok(resp) if resp.status().is_success() => return Ok(resp),
+            Ok(resp) => {
+                let status = resp.status();
+                let body = resp.text().await.unwrap_or_default();
+                if !is_retryable_status(status) {
+                    anyhow::bail!("{label} returned {status}: {body}");
+                }
+                warn!(
+                    "{label} attempt {} got {} — retrying",
+                    attempt, status
+                );
+            }
+            Err(e) => {
+                // Connect errors mean the target port is unreachable —
+                // retrying won't help, fail fast so the user can fix it.
+                if e.is_connect() {
+                    return Err(e.into());
+                }
+                warn!(
+                    "{label} attempt {} network error: {} — retrying",
+                    attempt, e
+                );
+            }
+        }
+
+        // Exponential backoff capped at 30s: 1, 2, 4, 8, 16, 30, 30, ...
+        let secs = 1u64 << attempt.saturating_sub(1).min(5);
+        tokio::time::sleep(Duration::from_secs(secs.min(30))).await;
+    }
+}
 
 #[derive(Debug, Serialize)]
 pub struct ScrapeRequest {
@@ -54,19 +115,14 @@ pub struct ScrapedRoom {
 pub async fn scrape_hotels(base_url: &str, req: &ScrapeRequest) -> Result<ScrapeResponse> {
     let client = reqwest::Client::new();
     let url = format!("{base_url}/scrape/hotels");
-    let resp = client
-        .post(&url)
-        .json(req)
-        .timeout(std::time::Duration::from_mins(2))
-        .send()
-        .await?;
-
-    if !resp.status().is_success() {
-        let status = resp.status();
-        let body = resp.text().await.unwrap_or_default();
-        anyhow::bail!("Scraper returned {status}: {body}");
-    }
-
+    let resp = post_with_retry(
+        &client,
+        &url,
+        req,
+        Duration::from_secs(600),
+        "scrape_hotels",
+    )
+    .await?;
     let data: ScrapeResponse = resp.json().await?;
     Ok(data)
 }
@@ -125,18 +181,14 @@ pub async fn scrape_trains(
         travel_date: travel_date.to_string(),
     };
 
-    let resp = client
-        .post(&url)
-        .json(&req)
-        .timeout(std::time::Duration::from_secs(30))
-        .send()
-        .await?;
-
-    if !resp.status().is_success() {
-        let status = resp.status();
-        let body = resp.text().await.unwrap_or_default();
-        anyhow::bail!("Scraper returned {status}: {body}");
-    }
+    let resp = post_with_retry(
+        &client,
+        &url,
+        &req,
+        Duration::from_secs(600),
+        "scrape_trains",
+    )
+    .await?;
 
     let data: TrainScrapeResponse = resp.json().await?;
     Ok(data.trains)
@@ -199,18 +251,14 @@ pub async fn scrape_flights(
         travel_date: travel_date.to_string(),
     };
 
-    let resp = client
-        .post(&url)
-        .json(&req)
-        .timeout(std::time::Duration::from_secs(30))
-        .send()
-        .await?;
-
-    if !resp.status().is_success() {
-        let status = resp.status();
-        let body = resp.text().await.unwrap_or_default();
-        anyhow::bail!("Scraper returned {status}: {body}");
-    }
+    let resp = post_with_retry(
+        &client,
+        &url,
+        &req,
+        Duration::from_secs(600),
+        "scrape_flights",
+    )
+    .await?;
 
     let data: FlightScrapeResponse = resp.json().await?;
     Ok(data.flights)

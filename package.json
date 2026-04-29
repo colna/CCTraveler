@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "turbo dev",
     "dev:all": "./scripts/dev.sh",
-    "dev:scraper": "cd services/scraper && source .venv/bin/activate && uvicorn src.server:app --port 8300 --reload",
+    "dev:scraper": "cd services/scraper && { [ -f .venv/bin/activate ] && . .venv/bin/activate || . venv/bin/activate; } && uvicorn src.server:app --port 8300 --reload",
     "dev:web": "pnpm --filter web dev",
     "build": "turbo build",
     "build:web": "pnpm --filter web build",

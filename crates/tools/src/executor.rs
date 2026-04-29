@@ -355,6 +355,8 @@ impl ToolExecutor for TravelerToolExecutor {
             "analyze_prices" => self.handle_analyze(input),
             "export_report" => self.handle_export(input),
             // v0.2 tools
+            "scrape_trains" => crate::train::handle_scrape_trains(&self.db, &self.scraper_base_url, &self.redis, input),
+            "scrape_flights" => crate::flight::handle_scrape_flights(&self.db, &self.scraper_base_url, &self.redis, input),
             "search_trains" => crate::train::handle_search_trains(&self.db, &self.scraper_base_url, &self.redis, input),
             "search_flights" => crate::flight::handle_search_flights(&self.db, &self.scraper_base_url, &self.redis, input),
             "compare_routes" => crate::route::handle_compare_routes(&self.db, &self.scraper_base_url, input),

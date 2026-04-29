@@ -11,10 +11,15 @@ import logging
 import re
 from typing import Dict, List, Optional, Set, Tuple
 
+from ..anti_detect.fingerprint import pick_user_agent
+from ..anti_detect.proxy import pick_proxy
 from ..utils.geo_lookup import get_airport_code
 from .types import ScrapedFlight, FlightCabinPrice
 
 logger = logging.getLogger(__name__)
+
+_BACKOFF_BASE = 2.0
+_BACKOFF_CAP = 30.0
 
 # City name -> Ctrip URL city code
 _CITY_CODES = {
@@ -219,64 +224,76 @@ async def fetch_flights_ctrip(
 
     flights: List[ScrapedFlight] = []
 
-    async with async_playwright() as pw:
-        browser = await pw.chromium.launch(headless=True)
+    attempt = 0
+    while True:
+        attempt += 1
+        proxy = pick_proxy()
+        launch_kwargs = {"headless": True}
+        if proxy:
+            launch_kwargs["proxy"] = {"server": proxy}
+
         try:
-            context = await browser.new_context(
-                user_agent=(
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/125.0.0.0 Safari/537.36"
-                ),
-                viewport={"width": 1920, "height": 1080},
-                locale="zh-CN",
-            )
-            page = await context.new_page()
+            async with async_playwright() as pw:
+                browser = await pw.chromium.launch(**launch_kwargs)
+                try:
+                    context = await browser.new_context(
+                        user_agent=pick_user_agent(),
+                        viewport={"width": 1920, "height": 1080},
+                        locale="zh-CN",
+                    )
+                    page = await context.new_page()
 
-            await page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                    await page.goto(url, wait_until="domcontentloaded", timeout=30000)
 
-            # Wait for flight items to render
-            try:
-                await page.wait_for_selector(".flight-item", timeout=20000)
-            except Exception:
-                title = await page.title()
-                logger.warning(
-                    "No .flight-item elements found (page title: %s)", title,
-                )
-                return []
+                    # Wait for flight items to render
+                    try:
+                        await page.wait_for_selector(".flight-item", timeout=20000)
+                    except Exception:
+                        title = await page.title()
+                        logger.warning(
+                            "No .flight-item elements found (page title: %s) "
+                            "— attempt %d", title, attempt,
+                        )
+                        # Treat as a soft block: retry with new UA/proxy.
+                        raise RuntimeError(f"no flight-item rendered (title={title!r})")
 
-            # Give the page a moment to finish rendering initial items
-            await asyncio.sleep(3)
+                    # Give the page a moment to finish rendering initial items
+                    await asyncio.sleep(3)
 
-            # Scroll repeatedly to trigger lazy loading until all flights appear
-            prev_count = 0
-            for _ in range(15):
-                await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                await asyncio.sleep(1.5)
-                cur_count = await page.evaluate(
-                    "document.querySelectorAll('.flight-item').length",
-                )
-                if cur_count == prev_count:
-                    break
-                prev_count = cur_count
+                    # Scroll repeatedly to trigger lazy loading until all flights appear
+                    prev_count = 0
+                    for _ in range(15):
+                        await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                        await asyncio.sleep(1.5)
+                        cur_count = await page.evaluate(
+                            "document.querySelectorAll('.flight-item').length",
+                        )
+                        if cur_count == prev_count:
+                            break
+                        prev_count = cur_count
 
-            # Extract structured data from DOM
-            raw_items: List[dict] = await page.evaluate(_EXTRACT_JS)
-            logger.info(
-                "Found %d valid .flight-item elements in DOM", len(raw_items),
-            )
+                    # Extract structured data from DOM
+                    raw_items: List[dict] = await page.evaluate(_EXTRACT_JS)
+                    logger.info(
+                        "Found %d valid .flight-item elements in DOM", len(raw_items),
+                    )
 
-            seen_ids: Set[str] = set()
-            for item in raw_items:
-                flight = _build_flight(item, from_city, to_city)
-                if flight and flight.flight_id not in seen_ids:
-                    seen_ids.add(flight.flight_id)
-                    flights.append(flight)
-
+                    seen_ids: Set[str] = set()
+                    for item in raw_items:
+                        flight = _build_flight(item, from_city, to_city)
+                        if flight and flight.flight_id not in seen_ids:
+                            seen_ids.add(flight.flight_id)
+                            flights.append(flight)
+                finally:
+                    await browser.close()
+            break  # success — exit retry loop
         except Exception as e:
-            logger.exception("Playwright flight fetch failed: %s", e)
-        finally:
-            await browser.close()
+            sleep_for = min(_BACKOFF_BASE ** attempt, _BACKOFF_CAP)
+            logger.warning(
+                "Playwright flight fetch attempt %d failed: %s — retrying in %.1fs",
+                attempt, e, sleep_for,
+            )
+            await asyncio.sleep(sleep_for)
 
     logger.info("Extracted %d unique flights from Ctrip", len(flights))
     return flights

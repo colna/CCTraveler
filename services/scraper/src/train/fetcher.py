@@ -9,6 +9,8 @@ from typing import Dict, List, Optional, Tuple
 
 import httpx
 
+from ..anti_detect.fingerprint import pick_headers
+from ..anti_detect.proxy import pick_proxy
 from ..utils.geo_lookup import get_station_code
 from ..utils.station_loader import ensure_stations_loaded
 from .types import ScrapedTrain, TrainSeatPrice
@@ -19,21 +21,16 @@ INIT_URL = "https://kyfw.12306.cn/otn/leftTicket/init?linktypeid=dc"
 QUERY_URL = "https://kyfw.12306.cn/otn/leftTicket/queryZ"
 PRICE_URL = "https://kyfw.12306.cn/otn/leftTicket/queryTicketPrice"
 
-BROWSER_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/125.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-}
-
+# Headers specific to the JSON API endpoint — merged on top of randomised ones.
 API_HEADERS = {
     "Accept": "application/json, text/javascript, */*; q=0.01",
     "Referer": "https://kyfw.12306.cn/otn/leftTicket/init",
     "X-Requested-With": "XMLHttpRequest",
 }
+
+# Retry policy: anti-bot rejections are retried indefinitely. Backoff caps at 30s.
+_BACKOFF_BASE = 2.0
+_BACKOFF_CAP = 30.0
 
 # 12306 pipe-delimited field indices (0-based)
 _IDX_TRAIN_INTERNAL = 2  # internal train number for price query
@@ -251,55 +248,72 @@ async def fetch_trains(
         from_city, from_code, to_city, to_code, formatted_date,
     )
 
-    async with httpx.AsyncClient(
-        headers=BROWSER_HEADERS,
-        follow_redirects=True,
-        timeout=30.0,
-    ) as client:
-        # Visit init page first to obtain session cookies
-        await client.get(INIT_URL)
-
-        # Query the API with session cookies
-        resp = await client.get(QUERY_URL, params=params, headers=API_HEADERS)
-
-        if resp.status_code != 200:
-            raise RuntimeError(
-                f"12306 API 返回状态码 {resp.status_code}: {resp.text[:200]}"
-            )
+    attempt = 0
+    while True:
+        attempt += 1
+        proxy = pick_proxy()
+        client_kwargs = {
+            "headers": pick_headers(),
+            "follow_redirects": True,
+            "timeout": 30.0,
+        }
+        if proxy:
+            client_kwargs["proxy"] = proxy
 
         try:
-            data = resp.json()
-        except Exception:
-            raise RuntimeError(
-                f"12306 返回非 JSON 响应 (可能被反爬拦截): {resp.text[:200]}"
+            async with httpx.AsyncClient(**client_kwargs) as client:
+                # Visit init page first to obtain session cookies
+                await client.get(INIT_URL)
+
+                # Query the API with session cookies
+                resp = await client.get(QUERY_URL, params=params, headers=API_HEADERS)
+
+                if resp.status_code != 200:
+                    raise RuntimeError(
+                        f"12306 API 返回状态码 {resp.status_code}: {resp.text[:200]}"
+                    )
+
+                try:
+                    data = resp.json()
+                except Exception:
+                    raise RuntimeError(
+                        f"12306 返回非 JSON 响应 (可能被反爬拦截): {resp.text[:200]}"
+                    )
+
+                # Check for API-level errors
+                if not data.get("status"):
+                    messages = data.get("messages", [])
+                    msg = "; ".join(messages) if messages else "未知错误"
+                    raise RuntimeError(f"12306 API 查询失败: {msg}")
+
+                result_data = data.get("data", {})
+                result_list = result_data.get("result", [])
+                station_map = result_data.get("map", {})
+
+                if not result_list:
+                    logger.info(
+                        "12306 returned 0 trains for %s -> %s on %s",
+                        from_city, to_city, formatted_date,
+                    )
+                    return []
+
+                # Parse all rows into field lists
+                all_fields: List[List[str]] = []
+                for raw in result_list:
+                    fields = raw.split("|")
+                    if len(fields) >= 34 and fields[_IDX_TRAIN_NO]:
+                        all_fields.append(fields)
+
+                # Fetch prices for all trains (reuses the same session)
+                prices = await _fetch_prices(client, all_fields, formatted_date)
+            break  # success — exit retry loop
+        except (httpx.HTTPError, RuntimeError) as e:
+            sleep_for = min(_BACKOFF_BASE ** attempt, _BACKOFF_CAP)
+            logger.warning(
+                "12306 attempt %d failed (%s) — retrying in %.1fs",
+                attempt, e, sleep_for,
             )
-
-        # Check for API-level errors
-        if not data.get("status"):
-            messages = data.get("messages", [])
-            msg = "; ".join(messages) if messages else "未知错误"
-            raise RuntimeError(f"12306 API 查询失败: {msg}")
-
-        result_data = data.get("data", {})
-        result_list = result_data.get("result", [])
-        station_map = result_data.get("map", {})
-
-        if not result_list:
-            logger.info(
-                "12306 returned 0 trains for %s -> %s on %s",
-                from_city, to_city, formatted_date,
-            )
-            return []
-
-        # Parse all rows into field lists
-        all_fields: List[List[str]] = []
-        for raw in result_list:
-            fields = raw.split("|")
-            if len(fields) >= 34 and fields[_IDX_TRAIN_NO]:
-                all_fields.append(fields)
-
-        # Fetch prices for all trains (reuses the same session)
-        prices = await _fetch_prices(client, all_fields, formatted_date)
+            await asyncio.sleep(sleep_for)
 
     # Build final train objects
     trains: List[ScrapedTrain] = []

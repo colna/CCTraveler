@@ -6,7 +6,14 @@ echo "=== Starting CCTraveler Dev Services ==="
 # Start Python scraper in background
 echo ">> Starting scraper service on :8300..."
 cd services/scraper
-source .venv/bin/activate 2>/dev/null || true
+if [ -f .venv/bin/activate ]; then
+    source .venv/bin/activate
+elif [ -f venv/bin/activate ]; then
+    source venv/bin/activate
+else
+    echo "!! no virtualenv found in services/scraper (.venv or venv) — run 'pnpm setup:python' first" >&2
+    exit 1
+fi
 uvicorn src.server:app --port 8300 --reload &
 SCRAPER_PID=$!
 cd ../..

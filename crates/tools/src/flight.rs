@@ -79,7 +79,13 @@ pub fn handle_search_flights(
     })?;
 
     if flights.is_empty() {
-        return Ok("未找到符合条件的航班。".to_string());
+        return Ok(
+            "携程实时查询返回 0 条航班（非 mock 数据）。\n\
+             可能原因：该航线无直飞、日期超出预售期、或携程未收录。\n\
+             建议：尝试联程航班、或查询火车/汽车方案。"
+                .to_string(),
+        );
+        // NOTE: 空结果不写 Redis，避免永久卡死该路线
     }
 
     // 4. Persist scraped data
@@ -244,6 +250,87 @@ fn build_flight_response_from_scraped(
         "flights": results
     }))
     .unwrap_or_default())
+}
+
+#[derive(Deserialize)]
+pub struct ScrapeFlightsParams {
+    pub from_city: String,
+    pub to_city: String,
+    pub travel_date: String,
+}
+
+pub fn handle_scrape_flights(
+    db: &Database,
+    scraper_base_url: &str,
+    redis: &RedisCache,
+    input: &str,
+) -> Result<String, RuntimeError> {
+    let params: ScrapeFlightsParams =
+        serde_json::from_str(input).map_err(|e| RuntimeError::Tool {
+            tool_name: "scrape_flights".into(),
+            message: format!("Invalid input: {e}"),
+        })?;
+
+    chrono::NaiveDate::parse_from_str(&params.travel_date, "%Y-%m-%d").map_err(|_| {
+        RuntimeError::Tool {
+            tool_name: "scrape_flights".into(),
+            message: "出行日期格式错误，应为 YYYY-MM-DD".into(),
+        }
+    })?;
+
+    info!(
+        "Scraping flights (force refresh): {} -> {} on {}",
+        params.from_city, params.to_city, params.travel_date
+    );
+
+    let flights = tokio::task::block_in_place(|| {
+        tokio::runtime::Handle::current().block_on(async {
+            scrape_flights(
+                scraper_base_url,
+                &params.from_city,
+                &params.to_city,
+                &params.travel_date,
+            )
+            .await
+        })
+    })
+    .map_err(|e| RuntimeError::Tool {
+        tool_name: "scrape_flights".into(),
+        message: e.to_string(),
+    })?;
+
+    if flights.is_empty() {
+        return Ok(format!(
+            "{}→{} {} 当日抓取未返回任何航班（可能无直飞或抓取被限流/页面结构变化）。",
+            params.from_city, params.to_city, params.travel_date
+        ));
+    }
+
+    persist_scraped_flights(db, &flights, &params.travel_date).map_err(|e| {
+        RuntimeError::Tool {
+            tool_name: "scrape_flights".into(),
+            message: format!("保存机票数据失败: {e}"),
+        }
+    })?;
+
+    let search_params = SearchFlightsParams {
+        from_city: params.from_city.clone(),
+        to_city: params.to_city.clone(),
+        travel_date: params.travel_date.clone(),
+        cabin_class: None,
+        max_price: None,
+        sort_by: Some("price".to_string()),
+        limit: Some(50),
+    };
+    let response = build_flight_response_from_scraped(flights, &search_params, 50)?;
+    redis.set_transport(
+        "flight",
+        &params.from_city,
+        &params.to_city,
+        &params.travel_date,
+        &response,
+    );
+    Ok(response)
 }
 
 fn persist_scraped_flights(
